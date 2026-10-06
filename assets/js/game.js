@@ -949,8 +949,12 @@ class GameApp {
               const teaDone = this.currentCup.tea === ord.recipe.tea;
               const sugarDone = this.currentCup.sugar === ord.recipe.sugar;
               const iceDone = this.currentCup.ice === ord.recipe.ice;
-              const syrupDone = !ord.recipe.syrup || this.currentCup.syrup === ord.recipe.syrup;
+              const syrupDone = ord.recipe.syrup ? (this.currentCup.syrup === ord.recipe.syrup) : !this.currentCup.syrup;
               const topsDone = ord.recipe.toppings.every(tid => this.currentCup.toppings.includes(tid));
+
+              // Báo thừa nguyên liệu nếu lỡ tay chọn nhầm
+              const extraToppings = isSelected ? this.currentCup.toppings.filter(tid => !ord.recipe.toppings.includes(tid)) : [];
+              const hasExtraSyrup = isSelected && Boolean(this.currentCup.syrup && this.currentCup.syrup !== ord.recipe.syrup);
 
               return `
                 <div class="order-card ${isSelected ? 'active' : ''}" data-order-idx="${idx}">
@@ -965,7 +969,7 @@ class GameApp {
                     ${ord.recipe.teaName} ${ord.recipe.syrupName ? `+ ${ord.recipe.syrupName}` : ''}
                   </div>
 
-                  <!-- Checklist thành phần: ĐỎ 🔴 vs XANH 🟢✓ -->
+                  <!-- Checklist thành phần: ĐỎ 🔴 vs XANH 🟢✓ vs CẢNH BÁO THỪA ⚠️ -->
                   <div class="recipe-checklist">
                     <span class="recipe-step-tag ${cupDone ? 'done' : 'pending'}">
                       ${cupDone ? '🟢✓' : '🔴'} Ly ${ord.recipe.cup}
@@ -990,6 +994,20 @@ class GameApp {
                       return `
                         <span class="recipe-step-tag ${tDone ? 'done' : 'pending'}">
                           ${tDone ? '🟢✓' : '🔴'} ${tObj?.name || 'Topping'}
+                        </span>
+                      `;
+                    }).join('')}
+
+                    ${hasExtraSyrup ? `
+                      <span class="recipe-step-tag warning" title="Bấm lại chai siro này để bỏ ra">
+                        ⚠️ Thừa ${SYRUPS.find(s => s.id === this.currentCup.syrup)?.name || 'Siro'}
+                      </span>
+                    ` : ''}
+                    ${extraToppings.map(tid => {
+                      const tObj = TOPPINGS.find(t => t.id === tid);
+                      return `
+                        <span class="recipe-step-tag warning" title="Bấm lại topping này để bỏ ra">
+                          ⚠️ Thừa ${tObj?.name || 'Topping'}
                         </span>
                       `;
                     }).join('')}
@@ -1078,13 +1096,20 @@ class GameApp {
             <!-- Bàn gỗ đặt ly -->
             <div class="wooden-prep-board ${!this.currentCup.cup ? 'need-cup' : ''}">
               ${this.currentCup.cup ? `
-                <button class="btn-trash-inline" id="btnDiscardCup" title="Đổ ly này">🗑 Đổ</button>
+                <button class="btn-trash-inline" id="btnDiscardCup" title="Đổ ly này để pha lại">🗑 Đổ</button>
                 <div class="cup-on-board">
                   <div class="cup-svg-wrapper size-${this.currentCup.cup.toLowerCase()}">
                     ${this.renderCupSvg()}
                   </div>
                   <div class="cup-size-badge-on-board">Ly ${this.currentCup.cup}</div>
                 </div>
+                ${this.isOrderMatched(activeOrd) ? `
+                  <button class="btn-seal-serve-action" id="btnManualSealServe">✨ ĐÓNG NẮP & GIAO</button>
+                ` : `
+                  <div class="cup-prep-hint ${this.getCupMismatchHintClass(activeOrd)}">
+                    ${this.getCupMismatchHint(activeOrd)}
+                  </div>
+                `}
               ` : `
                 <div class="board-empty-prompt">
                   <span style="font-size: 18px; animation: bounce 0.8s infinite alternate;">👆</span>
@@ -1295,7 +1320,7 @@ class GameApp {
       };
     });
 
-    // 6. Chọn Siro (Khu Siro)
+    // 6. Chọn Siro (Khu Siro) - Hỗ trợ bấm lại để gỡ ra
     this.elView.querySelectorAll('[data-pick-syrup]').forEach(btn => {
       btn.onclick = () => {
         if (!this.currentCup.cup) {
@@ -1304,13 +1329,19 @@ class GameApp {
           return;
         }
         const sid = btn.dataset.pickSyrup;
-        if ((state.inventory[sid] || 0) <= 0) {
-          audio.trash();
-          this.showToast('Chai siro này đã hết!');
-          return;
+        if (this.currentCup.syrup === sid) {
+          audio.click();
+          this.currentCup.syrup = null;
+          this.showToast('Đã bỏ siro ra khỏi ly!');
+        } else {
+          if ((state.inventory[sid] || 0) <= 0) {
+            audio.trash();
+            this.showToast('Chai siro này đã hết!');
+            return;
+          }
+          audio.addSyrup();
+          this.currentCup.syrup = sid;
         }
-        audio.addSyrup();
-        this.currentCup.syrup = sid;
         this.checkAndTriggerAutoSeal();
         this.render();
       };
@@ -1343,7 +1374,18 @@ class GameApp {
       };
     });
 
-    // 8. Nút Đổ Ly với Hộp thoại xác nhận (Mục 22, 102, 103)
+    // 8. Nút Đóng nắp & Giao món chủ động
+    const btnSeal = document.getElementById('btnManualSealServe');
+    if (btnSeal) {
+      btnSeal.onclick = () => {
+        const ord = this.orders[this.activeOrderIndex];
+        if (ord && this.isOrderMatched(ord)) {
+          this.checkAndTriggerAutoSeal(true);
+        }
+      };
+    }
+
+    // 9. Nút Đổ Ly với Hộp thoại xác nhận (Mục 22, 102, 103)
     const btnTrash = document.getElementById('btnDiscardCup');
     if (btnTrash) {
       btnTrash.onclick = () => {
@@ -1371,27 +1413,68 @@ class GameApp {
     }
   }
 
-  // ================= 4.3. CƠ CHẾ TỰ ĐỘNG DẬP NẮP & TỰ ĐỘNG GIAO MÓN (MỤC 51 - 54) =================
-  checkAndTriggerAutoSeal() {
-    const ord = this.orders[this.activeOrderIndex];
-    if (!ord || this.currentCup.isSealing || this.currentCup.isDelivering) return;
-
-    // Kiểm tra đã đủ toàn bộ thành phần theo order chưa
+  // ================= 4.3. KIỂM TRA CÔNG THỨC & TỰ ĐỘNG DẬP NẮP GIAO MÓN =================
+  isOrderMatched(ord) {
+    if (!ord || !this.currentCup.cup) return false;
     const isCupMatch = this.currentCup.cup === ord.recipe.cup;
     const isTeaMatch = this.currentCup.tea === ord.recipe.tea;
     const isSugarMatch = this.currentCup.sugar === ord.recipe.sugar;
     const isIceMatch = this.currentCup.ice === ord.recipe.ice;
-    const isSyrupMatch = !ord.recipe.syrup || this.currentCup.syrup === ord.recipe.syrup;
+    const isSyrupMatch = ord.recipe.syrup ? (this.currentCup.syrup === ord.recipe.syrup) : (!this.currentCup.syrup);
     const isToppingsMatch = ord.recipe.toppings.every(t => this.currentCup.toppings.includes(t)) &&
                             this.currentCup.toppings.length === ord.recipe.toppings.length;
+    return Boolean(isCupMatch && isTeaMatch && isSugarMatch && isIceMatch && isSyrupMatch && isToppingsMatch);
+  }
 
-    if (isCupMatch && isTeaMatch && isSugarMatch && isIceMatch && isSyrupMatch && isToppingsMatch) {
+  getCupMismatchHint(ord) {
+    if (!ord || !this.currentCup.cup) return '';
+    if (this.currentCup.isSealing) return '🤖 Máy đang dập nắp...';
+    if (this.currentCup.isDelivering) return '🛵 Đang giao cho khách...';
+
+    if (this.currentCup.syrup && this.currentCup.syrup !== ord.recipe.syrup) {
+      const sObj = SYRUPS.find(s => s.id === this.currentCup.syrup);
+      return `⚠️ Thừa ${sObj?.name || 'Siro'} (Bấm lại để bỏ)`;
+    }
+    const extraTops = this.currentCup.toppings.filter(tid => !ord.recipe.toppings.includes(tid));
+    if (extraTops.length > 0) {
+      const tObj = TOPPINGS.find(t => t.id === extraTops[0]);
+      return `⚠️ Thừa ${tObj?.name || 'Topping'} (Bấm lại để bỏ)`;
+    }
+    if (this.currentCup.cup !== ord.recipe.cup) return `⚠️ Cần Ly ${ord.recipe.cup}`;
+    if (!this.currentCup.tea) return '👇 Hãy rót trà';
+    if (this.currentCup.tea !== ord.recipe.tea) return '⚠️ Nhầm cốt trà (Bấm Đổ ly)';
+    if (!this.currentCup.sugar) return '👇 Chọn độ đường';
+    if (!this.currentCup.ice) return '👇 Chọn độ đá';
+    if (ord.recipe.syrup && this.currentCup.syrup !== ord.recipe.syrup) return `👇 Bơm ${ord.recipe.syrupName}`;
+    const missingTops = ord.recipe.toppings.filter(tid => !this.currentCup.toppings.includes(tid));
+    if (missingTops.length > 0) {
+      const tObj = TOPPINGS.find(t => t.id === missingTops[0]);
+      return `👇 Thêm ${tObj?.name || 'Topping'}`;
+    }
+    return '✨ Đã đủ công thức!';
+  }
+
+  getCupMismatchHintClass(ord) {
+    if (!ord || !this.currentCup.cup) return '';
+    if (this.currentCup.syrup && this.currentCup.syrup !== ord.recipe.syrup) return 'warn';
+    const extraTops = this.currentCup.toppings.filter(tid => !ord.recipe.toppings.includes(tid));
+    if (extraTops.length > 0) return 'warn';
+    if (this.currentCup.tea && this.currentCup.tea !== ord.recipe.tea) return 'warn';
+    return '';
+  }
+
+  checkAndTriggerAutoSeal(isManual = false) {
+    const ord = this.orders[this.activeOrderIndex];
+    if (!ord || this.currentCup.isSealing || this.currentCup.isDelivering) return;
+
+    if (this.isOrderMatched(ord)) {
       // ĐỦ CÔNG THỨC -> KÍCH HOẠT MÁY ĐÓNG NẮP TỰ ĐỘNG
       this.currentCup.isSealing = true;
       audio.autoSeal();
       this.showToast('✨ Đủ nguyên liệu! Máy tự động đóng nắp...');
+      this.render();
 
-      const sealDuration = state.upgrades.fastSealer ? 280 : 500;
+      const sealDuration = state.upgrades.fastSealer ? 260 : 450;
 
       setTimeout(() => {
         // TỰ ĐỘNG GIAO MÓN CHO KHÁCH
@@ -1437,7 +1520,7 @@ class GameApp {
     this.dailyReport.tips += tip;
 
     // Hiệu ứng bay tiền & chén ly
-    this.showToast(`+${totalEarned.toLocaleString()}đ 💰 ⭐ KHÁCH HÀI LÒNG!`);
+    this.showToast(`+${totalEarned.toLocaleString()}đ 💰 Đã giao khách! Hãy lấy ly mới để làm đơn tiếp.`);
 
     // Xóa order đã phục vụ và sinh order mới
     this.orders.splice(this.activeOrderIndex, 1);
