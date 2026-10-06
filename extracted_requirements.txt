@@ -1,0 +1,487 @@
+YÊU CẦU THIẾT KẾ GAME
+🧋 TIỆM TRÀ SỮA CỦA RÙA
+Game mobile 2D casual – quản lý & pha chế trà sữa
+1. Ý tưởng tổng thể
+Tạo game mobile 2D casual mô phỏng quản lý một tiệm trà sữa nhỏ. Phong cách cute, đáng yêu, pastel, 2D cartoon, UI bo tròn, thao tác chủ yếu bằng chạm, màn hình dọc 9:16.
+Gameplay nhanh, dễ hiểu nhưng càng về sau càng nhiều order và nhiều công thức.
+Người chơi là chủ tiệm và phải đọc order rồi pha đúng công thức.
+Cơ chế nhận biết trạng thái cốt lõi: 🔴 chưa chọn/chưa hoàn thành → 🟡 đang thực hiện → 🟢 đã chọn/hoàn thành → 🔒 chưa mở khóa.
+2. Bố cục màn hình chính
+┌──────────────────────────────┐│ ⏸    NGÀY 1       💰157K ⭐⭐⭐⭐⭐ ││        11:44                 │├──────────────────────────────┤│       🧋 TIỆM TRÀ SỮA       ││         CỦA RÙA              │├──────────────────────────────┤│ 🚚 ĐƠN #5692                 ││ 👩 Chị Lan                   ││ Trà sữa ô long • 50% đường  ││ + trân châu + pudding        ││ █████████████░░              │├──────────────────────────────┤│       KHU PHA CHẾ            ││ [🥤 LY] [🍵 TRÀ] [🍯 ĐƯỜNG]  ││ [🧊 ĐÁ] [🧋 TOPPING]          ││       ┌─────────────┐        ││       │   KHU PHA   │        ││       │    CHẾ      │        ││       └─────────────┘        ││       [ 🧋 GIAO MÓN ]       │├──────────────────────────────┤│ 🟤  ⚪  🟡  🍓  🥥  🧀       ││ Trân Thạch Pudding Dừa Phô  │└──────────────────────────────┘
+3. Thanh trên cùng
+Bên trái: nút ⏸ để tạm dừng.
+Chính giữa: NGÀY 1, bên dưới hiển thị thời gian trong ngày.
+Bên phải: KẾT, doanh thu, số sao và đánh giá của khách.
+4. Khu vực khách hàng / đơn hàng
+Mỗi khách xuất hiện thành một card order. Card phải hiển thị tên khách, mã đơn, món, các tùy chọn và thanh kiên nhẫn.
+👩 #5692 • Chị LanTrà sữa ô long50% đường • ít đá+ Trân châu • Pudding🟢━━━━━━━━━━
+Thanh kiên nhẫn giảm dần. Nếu hết, khách bỏ đi và người chơi bị trừ tiền hoặc sao.
+5. Order phải dễ nhìn
+Ví dụ: 🚚 Đơn app #5692 – Chị Lan: 1 ly trà sữa ô long – 50% đường – ít đá – + trân châu + pudding. Các thành phần quan trọng phải được highlight để người chơi đọc nhanh.
+6. Cơ chế LY – mechanic chính
+Thay cho tô/nồi của game mì, game trà sữa sử dụng LY. Người chơi phải chạm vào ly để bắt đầu pha.
+Ly S
+Ly M
+Ly L
+Ly đặc biệt
+Mỗi loại có dung tích khác nhau và có thể ảnh hưởng đến giá bán hoặc công thức.
+7. Hệ thống trạng thái ĐỎ → XANH
+🔴 CHƯA CHỌN
+Viền đỏ. Thành phần chưa được chọn.
+🟢 ĐÃ CHỌN
+Viền xanh, có dấu ✓ và animation nhẹ.
+🟡 ĐANG THỰC HIỆN
+Dùng khi đang pha/chế biến, pha hoặc thực hiện một thao tác có thời gian.
+🔒 CHƯA MỞ KHÓA
+Màu xám, có biểu tượng khóa.
+8. Menu pha chế
+[ 🥤 LY ] [ 🍵 TRÀ ] [ 🍯 ĐƯỜNG ] [ 🧊 ĐÁ ] [ 🧋 TOPPING ]
+Người chơi có thể chuyển giữa từng nhóm để chọn đúng thành phần theo order.
+9. Các loại trà
+🍵 Trà đen
+🍵 Trà xanh
+🍵 Ô long
+🍵 Trà nhài
+🌿 Trà sen – mở khóa sau
+🍵 Hồng trà – mở khóa sau
+🍓 Trà dâu – mở khóa sau
+🍑 Trà đào – mở khóa sau
+🥭 Trà xoài – mở khóa sau
+10. Các loại nền
+🥛 Sữa tươi
+🥛 Sữa đặc
+🥛 Sữa tươi đường đen
+🥥 Sữa dừa
+🧀 Kem cheese
+🍫 Sữa chocolate
+11. Độ đường
+ĐỘ ĐƯỜNG[ 0% ] [ 30% ] [ 50% ] [ 70% ] [ 100% ]
+Khi khách yêu cầu mức nào, người chơi phải bấm đúng mức đó. Sau khi chọn, trạng thái chuyển từ 🔴 sang 🟢✓.
+12. Độ đá
+ĐỘ ĐÁ[ Không đá ] [ Ít đá ] [ Bình thường ] [ Nhiều đá ]
+Ví dụ khách gọi ít đá → chọn Ít đá → 🟢✓.
+13. Hệ thống topping
+🟤 Trân châu đen
+⚪ Trân châu trắng
+🟡 Thạch phô mai
+🍮 Pudding trứng
+🥥 Thạch dừa
+🍓 Thạch dâu
+🧀 Cheese foam
+🍑 Đào
+🥝 Kiwi
+🍓 Dâu
+🫘 Đậu đỏ
+🍮 Flan
+14. Topping cũng có trạng thái
+Ví dụ khách gọi + Trân châu đen + Pudding. Ban đầu cả hai có viền 🔴. Chạm vào từng topping → chuyển thành 🟢✓. Dấu ✓ và viền xanh giúp người chơi biết chính xác topping nào đã cho vào.
+15. Khu pha chế
+┌───────────────────────┐│                       ││          🥤           ││        LY M            ││                       ││       🍵 + 🥛         ││                       │└───────────────────────┘
+Ban đầu khu vực hiển thị 'Chưa có ly – Chạm ly để bắt đầu'. Sau khi chọn ly, các thành phần được thể hiện trực quan bên trong ly.
+16. Quy trình pha một order
+Chọn ly M.
+Chọn Ô long.
+Chọn sữa.
+Chọn 50% đường.
+Chọn ít đá.
+Chọn pudding + có thể chọn 1 lần nhiều loại khác vào một ly
+Khi đủ thành phần → nút PHA CHẾ sáng lên.
+17. Animation pha chế
+Khi bấm PHA CHẾ, lần lượt thực hiện: rót trà → thêm sữa → thêm đường → thêm đá → thêm topping. Mỗi thao tác có animation ngắn và âm thanh vui nhộn.
+18. Cơ chế hoàn thành ly
+Sau khi đủ nguyên liệu, xuất hiện nút HOÀN THÀNH LY. Người chơi vuốt trái/phải hoặc chạm liên tục để pha/chế biến.
+HOÀN THÀNH LY████████░░80%
+Đạt 100% → ✨ HOÀN THÀNH!
+19. Đóng nắp
+Sau khi pha/chế biến, xuất hiện nắp ly. Người chơi bấm ĐẬY NẮP. Có animation ly được dập nắp và âm thanh 'tách'.
+20. Giao món
+Nút lớn 🧋 GIAO MÓN. Khi bấm, ly trà sữa bay về phía khách, hiện số tiền nhận được và đánh giá của khách.
++35.000đ 💰⭐ KHÁCH HÀI LÒNG!
+21. Nếu làm sai
+Nếu chọn sai loại trà, sai độ đường, sai đá hoặc sai topping → hiển thị ❌ SAI CÔNG THỨC. Cho phép chọn SỬA LẠI hoặc 🗑 ĐỔ LY.
+22. Nút ĐỔ LY
+Đặt cạnh khu pha chế. Khi bấm, hiện hộp xác nhận: 'Bạn có chắc muốn đổ ly này không?' [HỦY] [ĐỔ LY]. Nếu xác nhận, nguyên liệu mất và ly trở về trạng thái trống.
+23. Công thức mẫu
+🧋 TRÀ SỮA Ô LONG
+Ly M + Ô long + Sữa + 50% đường + Ít đá
+🍓 TRÀ DÂU
+Ly M + Trà xanh + Syrup dâu + 50% đường + Đá bình thường
+🖤 TRÀ SỮA ĐƯỜNG ĐEN
+Ly L + Trà đen + Sữa + Đường đen + Trân châu + Ít đá
+24. Order nâng cao
+Càng về sau khách càng gọi phức tạp, ví dụ: Ly L + Ô long + 30% đường + Không đá + Trân châu trắng + Cheese foam. Người chơi phải làm chính xác toàn bộ.
+25. Nhiều khách cùng lúc
+👩 Chị Lan🟢 Đang pha👨 Anh Minh🔴 Chưa làm👧 Bé Na🔴 Chưa làm
+Mỗi order có thanh kiên nhẫn riêng. Người chơi phải chuyển đổi giữa các order và tự quyết định thứ tự ưu tiên.
+26. Trạng thái của order
+🔴 Chưa làm
+🟡 Đang pha
+🟢 Hoàn thành
+Ví dụ: 🔴 Đơn #5692 → bắt đầu pha → 🟡 Đơn #5692 → pha xong → 🟢 Đơn #5692 ✓ → giao khách → nhận tiền.
+27. Lộ trình mở khóa
+Ngày 1: Trà sữa truyền thống, Ô long, Trân châu đen, PuddingNgày 2: Trà dâu, Thạch dừaNgày 3: Đường đen, Trân châu trắngNgày 5: Trà đào, Cheese foamNgày 7: Trà xoài, Trà kiwi
+28. Hệ thống tiền
+Sau mỗi order nhận tiền, ví dụ +25K, +35K, +42K. Tiền dùng để mua nguyên liệu, mở món mới, nâng cấp máy pha, nâng cấp tiệm, mua ly và trang trí, thuê nhân viên.
+29. Nâng cấp
+🧋 Máy pha – pha nhanh hơn.
+🧊 Máy làm đá – lấy đá nhanh hơn.
+🥤 Máy dập nắp – tự động đóng nắp.
+🫨 Máy pha/chế biến – giảm thời gian pha/chế biến.
+📦 Kho – chứa nhiều nguyên liệu hơn.
+🏪 Tiệm – tăng số khách.
+30. Quy tắc màu bắt buộc
+🔴 ĐỎ     = chưa chọn / chưa hoàn thành🟡 VÀNG   = đang thực hiện🟢 XANH   = đã chọn / hoàn thành🔒 XÁM    = chưa mở khóa⚠️ CAM    = nguyên liệu sắp hết
+Không chỉ đổi màu viền. Trạng thái phải kết hợp viền màu + icon + dấu ✓ + animation để người chơi nhận biết ngay cả khi chơi nhanh.
+31. Flow gameplay hoàn chỉnh
+KHÁCH ĐẶT ORDER       ↓HIỆN YÊU CẦU       ↓🔴 CHƯA LÀM       ↓CHỌN LY       ↓CHỌN LOẠI TRÀ       ↓CHỌN SỮA       ↓CHỌN ĐỘ ĐƯỜNG       ↓CHỌN ĐỘ ĐÁ       ↓CHỌN TOPPING       ↓🔴 → 🟢✓       ↓PHA CHẾ       ↓🧋 HOÀN THÀNH LY       ↓ĐẬY NẮP       ↓🧋 HOÀN THÀNH       ↓🟢 ORDER       ↓GIAO KHÁCH       ↓💰 NHẬN TIỀN       ↓⭐ ĐÁNH GIÁ       ↓ORDER TIẾP
+32. Yêu cầu hình ảnh & trải nghiệm
+Đồ họa 2D cute, pastel, lấy cảm hứng từ game quản lý đồ ăn mobile.
+Các vật thể như ly, topping, máy pha, đá, trân châu phải có hình minh họa rõ ràng.
+UI bo góc, có bóng đổ nhẹ, cảm giác mềm mại và đáng yêu.
+Các nút quan trọng như PHA CHẾ và GIAO MÓN phải lớn, dễ bấm bằng một tay.
+Ly phải thay đổi hình ảnh theo từng bước để người chơi cảm nhận rõ quá trình pha.
+Khi pha đúng: hiệu ứng sparkle, âm thanh vui, dấu ✓.
+Khi pha sai: rung nhẹ, dấu X và thông báo rõ ràng.
+Ưu tiên gameplay trực quan: người chơi nhìn vào màn hình phải hiểu ngay món nào chưa làm, đang làm và đã hoàn thành.
+33. MỞ RỘNG THỰC ĐƠN – NHIỀU MÓN HƠN
+Game không chỉ có vài món cơ bản. Thực đơn phải được mở rộng dần theo level để tạo cảm giác khám phá và khiến người chơi luôn có món mới để học công thức.
+🧋 Nhóm trà sữa
+Trà sữa truyền thống
+Trà sữa ô long
+Trà sữa trà đen
+Trà sữa trà nhài
+Trà sữa đường đen
+Trà sữa matcha
+Trà sữa chocolate
+Trà sữa khoai môn
+Trà sữa dâu
+Trà sữa caramel
+Trà sữa dừa
+Trà sữa bạc hà
+🍓 Nhóm trà trái cây
+Trà đào
+Trà dâu
+Trà xoài
+Trà chanh dây
+Trà vải
+Trà dưa hấu
+Trà kiwi
+Trà cam
+Trà nho
+Trà táo
+Trà dứa
+Trà đào cam sả
+Trà tắc mật ong
+Trà xoài chanh dây
+Trà dâu đào
+Trà vải hoa hồng
+Trà nhiệt đới
+🍵 Nhóm trà nguyên chất
+Trà đen
+Trà xanh
+Ô long
+Trà nhài
+Trà sen
+Hồng trà
+Trà đào nguyên vị
+Trà chanh
+🍵 Nhóm matcha / đặc biệt
+Matcha latte
+Matcha sữa tươi
+Matcha dâu
+Matcha kem cheese
+Chocolate milk
+Chocolate bạc hà
+Khoai môn sữa
+Caramel macchiato
+🧊 Nhóm đồ uống lạnh / đá xay
+Đào đá xay
+Dâu đá xay
+Xoài đá xay
+Matcha đá xay
+Đá xay caramel
+Chocolate đá xay
+Cookies & creamB
+🍹 ĐỒ UỐNG ĐẶC BIỆT
+Bơ già dừa non
+Soda dâu
+Soda đào
+Soda vải
+Soda chanh dây
+Soda việt quất
+Soda bạc hà
+Yakult dâu
+Yakult chanh dây
+Yakult đào
+Yakult vải
+Sữa tươi trân châu đường đen
+Sữa tươi dâu
+Sữa tươi matcha
+Sữa tươi khoai môn
+Sữa tươi dừa non
+☕ CÀ PHÊ
+Cà phê sữa
+Bạc xỉu
+Cà phê cốt dừa
+Cà phê caramel
+Cà phê kem cheese
+Latte
+Cappuccino
+Mocha
+Americano
+Espresso
+34. HỆ THỐNG TOPPING MỞ RỘNG
+Topping được chia thành nhiều nhóm để người chơi có thể tạo rất nhiều công thức khác nhau.
+🟤 Trân châu đen
+⚪ Trân châu trắng
+🟡 Trân châu hoàng kim
+🔴 Trân châu sợi
+🧋Trân châu đường đen
+🧋Trân châu caramel
+🧋Trân châu khoai môn
+🧋Trân châu mật ong
+🍮 Pudding trứng
+🍮 Flan
+🧃Popball thuỷ tinh
+🧴Sốt caramel
+🫗Đậu phộng rang
+🥥 Thạch dừa
+🍓 Thạch dâu
+🍑 Thạch đào
+🍇 Thạch nho
+🧈Thạch phô mai
+🧈Thạch sương sáo
+🧈Thạch konjac
+🧀 Thạch phô mai
+🧀 Cheese foam
+🍰Foam sữa
+🍰Foam cheese
+🍰Foam matcha
+🍰Foam cacao
+🍰Foam dâu
+🥛 Kem sữa
+🍪 Oreo vụn 
+🥜 Đậu phộng
+🍓 Dâu tươi
+🍑 Đào miếng
+🥭 Xoài miếng
+🥝 Kiwi
+🫘 Đậu đỏ
+🧮hạt chia
+🍶Sốt socola
+🍶Sốt caramel
+🍶Sốt dâu
+🍶Sốt xoài
+🍶Sốt mật ong
+🍶Sốt đường đen
+🍶Sốt matcha
+🍶Sốt vani
+🍶Sốt phô mai
+🍶Chocolate chip
+🍶Marshmallow
+🍶Kẹo dẻo
+🍶Kẹo popping
+🍶Mứt dâu
+🍶Mứt đào
+🍶Mứt việt quất
+🌱 Nha đam
+35. HỆ THỐNG NHÂN VIÊN – MỞ KHÓA & THUÊ
+Nhân viên là một hệ thống nâng cấp quan trọng. Người chơi KHÔNG có sẵn tất cả nhân viên. Mỗi nhân viên phải được mở khóa khi đạt điều kiện, sau đó người chơi dùng tiền để thuê.
+Mỗi nhân viên có tên, cấp độ, tốc độ làm việc, mức lương và kỹ năng riêng. Có thể nâng cấp nhân viên để tăng tốc độ hoặc khả năng xử lý.
+TIẾN TRÌNH:Đạt level / điều kiện        ↓MỞ KHÓA NHÂN VIÊN        ↓Trả phí thuê        ↓NHÂN VIÊN BẮT ĐẦU LÀM VIỆC        ↓Nâng cấp nhân viên khi cần
+36. Nhân viên 1 – PHỤ TOPPING
+🧑‍🍳 Nhân viên topping
+Nhiệm vụ: tự động lấy và thêm topping theo order.
+Tự kiểm tra topping cần thiết trong order.
+Lấy đúng topping và cho vào ly.
+Sau khi hoàn thành, topping chuyển trạng thái 🟢✓.
+Nếu có nhiều topping, nhân viên thực hiện lần lượt.
+Cấp càng cao → tốc độ thêm topping càng nhanh.
+Có thể nâng cấp số topping xử lý cùng lúc.
+Ví dụ: khách gọi trân châu + pudding + cheese foam → nhân viên topping lần lượt thêm đủ 3 loại.
+37. Nhân viên 2 – ĐƯỜNG & ĐÁ
+🧑‍🍹 Nhân viên điều chỉnh vị
+Nhiệm vụ: tự động xử lý độ đường và độ đá theo order.
+Đọc yêu cầu 0% / 30% / 50% / 70% / 100% đường.
+Đọc yêu cầu không đá / ít đá / bình thường / nhiều đá.
+Tự thực hiện đúng mức được khách yêu cầu.
+Sau khi hoàn thành, các mục đường và đá chuyển sang 🟢✓.
+Cấp cao hơn → thao tác nhanh hơn.
+Có thể nâng cấp để xử lý nhiều ly liên tiếp.
+38. Nhân viên 3 – RÓT TRÀ
+🍵 Nhân viên pha trà
+Nhiệm vụ: phụ trách công đoạn rót loại trà/nền trà vào ly.
+Tự nhận biết loại trà trong order.
+Rót đúng trà: trà đen, trà xanh, ô long, trà nhài...
+Có animation rót trà vào ly.
+Sau khi rót xong → loại trà chuyển 🟢✓.
+Cấp cao hơn → rót nhanh hơn.
+Có thể mở khóa nhiều loại máy/ấm trà để tăng năng suất.
+39. Nhân viên 4 – ĐƠN SHIP / ONLINE
+📱 Nhân viên xử lý đơn online
+Đây là nhân viên chuyên xử lý các đơn đặt qua app, tách biệt với khách đứng tại quầy.
+Tiếp nhận đơn online.
+Đọc thông tin khách và món.
+Đưa order vào hàng chờ.
+Ưu tiên các đơn sắp hết thời gian giao.
+Chuẩn bị ly / túi / tem đơn.
+Đóng gói đồ uống.
+Bàn giao đơn cho shipper.
+Giảm áp lực cho người chơi khi số lượng đơn online tăng.
+40. Hệ thống đơn tại quầy + đơn online
+👩 KHÁCH TẠI QUẦYĐơn #102🟢 Đang pha📱 ĐƠN ONLINE#5692⏳ Còn 45 giây📱 ĐƠN ONLINE#5693⏳ Còn 30 giây
+Hai loại đơn phải có màu/biểu tượng khác nhau để người chơi nhìn là nhận biết. Đơn online có thời gian giao và mức ưu tiên.
+41. Nhân viên làm việc theo khu vực
+                TIỆM                  │      ┌───────────┼───────────┐      ↓           ↓           ↓   RÓT TRÀ     ĐƯỜNG/ĐÁ    TOPPING      │           │           │      └───────────┼───────────┘                  ↓               LY HOÀN CHỈNH                  ↓             ĐÓNG GÓI / GIAO                  ↓          📱 NHÂN VIÊN ONLINE                  ↓              🚴 SHIPPER
+42. Người chơi không mất quyền điều khiển
+Nhân viên chỉ tự động hỗ trợ những công đoạn đã được giao. Người chơi vẫn có thể trực tiếp làm nếu muốn. Khi đông khách, người chơi nên thuê nhân viên để tự động hóa và tập trung vào các công đoạn quan trọng.
+43. Hệ thống thuê nhân viên
+Mỗi nhân viên có phí thuê ban đầu và tiền lương. Người chơi phải cân đối doanh thu để quyết định thuê nhân viên nào trước.
+Ví dụ:Nhân viên ToppingMở khóa: Ngày 2Phí thuê: 50.000đLương: 5.000đ / caNhân viên Đường & ĐáMở khóa: Ngày 3Phí thuê: 75.000đLương: 7.000đ / caNhân viên Rót TràMở khóa: Ngày 5Phí thuê: 120.000đLương: 10.000đ / caNhân viên OnlineMở khóa: Ngày 7Phí thuê: 180.000đLương: 15.000đ / ca
+44. Nâng cấp nhân viên
+Level 1: tốc độ cơ bản.
+Level 2: làm nhanh hơn.
+Level 3: xử lý nhiều ly liên tiếp.
+Level 4: giảm thời gian chờ.
+Level 5: kỹ năng đặc biệt.
+Mỗi lần nâng cấp phải có hiệu ứng trực quan để người chơi cảm nhận nhân viên mạnh hơn.
+45. Nhân viên có trạng thái
+🟢 ĐANG LÀM🟡 ĐANG CHỜ🔴 BỊ QUÁ TẢI☕ ĐANG NGHỈ⚡ KỸ NĂNG SẴN SÀNG
+Nếu quá nhiều order dồn vào một nhân viên, nhân viên có thể bị quá tải. Người chơi có thể hỗ trợ thủ công hoặc thuê thêm nhân viên.
+46. Mở khóa theo tiến trình
+Ngày 1 → Chơi một mình, học các bước pha cơ bảnNgày 2 → Mở nhân viên TOPPINGNgày 3 → Mở nhân viên ĐƯỜNG & ĐÁNgày 5 → Mở nhân viên RÓT TRÀNgày 7 → Mở hệ thống ĐƠN ONLINENgày 8+ → Mở nhân viên xử lý SHIPNgày 10+ → Có thể thuê nhiều nhân viên cùng lúc
+47. Hệ thống quản lý nhân viên
+Thêm một màn hình riêng tên NHÂN VIÊN.
+👥 NHÂN VIÊN🧑‍🍳 LinhTOPPINGLv.2🟢 Đang làm[ NÂNG CẤP ]🧑‍🍹 AnĐƯỜNG & ĐÁ🔒 Chưa mở khóa[ MỞ KHÓA ]🍵 MinhRÓT TRÀLv.1🟡 Đang chờ[ NÂNG CẤP ]📱 VyONLINE🔒 Chưa mở khóa[ MỞ KHÓA ]
+48. Thực đơn phải mở rộng theo level
+Không mở toàn bộ món ngay từ đầu. Mỗi nhóm món mới phải tạo cảm giác tiến bộ. Khi mở món mới, có popup giới thiệu công thức và cho người chơi thử pha một lần.
+Món cơ bản → công thức ít thành phần.
+Món trung cấp → thêm syrup, sữa hoặc topping.
+Món cao cấp → nhiều tầng nguyên liệu, nhiều topping và yêu cầu đặc biệt.
+Món đặc biệt → công thức hiếm, giá bán cao và giúp tăng sao.
+49. Mục tiêu thiết kế tổng thể sau khi mở rộng
+Game cần tạo cảm giác từ một người bán trà sữa tự tay làm mọi thứ → dần dần xây dựng thành một tiệm trà sữa đông khách có đội ngũ nhân viên. Người chơi ban đầu phải tự pha, nhưng càng chơi lâu càng có nhiều nhân viên hỗ trợ, nhiều món hơn, nhiều đơn online hơn và nhiều khu vực hoạt động hơn.
+50. FLOW GAME MỞ RỘNG
+KHÁCH ĐẶT ORDER       ↓QUẦY / ONLINE NHẬN ĐƠN       ↓KIỂM TRA CÔNG THỨC       ↓CHỌN LY       ↓🍵 NHÂN VIÊN RÓT TRÀ       ↓🍯 NHÂN VIÊN ĐƯỜNG & ĐÁ       ↓🧋 NHÂN VIÊN TOPPING       ↓NGƯỜI CHƠI KIỂM TRA LY       ↓🧋 HOÀN THÀNH LY / PHA CHẾ       ↓ĐẬY NẮP       ↓📦 ĐÓNG GÓI       ↓📱 ĐƠN ONLINE → GIAO SHIP       ↓🧋 ĐƠN TẠI QUẦY → GIAO KHÁCH       ↓💰 NHẬN TIỀN       ↓⭐ ĐÁNH GIÁ       ↓MỞ KHÓA MÓN / NHÂN VIÊN / NÂNG CẤP       ↓NGÀY TIẾP THEO
+51. CƠ CHẾ PHA CHẾ ĐƠN GIẢN – KHÔNG CÓ LẮC LY
+Bỏ hoàn toàn thao tác lắc ly, mini-game lắc, vuốt trái/phải và các bước pha chế phức tạp. Game tập trung vào thao tác nhanh: người chơi chỉ cần LẤY LY → THÊM NƯỚC/NỀN TRÀ → THÊM ĐÚNG TOPPING → máy tự động đóng nắp → tự động giao khách.
+KHÁCH ĐẶT ORDER       ↓NGƯỜI CHƠI CHỌN ĐƠN       ↓🥤 LẤY LY       ↓🍵 THÊM NƯỚC / NỀN TRÀ       ↓🧋 THÊM TOPPING       ↓✓ ĐỦ CÔNG THỨC       ↓🤖 MÁY TỰ ĐỘNG ĐÓNG NẮP       ↓📦 MÁY TỰ ĐỘNG HOÀN THIỆN       ↓🚚 TỰ ĐỘNG GIAO KHÁCH       ↓💰 NHẬN TIỀN / ⭐ ĐÁNH GIÁ
+52. Người chơi chỉ thực hiện 3 thao tác chính
+🥤 LẤY LY: chọn đúng loại ly theo order.
+🍵 THÊM NƯỚC / NỀN TRÀ: chọn đúng loại trà, sữa hoặc nền đồ uống mà khách yêu cầu.
+🧋 THÊM TOPPING: chọn đúng các topping khách gọi.
+Không yêu cầu người chơi tự lắc, tự đóng nắp, tự dán tem hoặc tự mang đồ uống tới khách.
+53. Máy đóng nắp tự động
+Sau khi người chơi đã thêm đủ thành phần theo order, máy đóng nắp tự động kích hoạt. Không cần người chơi bấm thêm bước đóng nắp.
+ĐỦ NGUYÊN LIỆU      ↓🟡 MÁY ĐANG ĐÓNG NẮP      ↓🟢 ĐÃ ĐÓNG NẮP      ↓✨ LY HOÀN THÀNH
+Có animation ngắn: ly di chuyển vào máy → máy dập nắp → hiện dấu ✓. Thời gian xử lý có thể được nâng cấp để máy đóng nắp nhanh hơn.
+54. Tự động giao khách
+Sau khi máy đóng nắp xong, ly tự động được chuyển sang khu giao hàng và giao đúng order. Người chơi không cần bấm nút GIAO MÓN.
+🧋 LY HOÀN THÀNH       ↓📦 KHU GIAO HÀNG       ↓🚚 / 👩 KHÁCH NHẬN MÓN       ↓💰 + TIỀN       ↓⭐ ĐÁNH GIÁ
+55. Vai trò nhân viên trong cơ chế mới
+Nhân viên hỗ trợ các bước thêm nguyên liệu. Người chơi có thể tự làm hoặc thuê nhân viên để tự động hóa từng công đoạn.
+🍵 Nhân viên RÓT TRÀ: tự thêm nước/nền trà theo order.
+🍯 Nhân viên ĐƯỜNG & ĐÁ: tự xử lý đường và đá nếu game có yêu cầu này.
+🧋 Nhân viên TOPPING: tự thêm topping.
+📱 Nhân viên ONLINE: nhận và sắp xếp đơn online/ship.
+🤖 Máy ĐÓNG NẮP: tự động đóng nắp cho mọi ly hoàn thành.
+🚚 Hệ thống GIAO MÓN: tự động chuyển ly hoàn thành đến khách hoặc đơn ship.
+56. Trạng thái nguyên liệu theo màu
+🔴 CHƯA CHỌN   ↓người chơi hoặc nhân viên thêm   ↓🟢 ĐÃ THÊM ✓   ↓đủ công thức   ↓🤖 máy tự động đóng nắp   ↓🟢 HOÀN THÀNH
+Viền đỏ/xanh vẫn là cơ chế nhận biết chính. Người chơi chỉ cần nhìn vào từng thành phần là biết mình đã thêm hay chưa.
+57. Ví dụ một order hoàn chỉnh
+📱 Đơn #5692 – Chị Lan🧋 Trà sữa Ô Long🥤 Ly M🍵 Ô Long🥛 Sữa🍯 50% đường🧊 Ít đá🟤 Trân châu đen🍮 PuddingNGƯỜI CHƠI:1. Lấy ly M2. Thêm Ô Long3. Thêm sữa4. Thêm 50% đường5. Thêm ít đá6. Thêm trân châu đen7. Thêm pudding→ ĐỦ ORDER→ MÁY TỰ ĐỘNG ĐÓNG NẮP→ TỰ ĐỘNG GIAO KHÁCH→ +35K 💰
+58. Yêu cầu gameplay cuối cùng
+Ưu tiên tốc độ và sự trực quan. Người chơi không cần thực hiện nhiều mini-game. Trọng tâm là đọc order và chọn đúng thành phần. Càng về sau, số lượng order, số lượng món và topping tăng lên; nhân viên được mở khóa và thuê để giảm số thao tác thủ công.
+Không có thao tác lắc ly.
+Không có mini-game lắc hoặc vuốt để pha.
+Không bắt người chơi tự đóng nắp.
+Không bắt người chơi tự giao từng ly.
+Người chơi chủ yếu lấy ly + thêm nước/nền + thêm topping.
+Máy đóng nắp tự động.
+Ly hoàn thành tự động được giao khách.
+Nhân viên có thể tự động hóa các công đoạn thêm nguyên liệu.
+Nhân viên phải mở khóa trước rồi mới thuê.
+Đơn online/ship có hàng chờ riêng và được nhân viên online hỗ trợ.
+59. NHÂN VIÊN ĐA NHIỆM – TOPPING + ĐƯỜNG & ĐÁ
+🧑‍🍹 Nhân viên pha phụ
+Thêm một nhân viên chuyên thực hiện cùng lúc hai nhóm thao tác: THÊM TOPPING và THÊM ĐƯỜNG & ĐÁ. Đây là một nhân viên đa nhiệm, giúp người chơi giảm đáng kể số thao tác khi tiệm bắt đầu đông khách.
+🧋 Tự đọc order và thêm đúng topping khách yêu cầu.
+🍯 Tự thêm đúng mức đường: 0% / 30% / 50% / 70% / 100%.
+🧊 Tự thêm đúng mức đá: không đá / ít đá / bình thường / nhiều đá.
+Sau khi hoàn thành từng yêu cầu, chuyển trạng thái từ 🔴 sang 🟢✓.
+Có thể xử lý topping, đường và đá cho cùng một ly.
+Khi có nhiều order, nhân viên xử lý theo hàng chờ.
+60. Hệ thống nhân viên sau khi cập nhật
+🍵 Nhân viên RÓT TRÀ: chỉ phụ trách thêm nước/nền trà.
+🧑‍🍹 Nhân viên TOPPING + ĐƯỜNG & ĐÁ: phụ trách cả topping, đường và đá trong cùng một công việc.
+📱 Nhân viên ONLINE: phụ trách nhận, sắp xếp và xử lý đơn đặt online/ship.
+🤖 Máy ĐÓNG NẮP: tự động đóng nắp sau khi ly đủ công thức.
+🚚 Hệ thống GIAO MÓN: tự động giao ly hoàn thành cho khách.
+61. Ví dụ hoạt động của nhân viên đa nhiệm
+Order: Trà sữa Ô Long + 50% đường + ít đá + trân châu + pudding.
+Nhân viên đa nhiệm sẽ tự động thực hiện: 50% đường → ít đá → trân châu → pudding. Khi xong toàn bộ, các mục tương ứng chuyển 🟢✓ và ly được chuyển sang công đoạn tiếp theo.
+62. Mở khóa & thuê nhân viên đa nhiệm
+Nhân viên này phải được mở khóa khi đạt level/ngày phù hợp.
+Sau khi mở khóa, người chơi phải trả phí để thuê.
+Có mức lương theo ca.
+Có thể nâng cấp tốc độ xử lý.
+Cấp càng cao → xử lý càng nhanh và giảm thời gian chờ của khách.
+63. QUY TẮC NHÂN VIÊN – BẢN CHÍNH THỨC
+Hệ thống nhân viên sử dụng 3 vai trò chính. Không tách riêng nhân viên topping và nhân viên đường/đá.
+1️⃣ Rót trà: phụ trách nước/nền trà.
+2️⃣ Topping + Đường & Đá: một nhân viên làm cả hai nhóm việc.
+3️⃣ Online/Ship: phụ trách đơn đặt online và hàng chờ giao.
+Các nhân viên đều phải được mở khóa rồi mới thuê. Người chơi có thể tự làm thủ công hoặc để nhân viên hỗ trợ. Máy đóng nắp và giao khách hoạt động tự động.
+64. KHU SIRO – BỔ SUNG Ở PHẦN DƯỚI
+Bổ sung một khu vực SIRO ở phía dưới khu topping, mô phỏng các chai siro có vòi bơm như hình tham khảo. Đây là một nhóm nguyên liệu riêng và là thành phần bắt buộc trong nhiều công thức trà trái cây, trà sữa và đồ uống đặc biệt.
+🍓 Bố trí khu siro
+Khu siro đặt ở phần dưới của giao diện pha ly, phía dưới nhóm foam/đá/nước đường và phía trên hoặc liền với khu thao tác chính. Các chai được xếp thành một hàng ngang. Mỗi chai có hình ảnh trái cây hoặc hương vị trên nhãn và số lượng còn lại hiển thị ở phía trên.
+Mỗi chai có vòi bơm ở phía trên.
+Có tên/hình hương vị trên nhãn chai.
+Hiển thị số lượng siro còn lại.
+Khi được chọn, chai có viền 🟢 hoặc khung sáng.
+Nếu chưa chọn theo order → 🔴.
+Nếu hết siro → ⚠️ và không thể sử dụng.
+Có thể mở khóa thêm siro theo level.
+🍑 Các loại siro ban đầu
+🍓 Siro dâu
+🍑 Siro đào
+🍇 Siro nho
+🍊 Siro cam
+🥭 Siro xoài
+🥝 Siro kiwi
+🍎 Siro táo
+🍋 Siro chanh
+🍉 Siro dưa hấu
+🍍 Siro dứa
+🥥 Siro dừa
+🫐 Siro việt quất
+🍈 Siro dưa lưới
+🌸 Siro hoa / hương đặc biệt
+🎮 Cách sử dụng siro
+Người chơi không cần thực hiện thao tác bơm nhiều lần phức tạp. Chỉ cần chọn đúng chai siro theo order. Sau khi chạm vào chai, game tự động thêm lượng siro tiêu chuẩn vào ly.
+Ví dụ order: Trà đào 50% đường + ít đá + thạch đào → người chơi chọn trà, chọn siro đào, chọn đá và topping. Siro đào chuyển 🔴 → 🟢✓.
+👩‍🍳 Nhân viên & khu siro
+Nhân viên Topping + Đường & Đá cũng có thể phụ trách siro vì đây là nhóm nguyên liệu phụ. Khi nhân viên được thuê, nhân viên có thể tự đọc order và thêm siro + đường + đá + topping.
+Người chơi có thể tự thêm siro.
+Nhân viên Topping + Đường & Đá có thể tự thêm siro.
+Cấp nhân viên càng cao → thao tác càng nhanh.
+Nếu siro sắp hết → hiển thị cảnh báo để người chơi nhập thêm hàng.
+65. Bố trí khu pha ly cập nhật
+Thứ tự khu vực pha chế nên được sắp xếp trực quan từ trên xuống dưới:
+1. 🥤 Chọn kích thước ly M / L.
+2. 🍵 Quầy trà – chọn nước/nền trà.
+3. 🧋 Khu ly – hiển thị ly đang pha.
+4. 🟤 Topping – chọn topping.
+5. 🧀 Foam – cheese foam, matcha foam, muối, ube...
+6. 🧊 Đá & nước đường.
+7. 🍓 Khu SIRO – các chai siro xếp thành hàng.
+8. 🤖 Đủ công thức → máy tự động đóng nắp.
+9. 🚚 Ly hoàn thành → tự động giao khách.
+66. Quy tắc siro theo order
+Siro là thành phần phải kiểm tra theo order. Nếu khách không gọi siro thì không tự ý thêm. Nếu khách gọi nhiều loại siro, mỗi loại phải được đánh dấu riêng.
+🔴 Chưa chọn.
+🟢 Đã chọn / đã thêm.
+⚠️ Hết nguyên liệu.
+🔒 Chưa mở khóa. 

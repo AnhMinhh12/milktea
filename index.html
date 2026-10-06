@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
-  <title>Tiệm Trà Sữa Nhỏ - Game Mở Quán Trà Sữa Online</title>
-  <meta name="description" content="Chơi miễn phí trên trình duyệt: Mở tiệm trà sữa, pha chế đúng vị đường đá, thêm trân châu pudding, chiều khách khó tính và nâng cấp tiệm mỗi ngày!">
-  <meta name="theme-color" content="#794D31">
+  <title>🧋 Tiệm Trà Sữa Của Rùa - Game Quản Lý & Pha Chế Trà Sữa</title>
+  <meta name="description" content="Game mobile 2D casual mô phỏng quản lý tiệm trà sữa của Rùa. Pha chế nhanh, tự động dập nắp, thuê nhân viên và nâng cấp tiệm mỗi ngày!">
+  <meta name="theme-color" content="#5C3826">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Mali:wght@400;500;600;700&family=Paytone+One&family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -16,62 +16,52 @@
   <svg width="0" height="0" style="position:absolute" aria-hidden="true">
     <defs>
       <linearGradient id="gCup" x1="0" y1="0" x2="1" y2="0">
-        <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.8"/>
-        <stop offset="30%" stop-color="#FFFFFF" stop-opacity="0.3"/>
-        <stop offset="70%" stop-color="#FFFFFF" stop-opacity="0.2"/>
-        <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.6"/>
-      </linearGradient>
-      <linearGradient id="gBlackTea" x1="0" y1="0" x2="1" y2="0">
-        <stop offset="0%" stop-color="#9C441E"/>
-        <stop offset="100%" stop-color="#732B0F"/>
-      </linearGradient>
-      <linearGradient id="gMilkTea" x1="0" y1="0" x2="1" y2="0">
-        <stop offset="0%" stop-color="#DDB38A"/>
-        <stop offset="100%" stop-color="#C5966B"/>
-      </linearGradient>
-      <linearGradient id="gOolong" x1="0" y1="0" x2="1" y2="0">
-        <stop offset="0%" stop-color="#CCA175"/>
-        <stop offset="100%" stop-color="#AD7E51"/>
-      </linearGradient>
-      <linearGradient id="gGreenTea" x1="0" y1="0" x2="1" y2="0">
-        <stop offset="0%" stop-color="#EAD68C"/>
-        <stop offset="100%" stop-color="#C2AD61"/>
-      </linearGradient>
-      <linearGradient id="gMatcha" x1="0" y1="0" x2="1" y2="0">
-        <stop offset="0%" stop-color="#8DB658"/>
-        <stop offset="100%" stop-color="#678E34"/>
+        <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.85"/>
+        <stop offset="30%" stop-color="#FFFFFF" stop-opacity="0.35"/>
+        <stop offset="70%" stop-color="#FFFFFF" stop-opacity="0.25"/>
+        <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.7"/>
       </linearGradient>
     </defs>
   </svg>
 
   <div id="app">
-    <!-- Top Bar: Status, Ngày, Doanh thu, Sao uy tín, Nút âm thanh -->
+    <!-- Top Bar: Nút tạm dừng ⏸, Ngày + Đồng hồ giờ, Ngân quỹ 💰, Đánh giá ⭐ -->
     <header id="top">
       <div class="top-left">
-        <div class="day-badge" id="topDay">Ngày 1</div>
-        <div class="shop-name-mini" id="topShopName">Tiệm Trà Sữa Nhỏ</div>
+        <button id="btnPause" class="top-icon-btn" title="Tạm dừng game" aria-label="Tạm dừng">⏸</button>
+        <button id="btnSound" class="top-icon-btn" title="Bật/Tắt âm thanh" aria-label="Âm thanh">🔊</button>
       </div>
+
       <div class="top-center">
-        <div class="money-box">
-          <small>Ngân quỹ</small>
-          <span id="topMoney">150.000đ</span>
-        </div>
+        <div class="top-day-title" id="topDay">NGÀY 1</div>
+        <div class="top-day-clock" id="topClock">09:00</div>
       </div>
+
       <div class="top-right">
-        <div class="reputation-box">
-          <span class="stars" id="topStars">⭐⭐⭐⭐⭐</span>
-          <span class="score" id="topRating">5.0</span>
+        <div class="top-money-badge">
+          <span class="coin-icon">💰</span>
+          <span id="topMoney">150K</span>
         </div>
-        <button id="btnSound" class="icon-btn" title="Bật/Tắt âm thanh" aria-label="Âm thanh">🔊</button>
+        <div class="top-rating-badge">
+          <span id="topStars">⭐⭐⭐⭐⭐</span>
+          <b id="topRating">5.0</b>
+        </div>
       </div>
     </header>
 
-    <!-- Main View Container: Dynamic giữa Màn Chuẩn Bị & Màn Bán Hàng -->
+    <!-- Biển hiệu tiệm dễ thương -->
+    <div class="brand-strip">
+      <span class="turtle-icon">🐢</span>
+      <span class="brand-title">TIỆM TRÀ SỮA CỦA RÙA</span>
+      <span class="turtle-icon">🧋</span>
+    </div>
+
+    <!-- Main View Container: Giao diện Chuẩn bị hoặc Bán hàng -->
     <main id="view">
-      <!-- Nội dung được kết xuất tự động từ Game Engine JS -->
+      <!-- Kết xuất giao diện qua JS -->
     </main>
 
-    <!-- Modal Box: Báo cáo ngày, thông báo, nâng cấp, sự cố -->
+    <!-- Modal Box: Hộp thoại xác nhận, Tạm dừng, Báo cáo, Nhân viên -->
     <div id="modal" hidden>
       <div id="modalOverlay"></div>
       <div id="modalCard" role="dialog" aria-modal="true">

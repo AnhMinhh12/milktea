@@ -1,6 +1,7 @@
 /**
- * Tiệm Trà Sữa Nhỏ - Boba Shop Simulator Engine
- * Tương thích Mobile, Tablet, Desktop (Client-side pure JS, LocalStorage)
+ * 🧋 TIỆM TRÀ SỮA CỦA RÙA (Boba Shop Simulator)
+ * Game mobile 2D casual mô phỏng quản lý & pha chế trà sữa
+ * Phiên bản hoàn thiện theo đặc tả chi tiết 66 mục
  */
 
 // ================= 1. HỆ THỐNG ÂM THANH (WEB AUDIO API SYNTHESIZER) =================
@@ -9,7 +10,7 @@ class SoundEngine {
     this.ctx = null;
     this.enabled = true;
     try {
-      const saved = localStorage.getItem('tiemTraSua_sound');
+      const saved = localStorage.getItem('tiemTraSuaRua_sound');
       if (saved !== null) this.enabled = JSON.parse(saved);
     } catch (e) {}
   }
@@ -27,7 +28,7 @@ class SoundEngine {
   toggle() {
     this.enabled = !this.enabled;
     try {
-      localStorage.setItem('tiemTraSua_sound', JSON.stringify(this.enabled));
+      localStorage.setItem('tiemTraSuaRua_sound', JSON.stringify(this.enabled));
     } catch (e) {}
     return this.enabled;
   }
@@ -51,91 +52,127 @@ class SoundEngine {
     } catch (e) {}
   }
 
-  click() { this.playBeep(600, 'sine', 0.05, 0.1); }
-  pour() { this.playBeep(320, 'triangle', 0.18, 0.2); }
+  click() { this.playBeep(650, 'sine', 0.05, 0.1); }
+  pour() { this.playBeep(340, 'triangle', 0.16, 0.18); }
   addIce() {
-    this.playBeep(1200, 'sine', 0.06, 0.12);
-    setTimeout(() => this.playBeep(1600, 'sine', 0.05, 0.1), 40);
+    this.playBeep(1200, 'sine', 0.05, 0.12);
+    setTimeout(() => this.playBeep(1500, 'sine', 0.04, 0.1), 35);
   }
-  addTopping() {
-    this.playBeep(240, 'sine', 0.12, 0.25);
-  }
-  shake() {
-    this.playBeep(180, 'square', 0.08, 0.15);
-  }
-  sealPop() {
-    this.playBeep(450, 'sine', 0.08, 0.2);
-    setTimeout(() => this.playBeep(850, 'triangle', 0.12, 0.25), 60);
+  addTopping() { this.playBeep(260, 'sine', 0.1, 0.22); }
+  addSyrup() { this.playBeep(520, 'sine', 0.12, 0.2); }
+  autoSeal() {
+    this.playBeep(480, 'sine', 0.06, 0.2);
+    setTimeout(() => this.playBeep(880, 'triangle', 0.12, 0.25), 50);
   }
   serveSuccess() {
     const notes = [523.25, 659.25, 783.99, 1046.50]; // C E G C
     notes.forEach((f, idx) => {
-      setTimeout(() => this.playBeep(f, 'sine', 0.15, 0.2), idx * 70);
+      setTimeout(() => this.playBeep(f, 'sine', 0.14, 0.2), idx * 60);
     });
   }
-  trashFail() {
-    this.playBeep(180, 'sawtooth', 0.2, 0.2);
-    setTimeout(() => this.playBeep(130, 'sawtooth', 0.25, 0.2), 120);
+  trash() {
+    this.playBeep(200, 'sawtooth', 0.15, 0.18);
+    setTimeout(() => this.playBeep(140, 'sawtooth', 0.2, 0.2), 100);
   }
   bell() {
-    this.playBeep(880, 'sine', 0.4, 0.2);
-    setTimeout(() => this.playBeep(1320, 'sine', 0.6, 0.15), 100);
+    this.playBeep(880, 'sine', 0.35, 0.2);
+    setTimeout(() => this.playBeep(1320, 'sine', 0.5, 0.15), 90);
   }
 }
 
 const audio = new SoundEngine();
 
-// ================= 2. DỮ LIỆU DANH MỤC TRÒ CHƠI =================
+// ================= 2. DANH MỤC NGUYÊN LIỆU & CÔNG THỨC (THEO ĐẶC TẢ) =================
+const CUPS = [
+  { id: 'M', name: 'Ly M', ml: '500ml', cost: 500, priceBonus: 0 },
+  { id: 'L', name: 'Ly L', ml: '700ml', cost: 800, priceBonus: 8000 }
+];
+
 const TEAS = [
-  { id: 'black', name: 'Hồng Trà', icon: '🍂', color: '#8F3A15', liquid: '#B35E34', cost: 3000, price: 20000 },
-  { id: 'oolong', name: 'Trà Ô Long', icon: '🪵', color: '#A06734', liquid: '#C48850', cost: 3500, price: 22000 },
-  { id: 'green', name: 'Lục Trà Lài', icon: '🌼', color: '#BF982A', liquid: '#DCC060', cost: 3000, price: 20000 },
-  { id: 'matcha', name: 'Matcha Nhật', icon: '🍵', color: '#557A28', liquid: '#77A33E', cost: 4500, price: 26000 }
+  { id: 'oolong', name: 'Ô long', icon: '🪵', liquid: '#C48850', cost: 3000, price: 20000 },
+  { id: 'black', name: 'Trà đen', icon: '🍂', liquid: '#9C441E', cost: 3000, price: 20000 },
+  { id: 'green', name: 'Trà xanh', icon: '🌼', liquid: '#DCC060', cost: 3000, price: 20000 },
+  { id: 'jasmine', name: 'Trà nhài', icon: '🌸', liquid: '#EAD68C', cost: 3500, price: 22000 },
+  { id: 'milk', name: 'Sữa tươi', icon: '🥛', liquid: '#F8EDE1', cost: 3000, price: 20000 },
+  { id: 'brownSugar', name: 'Đường đen', icon: '🧋', liquid: '#5A341E', cost: 4000, price: 25000 }
 ];
 
 const SUGAR_LEVELS = ['0%', '30%', '50%', '70%', '100%'];
-const ICE_LEVELS = ['Nóng', '0%', '50%', '100%'];
+const ICE_LEVELS = ['Không đá', 'Ít đá', 'Bình thường', 'Nhiều đá'];
+
+const SYRUPS = [
+  { id: 'peach', name: 'Siro Đào', icon: '🍑', color: '#FFB07C', cost: 2000, price: 5000 },
+  { id: 'strawberry', name: 'Siro Dâu', icon: '🍓', color: '#FF6B8B', cost: 2000, price: 5000 },
+  { id: 'mango', name: 'Siro Xoài', icon: '🥭', color: '#F6AD55', cost: 2000, price: 5000 },
+  { id: 'grape', name: 'Siro Nho', icon: '🍇', color: '#9F7AEA', cost: 2000, price: 5000 },
+  { id: 'orange', name: 'Siro Cam', icon: '🍊', color: '#ED8936', cost: 2000, price: 5000 },
+  { id: 'watermelon', name: 'Siro Dưa Hấu', icon: '🍉', color: '#FC8181', cost: 2000, price: 5000 }
+];
 
 const TOPPINGS = [
-  { id: 'tapioca', name: 'Trân Châu Đen', icon: '⚫', cost: 2000, price: 5000 },
-  { id: 'whitePearl', name: 'Trân Châu Trắng', icon: '⚪', cost: 2500, price: 6000 },
-  { id: 'pudding', name: 'Pudding Trứng', icon: '🍮', cost: 3000, price: 7000 },
-  { id: 'cheese', name: 'Kem Cheese', icon: '🧀', cost: 3500, price: 8000 },
-  { id: 'coconut', name: 'Thạch Dừa', icon: '🧊', cost: 2000, price: 5000 },
-  { id: 'peach', name: 'Đào Miếng', icon: '🍑', cost: 3000, price: 7000 }
+  { id: 'tapioca', name: 'Trân châu đen', icon: '🟤', cost: 2000, price: 5000 },
+  { id: 'whitePearl', name: 'Trân châu trắng', icon: '⚪', cost: 2500, price: 6000 },
+  { id: 'pudding', name: 'Pudding trứng', icon: '🍮', cost: 3000, price: 7000 },
+  { id: 'cheeseJelly', name: 'Thạch phô mai', icon: '🟡', cost: 3000, price: 7000 },
+  { id: 'coconut', name: 'Thạch dừa', icon: '🥥', cost: 2000, price: 5000 },
+  { id: 'peachSlice', name: 'Đào miếng', icon: '🍑', cost: 3000, price: 7000 }
+];
+
+const FOAMS = [
+  { id: 'cheeseFoam', name: 'Cheese foam', icon: '🧀', cost: 3500, price: 8000 },
+  { id: 'milkFoam', name: 'Foam sữa', icon: '🍰', cost: 3000, price: 7000 }
+];
+
+// Khách hàng & Nhân viên
+const CUSTOMER_NAMES = [
+  'Chị Lan', 'Anh Minh', 'Bé Na', 'Khánh An', 'Minh Thư',
+  'Tuấn Anh', 'Cô Hồng', 'Bạn Shipper Hảo', 'Tiktoker Mai'
+];
+
+const STAFF_LIST = [
+  {
+    id: 'minhTea',
+    name: 'Minh - Rót Trà',
+    avatar: '🍵',
+    role: 'Tự động rót trà/sữa theo đơn',
+    unlockDay: 1,
+    hireCost: 50000,
+    salary: 5000,
+    interval: 1400
+  },
+  {
+    id: 'linhHelper',
+    name: 'Linh - Đa Nhiệm',
+    avatar: '🧑‍🍹',
+    role: 'Tự thêm Topping + Đường, Đá & Siro',
+    unlockDay: 2,
+    hireCost: 80000,
+    salary: 8000,
+    interval: 1200
+  },
+  {
+    id: 'vyOnline',
+    name: 'Vy - Đơn Online',
+    avatar: '📱',
+    role: 'Tự tiếp nhận & ưu tiên đơn app',
+    unlockDay: 3,
+    hireCost: 120000,
+    salary: 12000,
+    interval: 1000
+  }
 ];
 
 const UPGRADES_LIST = [
-  { id: 'autoSealer', name: 'Máy Dập Nắp Siêu Tốc', icon: '⚡', desc: 'Tự động dập nắp ly khi đủ nguyên liệu', cost: 200000 },
-  { id: 'airConditioner', name: 'Điều Hòa Mát Rượi', icon: '❄️', desc: 'Khách đứng chờ kiên nhẫn hơn 30%', cost: 350000 },
-  { id: 'lofiSpeaker', name: 'Loa Nhạc Lofi Chill', icon: '📻', desc: 'Tăng 20% khả năng khách cho thêm tiền Tip', cost: 250000 },
-  { id: 'luckyCat', name: 'Mèo Chiêu Tài May Mắn', icon: '🐱', desc: 'Tăng 10% tổng doanh thu mỗi ngày', cost: 500000 }
+  { id: 'fastSealer', name: 'Máy dập nắp siêu tốc', icon: '⚡', desc: 'Dập nắp tự động nhanh gấp đôi', cost: 150000 },
+  { id: 'turtleCharm', name: 'Bùa Rùa May Mắn', icon: '🐢', desc: 'Tăng 25% tiền Tip khách thưởng', cost: 200000 },
+  { id: 'coolerAir', name: 'Điều hòa mát rượi', icon: '❄️', desc: 'Khách đứng chờ kiên nhẫn hơn 35%', cost: 250000 },
+  { id: 'lofiMusic', name: 'Loa Lofi Chill', icon: '📻', desc: 'Khách vui vẻ đánh giá 5 sao dễ hơn', cost: 180000 }
 ];
 
-const CUSTOMER_NAMES = [
-  'Bé Vy', 'Khánh An', 'Minh Thư', 'Bảo Hân', 'Hoàng Nam',
-  'Tuấn Anh', 'Cô Lan Văn Phòng', 'Chị Ngọc Yoga', 'Bạn Tiktoker Hảo'
-];
-
-const CUSTOMER_AVATARS = ['👧', '🧑', '👩‍🦰', '👱‍♂️', '👩‍💻', '👨‍🎓', '🧕', '🐱'];
-
-const SAMPLE_REVIEWS_POS = [
-  "Trà sữa thơm đậm vị trà, trân châu dai mềm đúng ý!",
-  "Quán pha đúng 50% đường không bị ngọt khè, cho 5 sao.",
-  "Kem cheese béo ngậy mặn mặn cực ngon, sẽ ủng hộ dài!",
-  "Đóng gói sạch sẽ, giao hàng nhanh như chớp."
-];
-
-const SAMPLE_REVIEWS_NEG = [
-  "Bảo lấy ô long mà thành hồng trà, thất vọng ghê.",
-  "Chờ lâu quá xém muộn giờ làm, mong tiệm nhanh tay hơn.",
-  "Quên bỏ trân châu của tui rồi quán ơiiii!"
-];
-
-// ================= 3. TRẠNG THÁI TOÀN CỤC (STATE & STORAGE) =================
+// ================= 3. TRẠNG THÁI GAME & LOCAL STORAGE =================
 class GameState {
   constructor() {
-    this.shopName = 'Tiệm Trà Sữa Nhỏ';
+    this.shopName = 'Tiệm Trà Sữa Của Rùa';
     this.day = 1;
     this.money = 150000;
     this.rating = 5.0;
@@ -143,31 +180,48 @@ class GameState {
     this.level = 1;
     this.exp = 0;
     this.expMax = 100;
-    
-    // Kho nguyên liệu
+
+    // Kho hàng
     this.inventory = {
-      cupM: 35,
-      cupL: 25,
+      cupM: 40,
+      cupL: 30,
+      oolong: 30,
       black: 30,
-      oolong: 25,
       green: 25,
-      matcha: 15,
+      jasmine: 20,
+      milk: 30,
+      brownSugar: 20,
+      peach: 20,
+      strawberry: 20,
+      mango: 15,
+      grape: 15,
+      orange: 15,
+      watermelon: 15,
       tapioca: 40,
       whitePearl: 30,
-      pudding: 20,
-      cheese: 20,
+      pudding: 25,
+      cheeseJelly: 20,
       coconut: 25,
-      peach: 15
+      peachSlice: 20,
+      cheeseFoam: 15,
+      milkFoam: 15
     };
 
-    // Nâng cấp đã sở hữu
+    // Nhân viên
+    this.staff = {
+      minhTea: { hired: false, level: 1, status: 'waiting' },
+      linhHelper: { hired: false, level: 1, status: 'waiting' },
+      vyOnline: { hired: false, level: 1, status: 'waiting' }
+    };
+
+    // Nâng cấp
     this.upgrades = {};
 
-    // Lịch sử doanh thu
+    // Sổ sách & review
     this.history = [];
     this.reviews = [
-      { name: "Khánh Ly", stars: 5, comment: "Trà sữa ngon xỉu, ngày nào cũng ghé!" },
-      { name: "Anh Nam", stars: 5, comment: "Pha nhanh, trân châu chuẩn vị." }
+      { name: "Chị Lan", stars: 5, comment: "Trà sữa đậm vị, topping đầy ắp, Rùa cưng xỉu!" },
+      { name: "Anh Nam", stars: 5, comment: "Pha nhanh, máy dập nắp hiện đại cực kỳ." }
     ];
 
     this.load();
@@ -185,11 +239,12 @@ class GameState {
         exp: this.exp,
         expMax: this.expMax,
         inventory: this.inventory,
+        staff: this.staff,
         upgrades: this.upgrades,
         history: this.history,
         reviews: this.reviews
       };
-      localStorage.setItem('tiemTraSua_save', JSON.stringify(data));
+      localStorage.setItem('tiemTraSuaRua_save', JSON.stringify(data));
     } catch (e) {
       console.error("Lỗi lưu game", e);
     }
@@ -197,15 +252,21 @@ class GameState {
 
   load() {
     try {
-      const str = localStorage.getItem('tiemTraSua_save');
+      const str = localStorage.getItem('tiemTraSuaRua_save');
       if (str) {
         const obj = JSON.parse(str);
         Object.assign(this, obj);
       }
-      if (this.inventory.cupM === undefined) this.inventory.cupM = 35;
-      if (this.inventory.cupL === undefined) this.inventory.cupL = 25;
+      // Khởi tạo các key thiếu
+      if (!this.staff) {
+        this.staff = {
+          minhTea: { hired: false, level: 1, status: 'waiting' },
+          linhHelper: { hired: false, level: 1, status: 'waiting' },
+          vyOnline: { hired: false, level: 1, status: 'waiting' }
+        };
+      }
     } catch (e) {
-      console.error("Lỗi đọc game", e);
+      console.error("Lỗi nạp game", e);
     }
   }
 
@@ -214,8 +275,8 @@ class GameState {
     if (this.exp >= this.expMax) {
       this.level += 1;
       this.exp -= this.expMax;
-      this.expMax = Math.round(this.expMax * 1.4);
-      return true; // Level up!
+      this.expMax = Math.round(this.expMax * 1.35);
+      return true;
     }
     return false;
   }
@@ -223,49 +284,58 @@ class GameState {
 
 const state = new GameState();
 
-// ================= 4. GAME CONTROLLER & LOGIC =================
+// ================= 4. GAME CONTROLLER & LOGIC BÁN HÀNG =================
 class GameApp {
   constructor() {
     this.viewMode = 'prep'; // 'prep' hoặc 'sell'
-    this.activeTab = 'restock'; // 'restock' | 'upgrades' | 'ledger'
-    
-    // Trạng thái ngày bán hàng
-    this.sellTimer = null;
-    this.timeLeft = 60;
-    this.customers = [];
-    this.activeCustomerIdx = 0;
-    this.spillActive = false;
-    this.spillClicks = 0;
+    this.activeTab = 'restock'; // 'restock' | 'staff' | 'upgrades' | 'ledger'
+    this.isPaused = false;
 
-    // Ly đang pha trên bàn
+    // Giờ và ca bán
+    this.sellTimer = null;
+    this.staffTimer = null;
+    this.gameSeconds = 0; // Đếm giờ trong ngày (08:00 - 22:00)
+    this.maxDaySeconds = 75; // 75 giây thực = 1 ngày làm việc
+
+    // Danh sách orders đang chờ
+    this.orders = [];
+    this.activeOrderIndex = 0;
+    this.orderCounterId = 100;
+
+    // Ly đang pha trên bàn gỗ
     this.currentCup = {
-      tea: null,
-      sugar: '50%',
-      ice: '100%',
-      toppings: [],
-      sealed: false
+      cup: null,      // 'M' hoặc 'L'
+      tea: null,      // tea id
+      syrup: null,    // syrup id
+      sugar: null,    // '0%', '30%', '50%', '70%', '100%'
+      ice: null,      // 'Không đá', 'Ít đá', 'Bình thường', 'Nhiều đá'
+      toppings: [],   // mảng topping ids
+      foam: null,     // foam id
+      isSealing: false,
+      isDelivering: false
     };
 
-    // Thống kê ngày hôm nay
+    // Báo cáo ca bán
     this.dailyReport = {
       served: 0,
       mistakes: 0,
       revenue: 0,
-      cost: 0,
       tips: 0
     };
 
-    // Cache elements
+    // Elements
     this.elTopDay = document.getElementById('topDay');
+    this.elTopClock = document.getElementById('topClock');
     this.elTopMoney = document.getElementById('topMoney');
     this.elTopStars = document.getElementById('topStars');
     this.elTopRating = document.getElementById('topRating');
-    this.elTopShopName = document.getElementById('topShopName');
+    this.elBtnPause = document.getElementById('btnPause');
     this.elBtnSound = document.getElementById('btnSound');
     this.elView = document.getElementById('view');
     this.elModal = document.getElementById('modal');
     this.elModalCard = document.getElementById('modalCard');
     this.elToast = document.getElementById('toast');
+    this.elFxLayer = document.getElementById('fxLayer');
 
     this.initEvents();
     this.render();
@@ -279,9 +349,13 @@ class GameApp {
     };
     this.elBtnSound.textContent = audio.enabled ? '🔊' : '🔇';
 
-    // Click ngoài modal
+    this.elBtnPause.onclick = () => this.togglePause();
+
     const overlay = document.getElementById('modalOverlay');
-    if (overlay) overlay.onclick = () => this.closeModal();
+    if (overlay) overlay.onclick = () => {
+      if (this.isPaused) this.togglePause();
+      else this.closeModal();
+    };
   }
 
   showToast(msg) {
@@ -303,6 +377,40 @@ class GameApp {
     this.elModal.hidden = true;
   }
 
+  togglePause() {
+    if (this.viewMode !== 'sell') return;
+    this.isPaused = !this.isPaused;
+    audio.click();
+
+    if (this.isPaused) {
+      this.openModal(`
+        <h2>⏸ TẠM DỪNG</h2>
+        <p style="color: #7C5B49; margin-bottom: 14px;">Quán đang tạm nghỉ ngơi một chút!</p>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <button class="btn-modal-primary" id="btnResume">▶️ Tiếp tục bán</button>
+          <button class="btn-modal-cancel" id="btnToggleSoundModal">
+            ${audio.enabled ? '🔊 Tắt âm thanh' : '🔇 Bật âm thanh'}
+          </button>
+          <button class="btn-modal-confirm" id="btnEndDayEarly">🌙 Đóng cửa tiệm sớm</button>
+        </div>
+      `);
+
+      document.getElementById('btnResume').onclick = () => this.togglePause();
+      document.getElementById('btnToggleSoundModal').onclick = () => {
+        const on = audio.toggle();
+        this.elBtnSound.textContent = on ? '🔊' : '🔇';
+        this.togglePause();
+      };
+      document.getElementById('btnEndDayEarly').onclick = () => {
+        this.closeModal();
+        this.isPaused = false;
+        this.endSellPhase();
+      };
+    } else {
+      this.closeModal();
+    }
+  }
+
   render() {
     this.renderTopBar();
     if (this.viewMode === 'prep') {
@@ -313,90 +421,97 @@ class GameApp {
   }
 
   renderTopBar() {
-    this.elTopDay.textContent = `Ngày ${state.day}`;
-    this.elTopMoney.textContent = `${state.money.toLocaleString('vi-VN')}đ`;
-    this.elTopShopName.textContent = state.shopName;
+    this.elTopDay.textContent = `NGÀY ${state.day}`;
+    this.elTopMoney.textContent = `${Math.round(state.money / 1000)}K`;
     this.elTopRating.textContent = state.rating.toFixed(1);
-    
-    // Vẽ số sao vàng
-    const fullStars = Math.round(state.rating);
-    this.elTopStars.textContent = '⭐'.repeat(Math.max(1, fullStars));
+    this.elTopStars.textContent = '⭐'.repeat(Math.max(1, Math.round(state.rating)));
+
+    // Đồng hồ giờ trong ngày (08:00 -> 22:00)
+    if (this.viewMode === 'sell') {
+      const startHour = 8;
+      const progress = this.gameSeconds / this.maxDaySeconds;
+      const totalMinutes = Math.floor(progress * 14 * 60); // 14 tiếng làm việc
+      const currentH = startHour + Math.floor(totalMinutes / 60);
+      const currentM = totalMinutes % 60;
+      this.elTopClock.textContent = `${String(currentH).padStart(2, '0')}:${String(currentM).padStart(2, '0')}`;
+    } else {
+      this.elTopClock.textContent = "Chuẩn bị";
+    }
   }
 
-  // ================= 4.1. MÀN HÌNH CHUẨN BỊ (PREP VIEW) =================
+  // ================= 4.1. GIAO DIỆN CHUẨN BỊ (PREP VIEW) =================
   renderPrepView() {
     const expPercent = Math.min(100, Math.round((state.exp / state.expMax) * 100));
 
     this.elView.innerHTML = `
       <div class="prep-view">
         <div class="prep-left-col">
-          <!-- Biển hiệu tiệm -->
+          <!-- Biển hiệu tiệm với chú Rùa -->
           <div class="shop-sign">
             <div class="awning"></div>
-            <div class="mascot">
+            <div class="mascot-turtle">
               <svg viewBox="0 0 80 90" width="100%" height="100%">
-                <ellipse cx="40" cy="55" rx="26" ry="28" fill="#FCEBD9" stroke="#7A4222" stroke-width="3"/>
-                <!-- Tai gấu / Mèo -->
-                <circle cx="20" cy="32" r="9" fill="#7A4222"/>
-                <circle cx="20" cy="32" r="5" fill="#FCEBD9"/>
-                <circle cx="60" cy="32" r="9" fill="#7A4222"/>
-                <circle cx="60" cy="32" r="5" fill="#FCEBD9"/>
-                <!-- Mắt & Miệng -->
-                <circle cx="32" cy="52" r="3.5" fill="#3D2214"/>
-                <circle cx="48" cy="52" r="3.5" fill="#3D2214"/>
-                <path d="M36 58 Q40 62 44 58" fill="none" stroke="#3D2214" stroke-width="2.5" stroke-linecap="round"/>
+                <!-- Mai rùa tròn màu xanh -->
+                <ellipse cx="40" cy="54" rx="27" ry="24" fill="#529B2B" stroke="#2F6614" stroke-width="3"/>
+                <ellipse cx="40" cy="52" rx="20" ry="17" fill="#68B936" stroke="#2F6614" stroke-width="1.5"/>
+                <!-- Đầu rùa -->
+                <circle cx="40" cy="30" r="14" fill="#A0D864" stroke="#2F6614" stroke-width="2.5"/>
+                <!-- Mắt rùa to tròn long lanh -->
+                <circle cx="34" cy="27" r="4.5" fill="#3D2214"/>
+                <circle cx="33" cy="25.5" r="1.5" fill="#FFF"/>
+                <circle cx="46" cy="27" r="4.5" fill="#3D2214"/>
+                <circle cx="45" cy="25.5" r="1.5" fill="#FFF"/>
+                <!-- Nụ cười -->
+                <path d="M36 34 Q40 38 44 34" fill="none" stroke="#2F6614" stroke-width="2" stroke-linecap="round"/>
                 <!-- Má hồng -->
-                <ellipse cx="26" cy="56" rx="4" ry="2.5" fill="#FFB6C1"/>
-                <ellipse cx="54" cy="56" rx="4" ry="2.5" fill="#FFB6C1"/>
+                <circle cx="31" cy="33" r="3" fill="#FFB6C1" opacity="0.8"/>
+                <circle cx="49" cy="33" r="3" fill="#FFB6C1" opacity="0.8"/>
+                <!-- Chân rùa & Tay ôm ly boba -->
+                <circle cx="20" cy="62" r="6" fill="#A0D864" stroke="#2F6614" stroke-width="2"/>
+                <circle cx="60" cy="62" r="6" fill="#A0D864" stroke="#2F6614" stroke-width="2"/>
                 <!-- Ly trà sữa cầm tay -->
-                <rect x="34" y="62" width="12" height="15" rx="2" fill="#E86558" stroke="#3D2214" stroke-width="1.5"/>
-                <circle cx="37" cy="72" r="1.5" fill="#3D2214"/>
-                <circle cx="43" cy="72" r="1.5" fill="#3D2214"/>
+                <rect x="34" y="52" width="12" height="17" rx="3" fill="#FFF" stroke="#2F6614" stroke-width="1.8"/>
+                <rect x="35" y="57" width="10" height="11" rx="2" fill="#E88358"/>
+                <circle cx="38" cy="65" r="1.5" fill="#3D2214"/>
+                <circle cx="42" cy="65" r="1.5" fill="#3D2214"/>
+                <line x1="42" y1="46" x2="39" y2="62" stroke="#FF6B8B" stroke-width="2" stroke-linecap="round"/>
               </svg>
             </div>
+
             <h1>${state.shopName}</h1>
-            <p>Trà sữa thơm ngon - Đậm đà từng ngụm</p>
+            <p>Trà sữa thơm béo • Rùa pha tận tâm</p>
             <div class="level-row">
               <span>Cấp quán: <b>Level ${state.level}</b></span>
               <div class="level-bar"><i style="width: ${expPercent}%"></i></div>
               <small>${state.exp}/${state.expMax} EXP</small>
             </div>
           </div>
-
-          <!-- Thẻ sự kiện hôm nay -->
-          <div class="event-card">
-            <div class="dot"></div>
-            <div>
-              <b>Hôm nay: Trời nắng đẹp</b>
-              <small>Lượng khách thích uống trà sữa nhiều đá tăng vọt!</small>
-            </div>
-          </div>
         </div>
 
         <div class="prep-right-col">
-          <!-- 3 Tabs Điều Hướng -->
+          <!-- 4 Tabs Điều Hướng -->
           <div class="tabs-nav">
-            <button class="tab-btn ${this.activeTab === 'restock' ? 'active' : ''}" data-tab="restock">📦 Nhập Hàng</button>
+            <button class="tab-btn ${this.activeTab === 'restock' ? 'active' : ''}" data-tab="restock">📦 Kho</button>
+            <button class="tab-btn ${this.activeTab === 'staff' ? 'active' : ''}" data-tab="staff">👥 Nhân Viên</button>
             <button class="tab-btn ${this.activeTab === 'upgrades' ? 'active' : ''}" data-tab="upgrades">✨ Nâng Cấp</button>
             <button class="tab-btn ${this.activeTab === 'ledger' ? 'active' : ''}" data-tab="ledger">📊 Sổ Sách</button>
           </div>
 
           <!-- Nội dung Tab -->
-          <div class="tab-content" id="tabContent">
+          <div class="tab-content">
             ${this.getTabContentHtml()}
           </div>
         </div>
 
-        <!-- Nút to dính đáy Mở tiệm -->
         <div class="dock-bar">
-          <button class="btn-big-open" id="btnStartDay">
-            <span>🚪</span> BẮT ĐẦU NGÀY BÁN HÀNG
+          <button class="btn-big-open" id="btnStartSellDay">
+            <span>🐢</span> MỞ TIỆM BÁN HÀNG NGÀY ${state.day}
           </button>
         </div>
       </div>
     `;
 
-    // Gắn sự kiện chuyển Tab
+    // Events tab
     this.elView.querySelectorAll('.tab-btn').forEach(btn => {
       btn.onclick = () => {
         audio.click();
@@ -405,8 +520,7 @@ class GameApp {
       };
     });
 
-    // Bắt đầu ngày bán hàng
-    const btnStart = document.getElementById('btnStartDay');
+    const btnStart = document.getElementById('btnStartSellDay');
     if (btnStart) {
       btnStart.onclick = () => this.startSellPhase();
     }
@@ -417,64 +531,107 @@ class GameApp {
   getTabContentHtml() {
     if (this.activeTab === 'restock') {
       return `
-        <h3>Nguyên Liệu Cần Nhập <small>Tự động trừ tiền khi mua</small></h3>
-        <div class="restock-list">
-          <!-- Nhập Ly Nhựa M & L -->
-          <div class="restock-item" style="background: #FFF9F2; border-radius: 8px; padding: 6px;">
-            <div class="restock-icon">🥛</div>
-            <div class="restock-info">
-              <b>Ly Nhựa Size M (500ml)</b>
-              <small>Giá nhập: 500đ/ly | Tồn kho: ${state.inventory.cupM || 0}</small>
+        <h3>Kho Nguyên Liệu <small>Tự động trừ tiền khi mua</small></h3>
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          <!-- Ly Nhựa M & L -->
+          <div style="font-weight: 800; font-size: 11px; color: var(--boba-primary); margin-top: 2px;">🥤 LY NHỰA</div>
+          ${CUPS.map(c => `
+            <div class="restock-item" style="display: flex; align-items: center; justify-content: space-between; padding: 4px; background: #FFF9F2; border-radius: 6px;">
+              <div>
+                <b>${c.name} (${c.ml})</b>
+                <small style="display: block; font-size: 10px; color: #7C5B49;">Giá: ${c.cost}đ | Tồn: ${state.inventory['cup' + c.id] || 0}</small>
+              </div>
+              <div class="qty-control">
+                <button class="qty-btn" data-act="sub" data-item="cup${c.id}">-</button>
+                <span class="qty-val" style="min-width: 24px; text-align: center; font-weight: 800;">${state.inventory['cup' + c.id] || 0}</span>
+                <button class="qty-btn plus" data-act="add" data-item="cup${c.id}" data-cost="${c.cost}">+</button>
+              </div>
             </div>
-            <div class="qty-control">
-              <button class="qty-btn" data-act="sub" data-item="cupM">-</button>
-              <span class="qty-val">${state.inventory.cupM || 0}</span>
-              <button class="qty-btn plus" data-act="add" data-item="cupM" data-cost="500">+</button>
-            </div>
-          </div>
+          `).join('')}
 
-          <div class="restock-item" style="background: #FFF9F2; border-radius: 8px; padding: 6px;">
-            <div class="restock-icon">🧋</div>
-            <div class="restock-info">
-              <b>Ly Nhựa Size L (700ml)</b>
-              <small>Giá nhập: 800đ/ly | Tồn kho: ${state.inventory.cupL || 0}</small>
-            </div>
-            <div class="qty-control">
-              <button class="qty-btn" data-act="sub" data-item="cupL">-</button>
-              <span class="qty-val">${state.inventory.cupL || 0}</span>
-              <button class="qty-btn plus" data-act="add" data-item="cupL" data-cost="800">+</button>
-            </div>
-          </div>
-
+          <!-- Cốt Trà & Nước Nền -->
+          <div style="font-weight: 800; font-size: 11px; color: var(--boba-primary); margin-top: 6px;">🍵 CỐT TRÀ & SỮA</div>
           ${TEAS.map(t => `
-            <div class="restock-item">
-              <div class="restock-icon">${t.icon}</div>
-              <div class="restock-info">
-                <b>${t.name}</b>
-                <small>Giá nhập: ${t.cost.toLocaleString('vi-VN')}đ/ly | Tồn kho: ${state.inventory[t.id] || 0}</small>
+            <div class="restock-item" style="display: flex; align-items: center; justify-content: space-between; padding: 4px; background: #FFF9F2; border-radius: 6px;">
+              <div>
+                <b>${t.icon} ${t.name}</b>
+                <small style="display: block; font-size: 10px; color: #7C5B49;">Giá: ${t.cost.toLocaleString()}đ | Tồn: ${state.inventory[t.id] || 0}</small>
               </div>
               <div class="qty-control">
                 <button class="qty-btn" data-act="sub" data-item="${t.id}">-</button>
-                <span class="qty-val">${state.inventory[t.id] || 0}</span>
+                <span class="qty-val" style="min-width: 24px; text-align: center; font-weight: 800;">${state.inventory[t.id] || 0}</span>
                 <button class="qty-btn plus" data-act="add" data-item="${t.id}" data-cost="${t.cost}">+</button>
               </div>
             </div>
           `).join('')}
 
+          <!-- SIRO TRÁI CÂY (Mục 64) -->
+          <div style="font-weight: 800; font-size: 11px; color: var(--boba-primary); margin-top: 6px;">🍓 SIRO TRÁI CÂY (KHU SIRO)</div>
+          ${SYRUPS.map(s => `
+            <div class="restock-item" style="display: flex; align-items: center; justify-content: space-between; padding: 4px; background: #FFF9F2; border-radius: 6px;">
+              <div>
+                <b>${s.icon} ${s.name}</b>
+                <small style="display: block; font-size: 10px; color: #7C5B49;">Giá: ${s.cost.toLocaleString()}đ | Tồn: ${state.inventory[s.id] || 0}</small>
+              </div>
+              <div class="qty-control">
+                <button class="qty-btn" data-act="sub" data-item="${s.id}">-</button>
+                <span class="qty-val" style="min-width: 24px; text-align: center; font-weight: 800;">${state.inventory[s.id] || 0}</span>
+                <button class="qty-btn plus" data-act="add" data-item="${s.id}" data-cost="${s.cost}">+</button>
+              </div>
+            </div>
+          `).join('')}
+
+          <!-- TOPPINGS -->
+          <div style="font-weight: 800; font-size: 11px; color: var(--boba-primary); margin-top: 6px;">🟤 TOPPING & FOAM</div>
           ${TOPPINGS.map(tp => `
-            <div class="restock-item">
-              <div class="restock-icon">${tp.icon}</div>
-              <div class="restock-info">
-                <b>${tp.name}</b>
-                <small>Giá nhập: ${tp.cost.toLocaleString('vi-VN')}đ | Tồn kho: ${state.inventory[tp.id] || 0}</small>
+            <div class="restock-item" style="display: flex; align-items: center; justify-content: space-between; padding: 4px; background: #FFF9F2; border-radius: 6px;">
+              <div>
+                <b>${tp.icon} ${tp.name}</b>
+                <small style="display: block; font-size: 10px; color: #7C5B49;">Giá: ${tp.cost.toLocaleString()}đ | Tồn: ${state.inventory[tp.id] || 0}</small>
               </div>
               <div class="qty-control">
                 <button class="qty-btn" data-act="sub" data-item="${tp.id}">-</button>
-                <span class="qty-val">${state.inventory[tp.id] || 0}</span>
+                <span class="qty-val" style="min-width: 24px; text-align: center; font-weight: 800;">${state.inventory[tp.id] || 0}</span>
                 <button class="qty-btn plus" data-act="add" data-item="${tp.id}" data-cost="${tp.cost}">+</button>
               </div>
             </div>
           `).join('')}
+        </div>
+      `;
+    }
+
+    if (this.activeTab === 'staff') {
+      return `
+        <h3>Đội Ngũ Nhân Viên <small>Tự động hóa pha chế</small></h3>
+        <p style="font-size: 11px; color: #7C5B49; margin: 0 0 8px;">Nhân viên tự động làm các công đoạn theo order giúp bạn rảnh tay!</p>
+        <div class="staff-list">
+          ${STAFF_LIST.map(st => {
+            const current = state.staff[st.id] || { hired: false, level: 1, status: 'locked' };
+            const isUnlocked = state.day >= st.unlockDay || current.hired;
+            return `
+              <div class="staff-card ${current.hired ? 'hired' : ''}">
+                <div class="staff-avatar">${st.avatar}</div>
+                <div class="staff-info">
+                  <b>${st.name} ${current.hired ? `<span style="color: #38A169;">(Lv.${current.level})</span>` : ''}</b>
+                  <small>${st.role}</small>
+                  ${isUnlocked 
+                    ? (current.hired 
+                        ? `<span class="staff-badge doing">🟢 Đang làm việc (Lương: ${st.salary.toLocaleString()}đ/ca)</span>` 
+                        : `<span class="staff-badge waiting">🟡 Sẵn sàng thuê</span>`)
+                    : `<span class="staff-badge locked">🔒 Mở khóa ở Ngày ${st.unlockDay}</span>`
+                  }
+                </div>
+                <div>
+                  ${isUnlocked 
+                    ? (current.hired 
+                        ? `<button class="btn-hire owned" style="font-size: 10px;">Đã thuê</button>` 
+                        : `<button class="btn-hire" data-hire="${st.id}" data-cost="${st.hireCost}">${st.hireCost.toLocaleString()}đ</button>`)
+                    : `<button class="btn-hire owned" disabled>Chưa mở</button>`
+                  }
+                </div>
+              </div>
+            `;
+          }).join('')}
         </div>
       `;
     }
@@ -486,16 +643,18 @@ class GameApp {
           ${UPGRADES_LIST.map(u => {
             const owned = state.upgrades[u.id];
             return `
-              <div class="upgrade-item">
-                <div class="restock-icon">${u.icon}</div>
-                <div class="upgrade-info">
+              <div class="staff-card ${owned ? 'hired' : ''}">
+                <div class="staff-avatar">${u.icon}</div>
+                <div class="staff-info">
                   <b>${u.name}</b>
                   <small>${u.desc}</small>
                 </div>
-                ${owned 
-                  ? `<span class="btn-buy owned">Đã sở hữu</span>`
-                  : `<button class="btn-buy" data-uid="${u.id}" data-cost="${u.cost}">${u.cost.toLocaleString('vi-VN')}đ</button>`
-                }
+                <div>
+                  ${owned 
+                    ? `<button class="btn-hire owned">Đã sở hữu</button>` 
+                    : `<button class="btn-hire" data-upgrade="${u.id}" data-cost="${u.cost}">${u.cost.toLocaleString()}đ</button>`
+                  }
+                </div>
               </div>
             `;
           }).join('')}
@@ -506,26 +665,26 @@ class GameApp {
     if (this.activeTab === 'ledger') {
       return `
         <h3>Sổ Sách & Đánh Giá</h3>
-        <div class="ledger-summary">
-          <div class="ledger-card">
-            <small>Đánh giá trung bình</small>
-            <b>⭐ ${state.rating.toFixed(1)} / 5.0</b>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 8px;">
+          <div style="background: #FDF4E7; border-radius: 8px; padding: 6px 8px;">
+            <small style="color: #7C5B49; font-size: 10.5px;">Đánh giá của khách</small>
+            <b style="display: block; font-size: 15px; color: var(--boba-primary);">⭐ ${state.rating.toFixed(1)} / 5.0</b>
           </div>
-          <div class="ledger-card">
-            <small>Tổng số ly đã phục vụ</small>
-            <b>🥤 ${(state.history.reduce((a, b) => a + (b.served || 0), 0) + 12)} ly</b>
+          <div style="background: #FDF4E7; border-radius: 8px; padding: 6px 8px;">
+            <small style="color: #7C5B49; font-size: 10.5px;">Tổng ly đã phục vụ</small>
+            <b style="display: block; font-size: 15px; color: var(--turtle-green-d);">🥤 ${(state.history.reduce((a, b) => a + (b.served || 0), 0) + 16)} ly</b>
           </div>
         </div>
 
-        <h4 style="margin: 8px 0 4px; font-size: 13px;">Bình luận gần đây từ khách</h4>
+        <h4 style="margin: 6px 0 4px; font-size: 12px;">Đánh giá gần đây từ khách hàng</h4>
         <div class="reviews-list">
           ${state.reviews.map(r => `
-            <div class="review-item">
-              <div class="review-header">
+            <div style="padding: 6px 0; border-bottom: 1px dashed var(--border-color); font-size: 12px;">
+              <div style="display: flex; justify-content: space-between;">
                 <b>${r.name}</b>
                 <span style="color: #ECC94B;">${'⭐'.repeat(r.stars)}</span>
               </div>
-              <p class="review-comment">"${r.comment}"</p>
+              <p style="margin: 2px 0 0; color: #3D2214;">"${r.comment}"</p>
             </div>
           `).join('')}
         </div>
@@ -534,7 +693,7 @@ class GameApp {
   }
 
   attachTabEvents() {
-    // Nút cộng trừ nhập hàng
+    // Nhập hàng
     this.elView.querySelectorAll('.qty-btn').forEach(btn => {
       btn.onclick = () => {
         const item = btn.dataset.item;
@@ -542,12 +701,13 @@ class GameApp {
         const cost = parseInt(btn.dataset.cost || '0', 10);
 
         if (act === 'add') {
-          if (state.money < cost) {
-            audio.trashFail();
+          const bulkCost = cost * 5;
+          if (state.money < bulkCost) {
+            audio.trash();
             this.showToast('Không đủ tiền trong ngân quỹ!');
             return;
           }
-          state.money -= cost;
+          state.money -= bulkCost;
           state.inventory[item] = (state.inventory[item] || 0) + 5;
           audio.pour();
         } else if (act === 'sub') {
@@ -561,315 +721,407 @@ class GameApp {
       };
     });
 
-    // Nút mua nâng cấp
-    this.elView.querySelectorAll('.btn-buy').forEach(btn => {
+    // Thuê nhân viên
+    this.elView.querySelectorAll('[data-hire]').forEach(btn => {
       btn.onclick = () => {
-        const uid = btn.dataset.uid;
+        const sid = btn.dataset.hire;
         const cost = parseInt(btn.dataset.cost, 10);
         if (state.money < cost) {
-          audio.trashFail();
+          audio.trash();
+          this.showToast('Không đủ tiền thuê nhân viên!');
+          return;
+        }
+        state.money -= cost;
+        state.staff[sid].hired = true;
+        state.staff[sid].status = 'waiting';
+        audio.serveSuccess();
+        this.showToast(`Đã thuê nhân viên thành công!`);
+        state.save();
+        this.render();
+      };
+    });
+
+    // Mua nâng cấp
+    this.elView.querySelectorAll('[data-upgrade]').forEach(btn => {
+      btn.onclick = () => {
+        const uid = btn.dataset.upgrade;
+        const cost = parseInt(btn.dataset.cost, 10);
+        if (state.money < cost) {
+          audio.trash();
           this.showToast('Không đủ tiền nâng cấp!');
           return;
         }
         state.money -= cost;
         state.upgrades[uid] = true;
         audio.serveSuccess();
-        this.showToast('Nâng cấp thành công!');
+        this.showToast('Nâng cấp tiệm thành công!');
         state.save();
         this.render();
       };
     });
   }
 
-  // ================= 4.2. MÀN HÌNH BÁN HÀNG (SELL PHASE) =================
+  // ================= 4.2. GIAO DIỆN BÁN HÀNG (SELL VIEW) =================
   startSellPhase() {
     audio.bell();
     this.viewMode = 'sell';
-    this.timeLeft = 60;
-    this.customers = [];
-    this.activeCustomerIdx = 0;
+    this.isPaused = false;
+    this.gameSeconds = 0;
+    this.orders = [];
+    this.activeOrderIndex = 0;
     this.resetCup();
 
     this.dailyReport = {
       served: 0,
       mistakes: 0,
       revenue: 0,
-      cost: 0,
       tips: 0
     };
 
-    // Sinh 3 khách đầu tiên
-    this.generateCustomer();
-    this.generateCustomer();
-    this.generateCustomer();
+    // Sinh 3 đơn hàng ban đầu
+    this.generateOrder();
+    this.generateOrder();
+    this.generateOrder();
 
-    // Vòng lặp đếm ngược thời gian ca bán
+    // Vòng lặp đếm giờ và quản lý kiên nhẫn
     clearInterval(this.sellTimer);
     this.sellTimer = setInterval(() => {
-      this.timeLeft -= 1;
-      
-      // Giảm độ kiên nhẫn của khách hàng
-      const patienceSpeed = state.upgrades.airConditioner ? 1.0 : 1.35;
-      this.customers.forEach(c => {
-        c.patience = Math.max(0, c.patience - patienceSpeed);
+      if (this.isPaused) return;
+
+      this.gameSeconds += 1;
+
+      // Giảm độ kiên nhẫn
+      const coolerMod = state.upgrades.coolerAir ? 0.9 : 1.35;
+      this.orders.forEach(ord => {
+        ord.patience = Math.max(0, ord.patience - coolerMod);
       });
 
-      // Kiểm tra nếu khách hết kiên nhẫn bỏ về
-      const angryIdx = this.customers.findIndex(c => c.patience <= 0);
+      // Kiểm tra khách hết kiên nhẫn bỏ về
+      const angryIdx = this.orders.findIndex(ord => ord.patience <= 0);
       if (angryIdx !== -1) {
-        audio.trashFail();
-        const angryCust = this.customers.splice(angryIdx, 1)[0];
+        audio.trash();
+        const angryOrd = this.orders.splice(angryIdx, 1)[0];
         this.dailyReport.mistakes += 1;
         state.rating = Math.max(1.0, state.rating - 0.15);
-        this.showToast(`${angryCust.name} đã tức giận bỏ về!`);
-        this.generateCustomer();
+        this.showToast(`${angryOrd.name} đã tức giận bỏ về vì chờ lâu!`);
+        this.generateOrder();
       }
 
-      // Ngẫu nhiên tạo vũng nước đổ
-      if (!this.spillActive && Math.random() < 0.05) {
-        this.spillActive = true;
-        this.spillClicks = 0;
-      }
-
-      if (this.timeLeft <= 0) {
+      if (this.gameSeconds >= this.maxDaySeconds) {
         this.endSellPhase();
       } else {
         this.render();
       }
     }, 1000);
 
+    // Vòng lặp hỗ trợ tự động của NHÂN VIÊN
+    this.startStaffAutomation();
+
     this.render();
   }
 
-  generateCustomer() {
-    if (this.customers.length >= 3) return;
+  startStaffAutomation() {
+    clearInterval(this.staffTimer);
+    this.staffTimer = setInterval(() => {
+      if (this.isPaused || this.viewMode !== 'sell') return;
 
-    // Chọn ngẫu nhiên size M hoặc L
-    const randSize = Math.random() > 0.4 ? 'M' : 'L';
+      const activeOrd = this.orders[this.activeOrderIndex];
+      if (!activeOrd || this.currentCup.isSealing || this.currentCup.isDelivering) return;
+
+      // 1. Nhân viên Minh (Rót Trà): Nếu chưa có nước nền
+      if (state.staff.minhTea?.hired && this.currentCup.cup && !this.currentCup.tea) {
+        if (state.inventory[activeOrd.recipe.tea] > 0) {
+          this.currentCup.tea = activeOrd.recipe.tea;
+          audio.pour();
+          this.checkAndTriggerAutoSeal();
+          this.render();
+          return;
+        }
+      }
+
+      // 2. Nhân viên Linh (Đa Nhiệm: Topping, Đường, Đá, Siro)
+      if (state.staff.linhHelper?.hired && this.currentCup.cup) {
+        // Tự thêm đường
+        if (!this.currentCup.sugar) {
+          this.currentCup.sugar = activeOrd.recipe.sugar;
+          audio.click();
+          this.checkAndTriggerAutoSeal();
+          this.render();
+          return;
+        }
+        // Tự thêm đá
+        if (!this.currentCup.ice) {
+          this.currentCup.ice = activeOrd.recipe.ice;
+          audio.addIce();
+          this.checkAndTriggerAutoSeal();
+          this.render();
+          return;
+        }
+        // Tự thêm siro
+        if (activeOrd.recipe.syrup && !this.currentCup.syrup) {
+          if (state.inventory[activeOrd.recipe.syrup] > 0) {
+            this.currentCup.syrup = activeOrd.recipe.syrup;
+            audio.addSyrup();
+            this.checkAndTriggerAutoSeal();
+            this.render();
+            return;
+          }
+        }
+        // Tự thêm topping
+        for (const tid of activeOrd.recipe.toppings) {
+          if (!this.currentCup.toppings.includes(tid)) {
+            if (state.inventory[tid] > 0) {
+              this.currentCup.toppings.push(tid);
+              audio.addTopping();
+              this.checkAndTriggerAutoSeal();
+              this.render();
+              return;
+            }
+          }
+        }
+      }
+    }, 1100);
+  }
+
+  generateOrder() {
+    if (this.orders.length >= 3) return;
+
+    this.orderCounterId += 1;
+    const isOnline = Math.random() > 0.45;
+    const name = CUSTOMER_NAMES[Math.floor(Math.random() * CUSTOMER_NAMES.length)];
+    const randCup = Math.random() > 0.4 ? 'M' : 'L';
     const randTea = TEAS[Math.floor(Math.random() * TEAS.length)];
     const randSugar = SUGAR_LEVELS[Math.floor(Math.random() * SUGAR_LEVELS.length)];
     const randIce = ICE_LEVELS[Math.floor(Math.random() * ICE_LEVELS.length)];
-    
-    // Ngẫu nhiên 1-2 topping
-    const numToppings = Math.random() > 0.4 ? 2 : 1;
-    const shuffledToppings = [...TOPPINGS].sort(() => 0.5 - Math.random());
-    const orderToppings = shuffledToppings.slice(0, numToppings).map(t => t.id);
 
-    const name = CUSTOMER_NAMES[Math.floor(Math.random() * CUSTOMER_NAMES.length)];
-    const avatar = CUSTOMER_AVATARS[Math.floor(Math.random() * CUSTOMER_AVATARS.length)];
+    // Ngẫu nhiên siro (khoảng 50% đơn có siro trái cây)
+    const hasSyrup = Math.random() > 0.5;
+    const randSyrup = hasSyrup ? SYRUPS[Math.floor(Math.random() * SYRUPS.length)] : null;
 
-    this.customers.push({
+    // Ngẫu nhiên 1 - 2 topping
+    const numTops = Math.random() > 0.5 ? 2 : 1;
+    const shuffled = [...TOPPINGS].sort(() => 0.5 - Math.random());
+    const randTops = shuffled.slice(0, numTops).map(t => t.id);
+
+    this.orders.push({
+      id: `#${this.orderCounterId}`,
+      type: isOnline ? 'online' : 'counter',
       name,
-      avatar,
       patience: 100,
-      maxPatience: 100,
-      order: {
-        size: randSize,
-        teaId: randTea.id,
+      recipe: {
+        cup: randCup,
+        tea: randTea.id,
         teaName: randTea.name,
+        syrup: randSyrup ? randSyrup.id : null,
+        syrupName: randSyrup ? randSyrup.name : null,
         sugar: randSugar,
         ice: randIce,
-        toppings: orderToppings
+        toppings: randTops
       }
     });
   }
 
   resetCup() {
     this.currentCup = {
-      size: null, // 'M' hoặc 'L'
+      cup: null,
       tea: null,
-      sugar: '50%',
-      ice: '100%',
+      syrup: null,
+      sugar: null,
+      ice: null,
       toppings: [],
-      sealed: false
+      foam: null,
+      isSealing: false,
+      isDelivering: false
     };
   }
 
   renderSellView() {
-    const activeCust = this.customers[this.activeCustomerIdx] || null;
+    const activeOrd = this.orders[this.activeOrderIndex] || null;
 
     this.elView.innerHTML = `
       <div class="sell-view">
-        <!-- Phố và dãy khách hàng -->
-        <div class="street-scene">
-          <div class="canopy">
-            <div class="sell-timer-badge">⏱️ Ca bán: ${this.timeLeft}s</div>
-          </div>
-          <div class="customer-lane">
-            ${this.customers.map((c, idx) => {
-              const ringOffset = 163 - (163 * (c.patience / 100));
-              const isSelected = idx === this.activeCustomerIdx;
+        <!-- HÀNG ORDER: Hiển thị đơn và checklist 🔴/🟢✓ -->
+        <div class="orders-lane-container">
+          <div class="orders-row">
+            ${this.orders.map((ord, idx) => {
+              const isSelected = idx === this.activeOrderIndex;
+              const cupDone = this.currentCup.cup === ord.recipe.cup;
+              const teaDone = this.currentCup.tea === ord.recipe.tea;
+              const sugarDone = this.currentCup.sugar === ord.recipe.sugar;
+              const iceDone = this.currentCup.ice === ord.recipe.ice;
+              const syrupDone = !ord.recipe.syrup || this.currentCup.syrup === ord.recipe.syrup;
+              const topsDone = ord.recipe.toppings.every(tid => this.currentCup.toppings.includes(tid));
+
               return `
-                <div class="customer-seat ${isSelected ? 'active' : ''}" data-cidx="${idx}">
-                  <div class="customer-ring">
-                    <svg class="progress-ring" width="52" height="52">
-                      <circle cx="26" cy="26" r="23" stroke="#FFF" stroke-opacity="0.3" stroke-width="4" fill="none"/>
-                      <circle cx="26" cy="26" r="23" stroke="${c.patience > 40 ? '#48BB78' : (c.patience > 20 ? '#ECC94B' : '#E53E3E')}" 
-                              stroke-width="4" fill="none" stroke-dasharray="163" stroke-dashoffset="${ringOffset}" stroke-linecap="round"/>
-                    </svg>
-                    <div class="customer-face">${c.patience < 25 ? '😡' : c.avatar}</div>
+                <div class="order-card ${isSelected ? 'active' : ''}" data-order-idx="${idx}">
+                  <div class="order-card-header">
+                    <b>${ord.name}</b>
+                    <span class="order-type-chip ${ord.type}">
+                      ${ord.type === 'online' ? '🚚 App' : '👩 Quầy'} ${ord.id}
+                    </span>
                   </div>
-                  <div class="customer-name">${c.name}</div>
+
+                  <div class="order-recipe-title">
+                    ${ord.recipe.teaName} ${ord.recipe.syrupName ? `+ ${ord.recipe.syrupName}` : ''}
+                  </div>
+
+                  <!-- Checklist thành phần: ĐỎ 🔴 vs XANH 🟢✓ -->
+                  <div class="recipe-checklist">
+                    <span class="recipe-step-tag ${cupDone ? 'done' : 'pending'}">
+                      ${cupDone ? '🟢✓' : '🔴'} Ly ${ord.recipe.cup}
+                    </span>
+                    <span class="recipe-step-tag ${teaDone ? 'done' : 'pending'}">
+                      ${teaDone ? '🟢✓' : '🔴'} ${ord.recipe.teaName}
+                    </span>
+                    ${ord.recipe.syrupName ? `
+                      <span class="recipe-step-tag ${syrupDone ? 'done' : 'pending'}">
+                        ${syrupDone ? '🟢✓' : '🔴'} ${ord.recipe.syrupName}
+                      </span>
+                    ` : ''}
+                    <span class="recipe-step-tag ${sugarDone ? 'done' : 'pending'}">
+                      ${sugarDone ? '🟢✓' : '🔴'} ${ord.recipe.sugar}
+                    </span>
+                    <span class="recipe-step-tag ${iceDone ? 'done' : 'pending'}">
+                      ${iceDone ? '🟢✓' : '🔴'} ${ord.recipe.ice}
+                    </span>
+                    ${ord.recipe.toppings.map(tid => {
+                      const tDone = this.currentCup.toppings.includes(tid);
+                      const tObj = TOPPINGS.find(t => t.id === tid);
+                      return `
+                        <span class="recipe-step-tag ${tDone ? 'done' : 'pending'}">
+                          ${tDone ? '🟢✓' : '🔴'} ${tObj?.name || 'Topping'}
+                        </span>
+                      `;
+                    }).join('')}
+                  </div>
+
+                  <div class="order-patience-track">
+                    <i style="width: ${ord.patience}%; background: ${ord.patience > 35 ? '#38A169' : '#E53E3E'};"></i>
+                  </div>
                 </div>
               `;
             }).join('')}
           </div>
-
-          <!-- Vết nước đổ trên quầy/sàn -->
-          ${this.spillActive ? `
-            <div class="spill-spot" id="btnCleanSpill">
-              ⚠️ Tràn nước! Chạm lau (${3 - this.spillClicks})
-            </div>
-          ` : ''}
         </div>
 
-        <!-- Bong bóng gọi món của khách đang chọn -->
-        ${activeCust ? `
-          <div class="order-bubble">
-            <div class="order-cup-preview">
-              <span style="font-size: 32px;">🧋</span>
-            </div>
-            <div class="order-text">
-              <b>${activeCust.name} gọi:</b> 1x ${activeCust.order.teaName} <span class="order-size-badge">Size ${activeCust.order.size}</span><br>
-              <small>Đường: <b>${activeCust.order.sugar}</b> | Đá: <b>${activeCust.order.ice}</b></small><br>
-              <small>Topping: <b>${activeCust.order.toppings.map(tid => TOPPINGS.find(t => t.id === tid)?.name).join(', ')}</b></small>
-            </div>
-            <div class="order-patience-bar">
-              <i style="width: ${activeCust.patience}%; background: ${activeCust.patience > 40 ? '#48BB78' : '#E53E3E'};"></i>
-            </div>
-          </div>
-        ` : `
-          <div class="order-bubble" style="justify-content: center; text-align: center;">
-            <p style="margin: 0; color: #7C5B49;">Đang đợi khách mới tới...</p>
-          </div>
-        `}
-
-        <!-- Bàn pha chế chính (Kitchen Bar) -->
+        <!-- BÀN PHA CHẾ CHÍNH (KITCHEN BAR 2 TẦNG CHUẨN) -->
         <div class="kitchen-bar">
-          <!-- HÀNG TRÊN: QUẦY TRÀ (Chồng ly M/L, Các bình ủ trà, Máy dập nắp) -->
-          <div class="counter-header-tag">QUẦY TRÀ</div>
+          <!-- KỆ TRÊN: QUẦY TRÀ (Chồng ly M/L, Các bình ủ trà, Máy dập nắp) -->
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span class="section-label-tag">QUẦY TRÀ</span>
+            <!-- Báo trạng thái nhân viên đang làm -->
+            <div style="font-size: 10px; font-weight: 700; color: #386B1D;">
+              ${state.staff.linhHelper?.hired ? '🧑‍🍹 Linh đang hỗ trợ' : (state.staff.minhTea?.hired ? '🍵 Minh đang rót' : 'Tự pha')}
+            </div>
+          </div>
+
           <div class="top-shelf-row">
-            <!-- Chồng ly M & L -->
+            <!-- 1. Chồng ly M và L -->
             <div class="cup-stacks-wrapper">
-              <button class="cup-stack-btn ${this.currentCup.size === 'M' ? 'selected' : ''}" data-pick-size="M" title="Lấy ly Size M (500ml)">
+              <button class="cup-stack-btn ${this.currentCup.cup === 'M' ? 'selected' : ''}" data-pick-cup="M" title="Lấy ly M">
                 <span class="cup-stack-qty">${state.inventory.cupM || 0}</span>
-                <div class="cup-stack-visual stack-m">
-                  <svg viewBox="0 0 34 50" width="30" height="44">
-                    <path d="M5 14 L9 46 L25 46 L29 14 Z" fill="#FFF" stroke="#7A4222" stroke-width="1.8"/>
-                    <line x1="7" y1="22" x2="27" y2="22" stroke="#7A4222" stroke-width="1" stroke-dasharray="2 1"/>
-                    <line x1="8" y1="30" x2="26" y2="30" stroke="#7A4222" stroke-width="1" stroke-dasharray="2 1"/>
-                    <line x1="8" y1="38" x2="26" y2="38" stroke="#7A4222" stroke-width="1" stroke-dasharray="2 1"/>
-                    <ellipse cx="17" cy="14" rx="12" ry="3.5" fill="#E8F1F5" stroke="#7A4222" stroke-width="1.8"/>
-                    <text x="17" y="27" font-family="'Paytone One', sans-serif" font-size="12" font-weight="bold" fill="#7A4222" text-anchor="middle">M</text>
-                  </svg>
-                </div>
-                <b class="cup-size-letter">M</b>
+                <svg viewBox="0 0 34 48" width="28" height="40">
+                  <path d="M5 12 L9 44 L25 44 L29 12 Z" fill="#FFF" stroke="#7A4222" stroke-width="1.8"/>
+                  <line x1="7" y1="20" x2="27" y2="20" stroke="#7A4222" stroke-width="1" stroke-dasharray="2 1"/>
+                  <line x1="8" y1="28" x2="26" y2="28" stroke="#7A4222" stroke-width="1" stroke-dasharray="2 1"/>
+                  <ellipse cx="17" cy="12" rx="12" ry="3.5" fill="#E8F1F5" stroke="#7A4222" stroke-width="1.8"/>
+                  <text x="17" y="24" font-family="'Paytone One', sans-serif" font-size="11" font-weight="bold" fill="#7A4222" text-anchor="middle">M</text>
+                </svg>
+                <b style="font-size: 10px; color: #5C3826;">Ly M</b>
               </button>
 
-              <button class="cup-stack-btn ${this.currentCup.size === 'L' ? 'selected' : ''}" data-pick-size="L" title="Lấy ly Size L (700ml)">
+              <button class="cup-stack-btn ${this.currentCup.cup === 'L' ? 'selected' : ''}" data-pick-cup="L" title="Lấy ly L">
                 <span class="cup-stack-qty">${state.inventory.cupL || 0}</span>
-                <div class="cup-stack-visual stack-l">
-                  <svg viewBox="0 0 34 60" width="30" height="52">
-                    <path d="M4 12 L8 56 L26 56 L30 12 Z" fill="#FFF" stroke="#7A4222" stroke-width="1.8"/>
-                    <line x1="6" y1="21" x2="28" y2="21" stroke="#7A4222" stroke-width="1" stroke-dasharray="2 1"/>
-                    <line x1="7" y1="30" x2="27" y2="30" stroke="#7A4222" stroke-width="1" stroke-dasharray="2 1"/>
-                    <line x1="7" y1="39" x2="27" y2="39" stroke="#7A4222" stroke-width="1" stroke-dasharray="2 1"/>
-                    <line x1="8" y1="48" x2="26" y2="48" stroke="#7A4222" stroke-width="1" stroke-dasharray="2 1"/>
-                    <ellipse cx="17" cy="12" rx="13" ry="3.5" fill="#E8F1F5" stroke="#7A4222" stroke-width="1.8"/>
-                    <text x="17" y="26" font-family="'Paytone One', sans-serif" font-size="13" font-weight="bold" fill="#7A4222" text-anchor="middle">L</text>
-                  </svg>
-                </div>
-                <b class="cup-size-letter">L</b>
+                <svg viewBox="0 0 34 58" width="28" height="48">
+                  <path d="M4 10 L8 54 L26 54 L30 10 Z" fill="#FFF" stroke="#7A4222" stroke-width="1.8"/>
+                  <line x1="6" y1="19" x2="28" y2="19" stroke="#7A4222" stroke-width="1" stroke-dasharray="2 1"/>
+                  <line x1="7" y1="28" x2="27" y2="28" stroke="#7A4222" stroke-width="1" stroke-dasharray="2 1"/>
+                  <line x1="7" y1="37" x2="27" y2="37" stroke="#7A4222" stroke-width="1" stroke-dasharray="2 1"/>
+                  <ellipse cx="17" cy="10" rx="13" ry="3.5" fill="#E8F1F5" stroke="#7A4222" stroke-width="1.8"/>
+                  <text x="17" y="23" font-family="'Paytone One', sans-serif" font-size="12" font-weight="bold" fill="#7A4222" text-anchor="middle">L</text>
+                </svg>
+                <b style="font-size: 10px; color: #5C3826;">Ly L</b>
               </button>
             </div>
 
-            <!-- Bình ủ trà -->
+            <!-- 2. Quầy bình ủ trà & sữa -->
             <div class="tea-dispensers-shelf">
               ${TEAS.map(t => {
-                const selected = this.currentCup.tea === t.id;
+                const isSelected = this.currentCup.tea === t.id;
                 const qty = state.inventory[t.id] || 0;
                 return `
-                  <button class="dispenser-jar-btn ${selected ? 'selected' : ''}" data-tea="${t.id}" title="${t.name}">
-                    <span class="dispenser-qty">${qty}</span>
-                    <div class="jar-body" style="--jar-color: ${t.liquid}">
+                  <button class="dispenser-jar-btn ${isSelected ? 'selected' : ''}" data-pick-tea="${t.id}" title="${t.name}">
+                    <span style="position: absolute; top: 1px; right: 2px; font-size: 8px; font-weight: 800; background: rgba(0,0,0,0.6); color: #fff; padding: 0 3px; border-radius: 4px;">${qty}</span>
+                    <div class="jar-body">
                       <div class="jar-liquid" style="background: ${t.liquid};"></div>
                       <span class="jar-name">${t.name}</span>
                     </div>
-                    <div class="jar-tap">🚰</div>
+                    <span style="font-size: 9px; margin-top: 1px;">🚰</span>
                   </button>
                 `;
               }).join('')}
             </div>
 
-            <!-- Máy dập nắp (Sealer Machine) -->
+            <!-- 3. Máy Dập Nắp Tự Động (Tự kích hoạt) -->
             <div class="sealer-machine-box">
-              <div class="sealer-head">
-                <div class="sealer-roll"></div>
-                <div class="sealer-screen ${this.currentCup.sealed ? 'done' : 'ready'}">
-                  ${this.currentCup.sealed ? 'DONE' : 'READY'}
-                </div>
+              <span style="font-size: 8.5px; font-weight: 800; color: #7C5B49; margin-bottom: 2px;">MÁY DẬP</span>
+              <div class="sealer-screen ${this.currentCup.isSealing ? 'sealing' : ''}">
+                ${this.currentCup.isSealing ? 'DẬP NẮP' : 'TỰ ĐỘNG'}
               </div>
-              <button class="sealer-lever-btn" id="btnSealCup" title="Dập nắp ly">
-                <span>${this.currentCup.sealed ? '✅ Đã dập' : '🔴 Dập nắp'}</span>
-              </button>
+              <span style="font-size: 18px; margin-top: 2px;">🤖</span>
             </div>
           </div>
 
-          <!-- HÀNG DƯỚI: PHA LY (Bàn gỗ, Đá/Đường, Topping 12 ô) -->
-          <div class="counter-header-tag" style="margin-top: 6px;">PHA LY</div>
+          <!-- KỆ DƯỚI: PHA LY (Bàn gỗ, Đá/Đường, Topping Inox) -->
+          <span class="section-label-tag">PHA LY</span>
           <div class="lower-counter-grid">
-            <!-- Bàn gỗ đặt ly (Wooden board) -->
-            <div class="wooden-prep-board ${!this.currentCup.size ? 'need-cup' : ''}">
-              ${!this.currentCup.size ? `
-                <div class="board-empty-prompt">
-                  <span class="pointing-hand">👆</span>
-                  <b>Lấy ly<br>M hoặc L</b>
-                  <small>Chạm chồng ly</small>
-                </div>
-              ` : `
+            <!-- Bàn gỗ đặt ly -->
+            <div class="wooden-prep-board ${!this.currentCup.cup ? 'need-cup' : ''}">
+              ${this.currentCup.cup ? `
+                <button class="btn-trash-inline" id="btnDiscardCup" title="Đổ ly này">🗑 Đổ</button>
                 <div class="cup-on-board">
-                  <div class="cup-svg-wrapper size-${this.currentCup.size.toLowerCase()}">
+                  <div class="cup-svg-wrapper size-${this.currentCup.cup.toLowerCase()}">
                     ${this.renderCupSvg()}
                   </div>
-                  <div class="cup-size-badge-on-board">Ly Size ${this.currentCup.size}</div>
+                  <div class="cup-size-badge-on-board">Ly ${this.currentCup.cup}</div>
+                </div>
+              ` : `
+                <div class="board-empty-prompt">
+                  <span style="font-size: 18px; animation: bounce 0.8s infinite alternate;">👆</span>
+                  <b>Lấy ly<br>M hoặc L</b>
+                  <small>Bấm vào chồng ly</small>
                 </div>
               `}
             </div>
 
-            <!-- Khu giữa: Lắc Shaker + Đường & Đá -->
+            <!-- Khu Giữa: Mức Đường & Mức Đá -->
             <div class="middle-controls">
-              <div class="shaker-pill-row">
-                <button class="shaker-btn" id="btnShaker" title="Lắc Shaker">
-                  🥛 Lắc đều
-                </button>
-              </div>
-
               <div class="mini-control-group">
-                <small>Mức Đường</small>
+                <small>ĐỘ ĐƯỜNG</small>
                 <div class="pill-group mini">
                   ${SUGAR_LEVELS.map(s => `
-                    <button class="pill-btn ${this.currentCup.sugar === s ? 'active' : ''}" data-sugar="${s}">${s}</button>
+                    <button class="pill-btn ${this.currentCup.sugar === s ? 'active' : ''}" data-pick-sugar="${s}">${s}</button>
                   `).join('')}
                 </div>
               </div>
 
               <div class="mini-control-group">
-                <small>Mức Đá</small>
+                <small>ĐỘ ĐÁ</small>
                 <div class="pill-group mini">
                   ${ICE_LEVELS.map(ice => `
-                    <button class="pill-btn ${this.currentCup.ice === ice ? 'active' : ''}" data-ice="${ice}">${ice}</button>
+                    <button class="pill-btn ${this.currentCup.ice === ice ? 'active' : ''}" data-pick-ice="${ice}">${ice}</button>
                   `).join('')}
                 </div>
               </div>
             </div>
 
-            <!-- Khu phải: Khay Inox Topping (Topping Compartment Grid) -->
+            <!-- Khu Phải: Khay Topping Inox -->
             <div class="topping-compartment-grid">
               ${TOPPINGS.map(tp => {
                 const inCup = this.currentCup.toppings.includes(tp.id);
                 const qty = state.inventory[tp.id] || 0;
                 return `
-                  <button class="topping-tray-slot ${inCup ? 'in-cup' : ''}" data-topping="${tp.id}" title="${tp.name}">
+                  <button class="topping-tray-slot ${inCup ? 'in-cup' : ''}" data-pick-topping="${tp.id}" title="${tp.name}">
                     <span class="tray-qty">${qty}</span>
                     <span class="tray-icon">${tp.icon}</span>
                     <span class="tray-name">${tp.name}</span>
@@ -879,12 +1131,29 @@ class GameApp {
             </div>
           </div>
 
-          <!-- Nút hành động giao món & thùng rác -->
-          <div class="action-row">
-            <button class="btn-trash" id="btnTrash" title="Đổ ly làm lại">🗑️ Bỏ ly</button>
-            <button class="btn-serve ${this.currentCup.sealed ? 'ready' : ''}" id="btnServe">
-              <span>🥤</span> GIAO CHO KHÁCH
-            </button>
+          <!-- KHU SIRO TRÁI CÂY (Mục 64 - Dãy chai siro có vòi bơm ở phía dưới) -->
+          <div class="syrup-rack-section">
+            <span class="section-label-tag" style="background: #FFF3E0; border-color: #F6AD55;">KHU SIRO TRÁI CÂY</span>
+            <div class="syrup-bottles-row">
+              ${SYRUPS.map(s => {
+                const inCup = this.currentCup.syrup === s.id;
+                const qty = state.inventory[s.id] || 0;
+                return `
+                  <button class="syrup-bottle-btn ${inCup ? 'in-cup' : ''}" data-pick-syrup="${s.id}" title="${s.name}">
+                    <span class="syrup-qty">${qty}</span>
+                    <span class="syrup-pump">🧴</span>
+                    <span class="syrup-icon">${s.icon}</span>
+                    <span class="syrup-name">${s.name}</span>
+                  </button>
+                `;
+              }).join('')}
+            </div>
+          </div>
+
+          <!-- Hàng thông báo tự động hóa -->
+          <div class="auto-status-bar">
+            <span>✨ Đủ nguyên liệu máy sẽ TỰ ĐỘNG DẬP NẮP & GIAO MÓN!</span>
+            <span>🐢</span>
           </div>
         </div>
       </div>
@@ -894,173 +1163,171 @@ class GameApp {
   }
 
   renderCupSvg() {
-    if (!this.currentCup.size) return '';
+    if (!this.currentCup.cup) return '';
 
-    const isL = this.currentCup.size === 'L';
-    let liquidColor = '#F2E8DC'; // Trắng kem khi chưa rót trà
+    const isL = this.currentCup.cup === 'L';
+    let liquidColor = '#FDF5EC'; // màu ly trống
+
     if (this.currentCup.tea) {
       const teaObj = TEAS.find(t => t.id === this.currentCup.tea);
       if (teaObj) liquidColor = teaObj.liquid;
     }
+    // Nếu có siro thì pha màu siro
+    if (this.currentCup.syrup) {
+      const sObj = SYRUPS.find(s => s.id === this.currentCup.syrup);
+      if (sObj) liquidColor = sObj.color;
+    }
 
-    const hasIce = this.currentCup.ice !== 'Nóng' && this.currentCup.ice !== '0%';
-    const hasTopping = this.currentCup.toppings.length > 0;
+    const hasIce = this.currentCup.ice && this.currentCup.ice !== 'Không đá';
+    const hasTops = this.currentCup.toppings.length > 0;
 
     if (isL) {
-      // Ly Size L (700ml) cao hơn
       return `
-        <svg viewBox="0 0 70 96" width="100%" height="100%">
-          <!-- Thân ly Size L -->
-          <path d="M11 14 L17 88 Q18 92 23 92 L47 92 Q52 92 53 88 L59 14 Z" fill="url(#gCup)" stroke="#8A6348" stroke-width="2"/>
-          
-          <!-- Nước trà bên trong -->
-          ${this.currentCup.tea ? `
-            <path d="M13 22 L17 88 Q18 90 23 90 L47 90 Q52 90 53 88 L57 22 Z" fill="${liquidColor}"/>
+        <svg viewBox="0 0 70 94" width="100%" height="100%">
+          <path d="M11 12 L17 86 Q18 90 23 90 L47 90 Q52 90 53 86 L59 12 Z" fill="url(#gCup)" stroke="#7A4222" stroke-width="2"/>
+          ${this.currentCup.tea || this.currentCup.syrup ? `
+            <path d="M13 20 L17 86 Q18 88 23 88 L47 88 Q52 88 53 86 L57 20 Z" fill="${liquidColor}"/>
           ` : ''}
-
-          <!-- Viên đá -->
           ${hasIce ? `
-            <rect x="21" y="28" width="12" height="11" rx="2" fill="#FFF" fill-opacity="0.7" stroke="#FFF" stroke-width="1"/>
-            <rect x="37" y="34" width="12" height="11" rx="2" fill="#FFF" fill-opacity="0.7" stroke="#FFF" stroke-width="1"/>
-            <rect x="26" y="44" width="11" height="10" rx="2" fill="#FFF" fill-opacity="0.6" stroke="#FFF" stroke-width="1"/>
+            <rect x="22" y="26" width="11" height="10" rx="2" fill="#FFF" fill-opacity="0.75" stroke="#FFF" stroke-width="1"/>
+            <rect x="37" y="32" width="11" height="10" rx="2" fill="#FFF" fill-opacity="0.75" stroke="#FFF" stroke-width="1"/>
           ` : ''}
-
-          <!-- Topping dưới đáy ly -->
-          ${hasTopping ? `
-            <circle cx="24" cy="84" r="3.6" fill="#3D2214"/>
-            <circle cx="32" cy="86" r="3.6" fill="#3D2214"/>
-            <circle cx="40" cy="85" r="3.6" fill="#3D2214"/>
-            <circle cx="46" cy="82" r="3.4" fill="#3D2214"/>
-            <circle cx="27" cy="78" r="3.2" fill="#D4AF37"/>
-            <circle cx="37" cy="79" r="3.2" fill="#FFB6C1"/>
+          ${hasTops ? `
+            <circle cx="25" cy="82" r="3.5" fill="#3D2214"/>
+            <circle cx="33" cy="84" r="3.5" fill="#3D2214"/>
+            <circle cx="41" cy="83" r="3.5" fill="#3D2214"/>
+            <circle cx="28" cy="76" r="3.2" fill="#ECC94B"/>
+            <circle cx="38" cy="77" r="3.2" fill="#FFB6C1"/>
           ` : ''}
-
-          <!-- Màng nắp / Nắp ly -->
-          ${this.currentCup.sealed ? `
-            <rect x="7" y="10" width="56" height="5" rx="2.5" fill="#E86558" stroke="#3D2214" stroke-width="1"/>
-            <line x1="44" y1="0" x2="38" y2="86" stroke="#FA8072" stroke-width="4" stroke-linecap="round"/>
-          ` : `
-            <ellipse cx="35" cy="14" rx="24" ry="4" fill="none" stroke="#8A6348" stroke-width="2"/>
-          `}
+          <ellipse cx="35" cy="12" rx="24" ry="4" fill="none" stroke="#7A4222" stroke-width="2"/>
         </svg>
       `;
     }
 
-    // Ly Size M (500ml)
+    // Size M
     return `
-      <svg viewBox="0 0 70 82" width="100%" height="100%">
-        <!-- Thân ly Size M -->
-        <path d="M13 16 L18 74 Q19 78 24 78 L46 78 Q51 78 52 74 L57 16 Z" fill="url(#gCup)" stroke="#8A6348" stroke-width="2"/>
-        
-        <!-- Nước trà bên trong -->
-        ${this.currentCup.tea ? `
-          <path d="M15 24 L18 74 Q19 76 24 76 L46 76 Q51 76 52 74 L55 24 Z" fill="${liquidColor}"/>
+      <svg viewBox="0 0 70 80" width="100%" height="100%">
+        <path d="M13 14 L18 72 Q19 76 24 76 L46 76 Q51 76 52 72 L57 14 Z" fill="url(#gCup)" stroke="#7A4222" stroke-width="2"/>
+        ${this.currentCup.tea || this.currentCup.syrup ? `
+          <path d="M15 22 L18 72 Q19 74 24 74 L46 74 Q51 74 52 72 L55 22 Z" fill="${liquidColor}"/>
         ` : ''}
-
-        <!-- Viên đá -->
         ${hasIce ? `
-          <rect x="22" y="30" width="11" height="10" rx="2" fill="#FFF" fill-opacity="0.7" stroke="#FFF" stroke-width="1"/>
-          <rect x="36" y="34" width="11" height="10" rx="2" fill="#FFF" fill-opacity="0.7" stroke="#FFF" stroke-width="1"/>
+          <rect x="22" y="28" width="10" height="9" rx="2" fill="#FFF" fill-opacity="0.75" stroke="#FFF" stroke-width="1"/>
+          <rect x="36" y="32" width="10" height="9" rx="2" fill="#FFF" fill-opacity="0.75" stroke="#FFF" stroke-width="1"/>
         ` : ''}
-
-        <!-- Topping -->
-        ${hasTopping ? `
-          <circle cx="26" cy="70" r="3.5" fill="#3D2214"/>
-          <circle cx="34" cy="72" r="3.5" fill="#3D2214"/>
-          <circle cx="42" cy="71" r="3.5" fill="#3D2214"/>
-          <circle cx="29" cy="64" r="3.2" fill="#D4AF37"/>
-          <circle cx="39" cy="65" r="3.2" fill="#FFB6C1"/>
+        ${hasTops ? `
+          <circle cx="26" cy="68" r="3.5" fill="#3D2214"/>
+          <circle cx="34" cy="70" r="3.5" fill="#3D2214"/>
+          <circle cx="42" cy="69" r="3.5" fill="#3D2214"/>
+          <circle cx="29" cy="63" r="3.2" fill="#ECC94B"/>
+          <circle cx="39" cy="64" r="3.2" fill="#FFB6C1"/>
         ` : ''}
-
-        <!-- Nắp ly -->
-        ${this.currentCup.sealed ? `
-          <rect x="9" y="12" width="52" height="5" rx="2.5" fill="#E86558" stroke="#3D2214" stroke-width="1"/>
-          <line x1="43" y1="2" x2="38" y2="72" stroke="#FA8072" stroke-width="4" stroke-linecap="round"/>
-        ` : `
-          <ellipse cx="35" cy="16" rx="22" ry="4" fill="none" stroke="#8A6348" stroke-width="2"/>
-        `}
+        <ellipse cx="35" cy="14" rx="22" ry="4" fill="none" stroke="#7A4222" stroke-width="2"/>
       </svg>
     `;
   }
 
   attachSellEvents() {
-    // Chuyển khách hàng đang phục vụ
-    this.elView.querySelectorAll('.customer-seat').forEach(seat => {
-      seat.onclick = () => {
+    // 1. Chuyển đổi chọn order
+    this.elView.querySelectorAll('[data-order-idx]').forEach(card => {
+      card.onclick = () => {
         audio.click();
-        this.activeCustomerIdx = parseInt(seat.dataset.cidx, 10);
+        this.activeOrderIndex = parseInt(card.dataset.orderIdx, 10);
         this.render();
       };
     });
 
-    // Lấy ly Size M hoặc L
-    this.elView.querySelectorAll('[data-pick-size]').forEach(btn => {
+    // 2. Chọn Ly M hoặc L
+    this.elView.querySelectorAll('[data-pick-cup]').forEach(btn => {
       btn.onclick = () => {
-        const size = btn.dataset.pickSize;
-        const key = size === 'M' ? 'cupM' : 'cupL';
-        if ((state.inventory[key] || 0) <= 0) {
-          audio.trashFail();
-          this.showToast(`Hết ly Size ${size}! Hãy nhập thêm trong kho.`);
+        const size = btn.dataset.pickCup;
+        const invKey = 'cup' + size;
+        if ((state.inventory[invKey] || 0) <= 0) {
+          audio.trash();
+          this.showToast(`Hết Ly ${size}! Hãy nhập thêm trong kho.`);
           return;
         }
         audio.click();
-        this.currentCup.size = size;
-        this.showToast(`Đã lấy Ly Size ${size} đặt lên bàn!`);
+        this.currentCup.cup = size;
+        this.checkAndTriggerAutoSeal();
         this.render();
       };
     });
 
-    // Chọn Cốt trà
-    this.elView.querySelectorAll('[data-tea]').forEach(btn => {
+    // 3. Chọn Cốt Trà / Sữa
+    this.elView.querySelectorAll('[data-pick-tea]').forEach(btn => {
       btn.onclick = () => {
-        if (!this.currentCup.size) {
-          audio.trashFail();
+        if (!this.currentCup.cup) {
+          audio.trash();
           this.showToast('Hãy lấy ly (M hoặc L) trước khi rót trà!');
           return;
         }
-        const teaId = btn.dataset.tea;
-        if ((state.inventory[teaId] || 0) <= 0) {
-          audio.trashFail();
-          this.showToast('Hết cốt trà này! Hãy nhập thêm ở đầu ngày.');
+        const tid = btn.dataset.pickTea;
+        if ((state.inventory[tid] || 0) <= 0) {
+          audio.trash();
+          this.showToast('Hết loại cốt trà này trong kho!');
           return;
         }
         audio.pour();
-        this.currentCup.tea = teaId;
-        this.checkAutoSealer();
+        this.currentCup.tea = tid;
+        this.checkAndTriggerAutoSeal();
         this.render();
       };
     });
 
-    // Chọn Đường
-    this.elView.querySelectorAll('[data-sugar]').forEach(btn => {
+    // 4. Chọn Đường
+    this.elView.querySelectorAll('[data-pick-sugar]').forEach(btn => {
       btn.onclick = () => {
         audio.click();
-        this.currentCup.sugar = btn.dataset.sugar;
+        this.currentCup.sugar = btn.dataset.pickSugar;
+        this.checkAndTriggerAutoSeal();
         this.render();
       };
     });
 
-    // Chọn Đá
-    this.elView.querySelectorAll('[data-ice]').forEach(btn => {
+    // 5. Chọn Đá
+    this.elView.querySelectorAll('[data-pick-ice]').forEach(btn => {
       btn.onclick = () => {
         audio.addIce();
-        this.currentCup.ice = btn.dataset.ice;
+        this.currentCup.ice = btn.dataset.pickIce;
+        this.checkAndTriggerAutoSeal();
         this.render();
       };
     });
 
-    // Thêm Topping
-    this.elView.querySelectorAll('.topping-tray-slot').forEach(btn => {
+    // 6. Chọn Siro (Khu Siro)
+    this.elView.querySelectorAll('[data-pick-syrup]').forEach(btn => {
       btn.onclick = () => {
-        if (!this.currentCup.size) {
-          audio.trashFail();
-          this.showToast('Hãy lấy ly (M hoặc L) trước khi thêm topping!');
+        if (!this.currentCup.cup) {
+          audio.trash();
+          this.showToast('Hãy lấy ly trước khi bơm siro!');
           return;
         }
-        const tid = btn.dataset.topping;
+        const sid = btn.dataset.pickSyrup;
+        if ((state.inventory[sid] || 0) <= 0) {
+          audio.trash();
+          this.showToast('Chai siro này đã hết!');
+          return;
+        }
+        audio.addSyrup();
+        this.currentCup.syrup = sid;
+        this.checkAndTriggerAutoSeal();
+        this.render();
+      };
+    });
+
+    // 7. Chọn Topping
+    this.elView.querySelectorAll('[data-pick-topping]').forEach(btn => {
+      btn.onclick = () => {
+        if (!this.currentCup.cup) {
+          audio.trash();
+          this.showToast('Hãy lấy ly trước khi thêm topping!');
+          return;
+        }
+        const tid = btn.dataset.pickTopping;
         if ((state.inventory[tid] || 0) <= 0) {
-          audio.trashFail();
-          this.showToast('Hết loại topping này!');
+          audio.trash();
+          this.showToast('Hết topping này trong kho!');
           return;
         }
 
@@ -1071,192 +1338,132 @@ class GameApp {
         } else {
           this.currentCup.toppings.splice(idx, 1);
         }
-        this.checkAutoSealer();
+        this.checkAndTriggerAutoSeal();
         this.render();
       };
     });
 
-    // Lắc shaker
-    const btnShaker = document.getElementById('btnShaker');
-    if (btnShaker) {
-      btnShaker.onclick = () => {
-        audio.shake();
-        btnShaker.classList.add('shaking');
-        setTimeout(() => btnShaker.classList.remove('shaking'), 350);
-        this.showToast('Đã lắc đều ly trà!');
-      };
-    }
-
-    // Dập nắp ly thủ công
-    const btnSeal = document.getElementById('btnSealCup');
-    if (btnSeal) {
-      btnSeal.onclick = () => {
-        if (!this.currentCup.size) {
-          this.showToast('Chưa lấy ly!');
-          return;
-        }
-        if (!this.currentCup.tea) {
-          this.showToast('Ly chưa có trà!');
-          return;
-        }
-        audio.sealPop();
-        this.currentCup.sealed = true;
-        this.showToast('Đã dập nắp ly thành công!');
-        this.render();
-      };
-    }
-
-    // Thùng rác (Hủy ly)
-    const btnTrash = document.getElementById('btnTrash');
+    // 8. Nút Đổ Ly với Hộp thoại xác nhận (Mục 22, 102, 103)
+    const btnTrash = document.getElementById('btnDiscardCup');
     if (btnTrash) {
       btnTrash.onclick = () => {
-        audio.trashFail();
-        this.resetCup();
-        this.showToast('Đã bỏ ly làm lại!');
-        this.render();
-      };
-    }
-
-    // Giao món
-    const btnServe = document.getElementById('btnServe');
-    if (btnServe) {
-      btnServe.onclick = () => this.handleServeCup();
-    }
-
-    // Lau sàn khi có nước đổ
-    const btnClean = document.getElementById('btnCleanSpill');
-    if (btnClean) {
-      btnClean.onclick = () => {
         audio.click();
-        this.spillClicks += 1;
-        if (this.spillClicks >= 3) {
-          audio.serveSuccess();
-          this.spillActive = false;
-          this.showToast('Đã lau sạch quầy!');
-        }
-        this.render();
+        this.openModal(`
+          <h2>🗑 ĐỔ LY NÀY?</h2>
+          <p style="color: #7C5B49; margin: 8px 0 16px;">
+            Bạn có chắc muốn đổ ly này không? Các nguyên liệu đã dùng sẽ bị mất!
+          </p>
+          <div class="modal-btns">
+            <button class="btn-modal-cancel" id="btnCancelDiscard">HỦY</button>
+            <button class="btn-modal-confirm" id="btnConfirmDiscard">ĐỔ LY</button>
+          </div>
+        `);
+
+        document.getElementById('btnCancelDiscard').onclick = () => this.closeModal();
+        document.getElementById('btnConfirmDiscard').onclick = () => {
+          this.closeModal();
+          audio.trash();
+          this.resetCup();
+          this.showToast('Đã đổ ly làm lại!');
+          this.render();
+        };
       };
     }
   }
 
-  checkAutoSealer() {
-    if (state.upgrades.autoSealer && this.currentCup.size && this.currentCup.tea && this.currentCup.toppings.length > 0) {
-      this.currentCup.sealed = true;
+  // ================= 4.3. CƠ CHẾ TỰ ĐỘNG DẬP NẮP & TỰ ĐỘNG GIAO MÓN (MỤC 51 - 54) =================
+  checkAndTriggerAutoSeal() {
+    const ord = this.orders[this.activeOrderIndex];
+    if (!ord || this.currentCup.isSealing || this.currentCup.isDelivering) return;
+
+    // Kiểm tra đã đủ toàn bộ thành phần theo order chưa
+    const isCupMatch = this.currentCup.cup === ord.recipe.cup;
+    const isTeaMatch = this.currentCup.tea === ord.recipe.tea;
+    const isSugarMatch = this.currentCup.sugar === ord.recipe.sugar;
+    const isIceMatch = this.currentCup.ice === ord.recipe.ice;
+    const isSyrupMatch = !ord.recipe.syrup || this.currentCup.syrup === ord.recipe.syrup;
+    const isToppingsMatch = ord.recipe.toppings.every(t => this.currentCup.toppings.includes(t)) &&
+                            this.currentCup.toppings.length === ord.recipe.toppings.length;
+
+    if (isCupMatch && isTeaMatch && isSugarMatch && isIceMatch && isSyrupMatch && isToppingsMatch) {
+      // ĐỦ CÔNG THỨC -> KÍCH HOẠT MÁY ĐÓNG NẮP TỰ ĐỘNG
+      this.currentCup.isSealing = true;
+      audio.autoSeal();
+      this.showToast('✨ Đủ nguyên liệu! Máy tự động đóng nắp...');
+
+      const sealDuration = state.upgrades.fastSealer ? 280 : 500;
+
+      setTimeout(() => {
+        // TỰ ĐỘNG GIAO MÓN CHO KHÁCH
+        this.currentCup.isSealing = false;
+        this.currentCup.isDelivering = true;
+        this.executeAutoDelivery(ord);
+      }, sealDuration);
     }
   }
 
-  handleServeCup() {
-    const cust = this.customers[this.activeCustomerIdx];
-    if (!cust) return;
+  executeAutoDelivery(ord) {
+    audio.serveSuccess();
 
-    if (!this.currentCup.size) {
-      audio.trashFail();
-      this.showToast('Chưa lấy ly (Size M hoặc Size L)!');
-      return;
-    }
-
-    if (!this.currentCup.tea) {
-      audio.trashFail();
-      this.showToast('Chưa rót trà vào ly!');
-      return;
-    }
-
-    if (!this.currentCup.sealed) {
-      audio.trashFail();
-      this.showToast('Chưa dập nắp ly nước!');
-      return;
-    }
-
-    // Trừ ly trong kho
-    if (this.currentCup.size === 'M') {
-      if (state.inventory.cupM > 0) state.inventory.cupM -= 1;
-    } else {
-      if (state.inventory.cupL > 0) state.inventory.cupL -= 1;
-    }
-
-    // Trừ nguyên liệu kho
+    // Trừ kho hàng
+    if (state.inventory['cup' + this.currentCup.cup] > 0) state.inventory['cup' + this.currentCup.cup] -= 1;
     if (state.inventory[this.currentCup.tea] > 0) state.inventory[this.currentCup.tea] -= 1;
+    if (this.currentCup.syrup && state.inventory[this.currentCup.syrup] > 0) state.inventory[this.currentCup.syrup] -= 1;
     this.currentCup.toppings.forEach(tid => {
       if (state.inventory[tid] > 0) state.inventory[tid] -= 1;
     });
 
-    // So khớp đơn hàng
-    let isCorrectSize = this.currentCup.size === cust.order.size;
-    let isCorrectTea = this.currentCup.tea === cust.order.teaId;
-    let isCorrectSugar = this.currentCup.sugar === cust.order.sugar;
-    let isCorrectIce = this.currentCup.ice === cust.order.ice;
-    
-    // So khớp topping
-    let isCorrectToppings = cust.order.toppings.every(t => this.currentCup.toppings.includes(t)) &&
-                           this.currentCup.toppings.length === cust.order.toppings.length;
-
-    const teaObj = TEAS.find(t => t.id === cust.order.teaId);
-    const basePrice = teaObj ? teaObj.price : 20000;
-    const toppingTotal = cust.order.toppings.reduce((sum, tid) => {
-      const topObj = TOPPINGS.find(tp => tp.id === tid);
+    // Tính tiền
+    const teaObj = TEAS.find(t => t.id === ord.recipe.tea);
+    const baseP = teaObj ? teaObj.price : 20000;
+    const sizeP = ord.recipe.cup === 'L' ? 8000 : 0;
+    const syrupP = ord.recipe.syrup ? 5000 : 0;
+    const topP = ord.recipe.toppings.reduce((sum, tid) => {
+      const topObj = TOPPINGS.find(t => t.id === tid);
       return sum + (topObj ? topObj.price : 5000);
     }, 0);
 
-    const sizeMultiplier = cust.order.size === 'L' ? 1.35 : 1.0;
-    const fullPrice = Math.round((basePrice + toppingTotal) * sizeMultiplier);
+    const fullPrice = baseP + sizeP + syrupP + topP;
+    const tipMod = state.upgrades.turtleCharm ? 0.25 : 0.15;
+    const tip = Math.round(fullPrice * tipMod);
+    const totalEarned = fullPrice + tip;
 
-    if (isCorrectSize && isCorrectTea && isCorrectSugar && isCorrectIce && isCorrectToppings) {
-      // Đúng món hoàn hảo 100%!
-      audio.serveSuccess();
-      const tip = state.upgrades.lofiSpeaker ? Math.round(fullPrice * 0.25) : Math.round(fullPrice * 0.15);
-      const earned = fullPrice + tip;
+    state.money += totalEarned;
+    state.rating = Math.min(5.0, state.rating + 0.05);
+    state.addExp(25);
 
-      state.money += earned;
-      state.rating = Math.min(5.0, state.rating + 0.05);
-      state.addExp(25);
+    this.dailyReport.served += 1;
+    this.dailyReport.revenue += totalEarned;
+    this.dailyReport.tips += tip;
 
-      this.dailyReport.served += 1;
-      this.dailyReport.revenue += earned;
-      this.dailyReport.tips += tip;
+    // Hiệu ứng bay tiền & chén ly
+    this.showToast(`+${totalEarned.toLocaleString()}đ 💰 ⭐ KHÁCH HÀI LÒNG!`);
 
-      this.showToast(`Xuất sắc! +${earned.toLocaleString('vi-VN')}đ (Tip: ${tip.toLocaleString('vi-VN')}đ)`);
-    } else if (isCorrectTea) {
-      // Đúng trà nhưng lệch size/đường/đá
-      audio.click();
-      let earned = Math.round(fullPrice * 0.85);
-      if (!isCorrectSize) earned = Math.round(fullPrice * 0.7);
-      state.money += earned;
-      state.addExp(12);
-
-      this.dailyReport.served += 1;
-      this.dailyReport.revenue += earned;
-
-      const note = !isCorrectSize ? `Khách gọi Size ${cust.order.size} mà đưa Size ${this.currentCup.size}` : 'Hơi lệch vị đường/đá';
-      this.showToast(`${note}: +${earned.toLocaleString('vi-VN')}đ`);
-    } else {
-      // Pha nhầm hẳn loại trà
-      audio.trashFail();
-      const penaltyPrice = Math.round(fullPrice * 0.5);
-      state.money += penaltyPrice;
-      state.rating = Math.max(1.0, state.rating - 0.1);
-      this.dailyReport.mistakes += 1;
-      this.dailyReport.revenue += penaltyPrice;
-      this.showToast(`Khách phàn nàn sai loại trà! Chỉ trả ${penaltyPrice.toLocaleString('vi-VN')}đ`);
-    }
-
-    // Xóa khách vừa phục vụ và sinh khách mới
-    this.customers.splice(this.activeCustomerIdx, 1);
-    this.activeCustomerIdx = 0;
+    // Xóa order đã phục vụ và sinh order mới
+    this.orders.splice(this.activeOrderIndex, 1);
+    this.activeOrderIndex = 0;
     this.resetCup();
-    this.generateCustomer();
+    this.generateOrder();
     this.render();
   }
 
-  // ================= 4.3. KẾT THÚC NGÀY BÁN HÀNG =================
+  // ================= 4.4. KẾT THÚC NGÀY BÁN HÀNG =================
   endSellPhase() {
     clearInterval(this.sellTimer);
+    clearInterval(this.staffTimer);
     audio.bell();
 
-    const rentCost = 50000; // Tiền mặt bằng ngày
-    const netProfit = this.dailyReport.revenue - rentCost;
-    state.money -= rentCost;
+    const rentCost = 45000;
+    // Tính lương nhân viên
+    let staffSalaries = 0;
+    if (state.staff.minhTea?.hired) staffSalaries += STAFF_LIST[0].salary;
+    if (state.staff.linhHelper?.hired) staffSalaries += STAFF_LIST[1].salary;
+    if (state.staff.vyOnline?.hired) staffSalaries += STAFF_LIST[2].salary;
 
-    // Lưu vào lịch sử
+    const totalExpense = rentCost + staffSalaries;
+    const netProfit = this.dailyReport.revenue - totalExpense;
+    state.money -= totalExpense;
+
     state.history.push({
       day: state.day,
       served: this.dailyReport.served,
@@ -1264,74 +1471,63 @@ class GameApp {
       profit: netProfit
     });
 
-    // Thêm review mới ngẫu nhiên
-    if (this.dailyReport.served > 0) {
-      const sample = this.dailyReport.mistakes === 0 ? SAMPLE_REVIEWS_POS : SAMPLE_REVIEWS_NEG;
-      const comment = sample[Math.floor(Math.random() * sample.length)];
-      const stars = this.dailyReport.mistakes === 0 ? 5 : 3;
-      state.reviews.unshift({
-        name: CUSTOMER_NAMES[Math.floor(Math.random() * CUSTOMER_NAMES.length)],
-        stars,
-        comment
-      });
-      if (state.reviews.length > 10) state.reviews.pop();
-    }
+    // Đánh giá mới từ khách
+    const posReviews = [
+      "Trà sữa ngọt béo vừa vặn, giao nhanh như chớp!",
+      "Rùa pha chuẩn vị, trân châu mềm dẻo 10 điểm!",
+      "Máy dập nắp xịn xò, nước không bị tràn ra ngoài."
+    ];
+    state.reviews.unshift({
+      name: CUSTOMER_NAMES[Math.floor(Math.random() * CUSTOMER_NAMES.length)],
+      stars: 5,
+      comment: posReviews[Math.floor(Math.random() * posReviews.length)]
+    });
+    if (state.reviews.length > 8) state.reviews.pop();
 
-    // Modal tổng kết ngày
-    const reportHtml = `
-      <h2>🌙 Đóng Cửa Ngày ${state.day}</h2>
-      <p style="color: #7C5B49; margin-top: 0;">Một ngày làm việc vất vả nhưng bội thu!</p>
-      
-      <div style="background: #FDF4E7; border-radius: 12px; padding: 12px; text-align: left; font-size: 13.5px; margin: 12px 0;">
-        <div style="display: flex; justify-content: space-between; padding: 4px 0;">
+    this.openModal(`
+      <h2>🌙 ĐÓNG CỬA NGÀY ${state.day}</h2>
+      <p style="color: #7C5B49; margin-top: 0;">Một ngày kinh doanh tràn ngập niềm vui!</p>
+
+      <div style="background: #FDF4E7; border-radius: 12px; padding: 10px 12px; text-align: left; font-size: 13px; margin: 10px 0;">
+        <div style="display: flex; justify-content: space-between; padding: 3px 0;">
           <span>Ly đã phục vụ:</span> <b>${this.dailyReport.served} ly</b>
         </div>
-        <div style="display: flex; justify-content: space-between; padding: 4px 0;">
-          <span>Ly pha hỏng / sai:</span> <b style="color: #E53E3E;">${this.dailyReport.mistakes} ly</b>
+        <div style="display: flex; justify-content: space-between; padding: 3px 0;">
+          <span>Doanh thu:</span> <b style="color: #38A169;">+${this.dailyReport.revenue.toLocaleString()}đ</b>
         </div>
-        <div style="display: flex; justify-content: space-between; padding: 4px 0;">
-          <span>Tổng doanh thu:</span> <b style="color: #48BB78;">+${this.dailyReport.revenue.toLocaleString('vi-VN')}đ</b>
+        <div style="display: flex; justify-content: space-between; padding: 3px 0;">
+          <span>Mặt bằng tiệm:</span> <b style="color: #E53E3E;">-${rentCost.toLocaleString()}đ</b>
         </div>
-        <div style="display: flex; justify-content: space-between; padding: 4px 0;">
-          <span>Tiền mặt bằng cố định:</span> <b style="color: #E53E3E;">-${rentCost.toLocaleString('vi-VN')}đ</b>
-        </div>
-        <hr style="border: 0; border-top: 1px dashed #EAD2BC; margin: 8px 0;">
-        <div style="display: flex; justify-content: space-between; padding: 4px 0; font-size: 15px;">
-          <span>Lợi nhuận ròng:</span> <b>${netProfit >= 0 ? '+' : ''}${netProfit.toLocaleString('vi-VN')}đ</b>
+        ${staffSalaries > 0 ? `
+          <div style="display: flex; justify-content: space-between; padding: 3px 0;">
+            <span>Lương nhân viên:</span> <b style="color: #E53E3E;">-${staffSalaries.toLocaleString()}đ</b>
+          </div>
+        ` : ''}
+        <hr style="border: 0; border-top: 1px dashed #EAD2BC; margin: 6px 0;">
+        <div style="display: flex; justify-content: space-between; padding: 3px 0; font-size: 14.5px;">
+          <span>Lợi nhuận ròng:</span> <b>${netProfit >= 0 ? '+' : ''}${netProfit.toLocaleString()}đ</b>
         </div>
       </div>
 
-      <button id="btnNextDay" style="
-        width: 100%;
-        padding: 12px;
-        background: #48BB78;
-        color: #FFF;
-        font-family: 'Paytone One', sans-serif;
-        font-size: 16px;
-        border-radius: 12px;
-        box-shadow: 0 4px 0 #2F855A;
-      ">TIẾP TỤC SANG NGÀY ${state.day + 1} ➔</button>
-    `;
+      <button id="btnNextDay" class="btn-modal-primary" style="width: 100%; padding: 12px; font-size: 15px; border-radius: 12px;">
+        TIẾP TỤC SANG NGÀY ${state.day + 1} ➔
+      </button>
+    `);
 
-    this.openModal(reportHtml);
-
-    const btnNext = document.getElementById('btnNextDay');
-    if (btnNext) {
-      btnNext.onclick = () => {
-        state.day += 1;
-        state.save();
-        this.closeModal();
-        this.viewMode = 'prep';
-        this.render();
-      };
-    }
+    document.getElementById('btnNextDay').onclick = () => {
+      state.day += 1;
+      state.save();
+      this.closeModal();
+      this.viewMode = 'prep';
+      this.render();
+    };
 
     state.save();
     this.renderTopBar();
   }
 }
 
-// Khởi chạy game khi tải xong tài liệu
+// Khởi chạy game khi DOM sẵn sàng
 window.addEventListener('DOMContentLoaded', () => {
   window.gameApp = new GameApp();
 });
