@@ -411,20 +411,24 @@ button:active {
 /* ================= 6. HÀNG 1: QUẦY TRÀ (9 BÌNH TRÀ + MÁY ĐÓNG NẮP) ================= */
 .shelf-teas-row {
   flex: none;
-  height: 94px;
+  height: 98px;
 }
 
 .teas-shelf-flex {
   display: flex;
-  gap: 5px;
+  gap: 4px;
   align-items: stretch;
   height: calc(100% - 16px);
+  width: 100%;
 }
 
 .dispensers-scroll-grid {
   flex: 1;
+  min-width: 0;
   display: flex;
-  gap: 3px;
+  gap: 2px;
+  align-items: stretch;
+  justify-content: space-between;
   overflow-x: auto;
   overflow-y: hidden;
   padding-bottom: 2px;
@@ -433,23 +437,28 @@ button:active {
 .dispensers-scroll-grid::-webkit-scrollbar { display: none; }
 
 .dispenser-col-btn {
-  width: 48px;
-  flex: none;
+  flex: 1 1 0;
+  min-width: 38px;
+  max-width: 45px;
   height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   position: relative;
+  transition: transform 0.15s ease;
+}
+.dispenser-col-btn:hover {
+  transform: translateY(-2px);
 }
 
 .dispenser-col-btn.selected .vivid-svg {
-  filter: drop-shadow(0 0 5px #22C55E);
+  filter: drop-shadow(0 0 6px #22C55E);
   transform: translateY(-2px);
 }
 
 /* MÁY ĐÓNG NẮP RETRO */
 .sealer-retro-box {
-  width: 78px;
+  width: 62px;
   flex: none;
   height: 100%;
   background: #FFF;
@@ -460,6 +469,10 @@ button:active {
   justify-content: center;
   position: relative;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  transition: transform 0.15s ease;
+}
+.sealer-retro-box:hover {
+  transform: translateY(-1px);
 }
 
 .sealer-btn-touch {
@@ -491,37 +504,37 @@ button:active {
   box-shadow: inset 0 1px 2px #FFF, 0 2px 4px rgba(61, 34, 20, 0.08);
 }
 
-/* Hàng chọn cốc M & L */
+/* Hàng cọc ly xếp chồng M & L */
 .cups-select-row {
   display: flex;
-  gap: 4px;
+  gap: 5px;
   margin-bottom: 4px;
 }
 
-.cup-item-pill {
+.cup-stack-btn {
   flex: 1;
-  height: 38px;
-  background: #FFF;
+  height: 52px;
+  background: #FFFDF9;
   border: 1.5px solid var(--wood-border);
   border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
-  gap: 4px;
-  padding: 2px;
+  padding: 1px;
+  box-shadow: 0 1px 3px rgba(61, 34, 20, 0.08);
+  transition: transform 0.15s ease, border-color 0.15s ease;
 }
 
-.cup-item-pill.active {
+.cup-stack-btn:hover {
+  transform: translateY(-2px);
+}
+
+.cup-stack-btn.active {
   border-color: var(--status-green);
   background: #F0FDF4;
-  box-shadow: 0 0 0 1.5px var(--status-green);
-}
-
-.cup-name-label {
-  font-family: var(--font-display);
-  font-size: 10px;
-  color: var(--wood-dark);
+  box-shadow: 0 0 0 1.8px var(--status-green), 0 3px 6px rgba(34, 197, 94, 0.25);
+  transform: translateY(-2px);
 }
 
 .qty-tag {
@@ -537,19 +550,19 @@ button:active {
   z-index: 5;
 }
 
-/* THỚT GỖ ĐẶT LY TO SỐNG ĐỘNG */
+/* THỚT GỖ TỰ NHIÊN ĐẶT LY (CHUẨN ẢNH 2) */
 .cutting-board-mat {
   flex: 1;
-  min-height: 135px;
-  background: #EED8BD;
-  border: 2px dashed #C89968;
-  border-radius: 10px;
+  min-height: 125px;
+  background: linear-gradient(135deg, #F5E1C4 0%, #E7C99F 50%, #DBB788 100%);
+  border: 2px solid #A87140;
+  border-radius: 12px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   position: relative;
-  box-shadow: inset 0 2px 5px rgba(0,0,0,0.06);
+  box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.7), inset 0 -2px 4px rgba(92, 45, 16, 0.18), 0 3px 6px rgba(61, 34, 20, 0.12);
   padding: 4px;
 }
 
@@ -559,14 +572,19 @@ button:active {
   align-items: center;
   justify-content: center;
   text-align: center;
-  color: #9A6740;
-  gap: 4px;
+  color: #8C5429;
+  gap: 3px;
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.35);
+  border: 1.5px dashed #A87140;
+  border-radius: 8px;
+  width: 90%;
 }
 
 .ghost-text {
   font-size: 10px;
-  font-weight: 800;
-  color: #8C5429;
+  font-weight: 900;
+  color: #6C3814;
 }
 
 .live-workbench-cup-svg {
@@ -670,7 +688,7 @@ button:active {
   100% { box-shadow: 0 0 12px rgba(34, 197, 94, 0.9), 0 2px 0 #15803D; }
 }
 
-/* CỘT PHẢI: KHAY TOPPING & ĐÁ / ĐƯỜNG */
+/* CỘT PHẢI: KHAY TOPPING INOX BUFFET (CHUẨN ẢNH 2) */
 .toppings-station-col {
   flex: 1;
   min-width: 0;
@@ -682,31 +700,53 @@ button:active {
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  padding-right: 1px;
+  padding-right: 3px;
+  scrollbar-width: thin;
+  scrollbar-color: #D5A77A transparent;
+}
+.toppings-scroll-area::-webkit-scrollbar {
+  width: 4px;
+}
+.toppings-scroll-area::-webkit-scrollbar-track {
+  background: transparent;
+}
+.toppings-scroll-area::-webkit-scrollbar-thumb {
+  background: #D5A77A;
+  border-radius: 4px;
 }
 
 .toppings-grid-matrix {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 3.5px;
+  padding-bottom: 3px;
 }
 
 .topping-tray-btn {
   display: flex;
   flex-direction: column;
   position: relative;
-  height: 57px;
+  height: 61px;
+  border-radius: 8px;
+  transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.topping-tray-btn:hover {
+  transform: translateY(-2px);
+}
+
+.topping-tray-btn.in-cup {
+  transform: translateY(-2px);
 }
 
 .topping-tray-btn.in-cup .vivid-svg {
-  filter: drop-shadow(0 0 4px #22C55E);
-  transform: scale(1.05);
+  filter: drop-shadow(0 0 6px #22C55E);
 }
 
-/* ================= 8. HÀNG 3: KỆ SIRO (BOTTOM SHELF) ================= */
+/* ================= 8. HÀNG 3: KỆ SIRO TORANI/MONIN (BOTTOM SHELF) ================= */
 .shelf-syrups-row {
   flex: none;
-  height: 94px;
+  height: 98px;
 }
 
 .syrups-scroll-grid {
@@ -728,11 +768,16 @@ button:active {
   flex-direction: column;
   align-items: center;
   position: relative;
+  transition: transform 0.15s ease;
+}
+
+.syrup-bottle-btn:hover {
+  transform: translateY(-2px);
 }
 
 .syrup-bottle-btn.in-cup .vivid-svg {
-  filter: drop-shadow(0 0 4px #22C55E);
-  transform: scale(1.04);
+  filter: drop-shadow(0 0 6px #22C55E);
+  transform: translateY(-2px);
 }
 
 /* ================= 9. CÁC HIỆU ỨNG CỬ ĐỘNG CỰC KỲ SINH ĐỘNG (ANIMATIONS) ================= */

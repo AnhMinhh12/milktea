@@ -350,238 +350,713 @@ function renderCustomerAvatarSvg(avatarType) {
   `;
 }
 
-// 1. Bình trà thuỷ tinh nắp bạc và vòi rót
+// ================= 4. BỘ ĐỒ HOẠ SVG CHIBI VÀ CHI TIẾT GAME (CHUẨN ANIME COZY CAFE ẢNH 2) =================
+
+// 0. Cọc ly giấy/nhựa xếp chồng (Takeaway Cup Stacks - Ly M & Ly L)
+function renderCupStackSvg(size, qty, isActive) {
+  const isL = size === 'L';
+  const label = size;
+  const rimSteps = isL ? [14, 19, 24, 29, 34, 39, 44, 49] : [20, 26, 32, 38, 44, 50];
+  const topY = isL ? 12 : 18;
+  const bottomY = 88;
+
+  return `
+    <svg viewBox="0 0 65 95" width="100%" height="100%" class="vivid-svg ${isActive ? 'cup-stack-active' : ''}">
+      <defs>
+        <linearGradient id="cupStackGrad_${size}" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#FFFFFF"/>
+          <stop offset="30%" stop-color="#F8FAFC"/>
+          <stop offset="75%" stop-color="#E2E8F0"/>
+          <stop offset="100%" stop-color="#CBD5E1"/>
+        </linearGradient>
+        <linearGradient id="cupRimGrad_${size}" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#FFFFFF"/>
+          <stop offset="50%" stop-color="#F1F5F9"/>
+          <stop offset="100%" stop-color="#94A3B8"/>
+        </linearGradient>
+      </defs>
+
+      <!-- Bóng đổ dưới đế cọc ly -->
+      <ellipse cx="32.5" cy="91" rx="20" ry="3.5" fill="rgba(61, 34, 20, 0.22)"/>
+
+      <!-- Thân cọc ly giấy xếp chồng -->
+      <path d="M14 ${topY} L19 ${bottomY - 4} Q20 ${bottomY} 32.5 ${bottomY} Q45 ${bottomY} 46 ${bottomY - 4} L51 ${topY} Z" 
+            fill="url(#cupStackGrad_${size})" stroke="#3A2012" stroke-width="1.8" stroke-linejoin="round"/>
+
+      <!-- Các gờ vành ly xếp lồng nhau -->
+      ${rimSteps.map(y => `
+        <ellipse cx="32.5" cy="${y}" rx="${17 + (y - 12) * 0.05}" ry="3.2" fill="url(#cupRimGrad_${size})" stroke="#3A2012" stroke-width="1.3"/>
+        <line x1="${16 + (y - 12) * 0.05}" y1="${y}" x2="${49 - (y - 12) * 0.05}" y2="${y}" stroke="rgba(255,255,255,0.85)" stroke-width="1"/>
+      `).join('')}
+
+      <!-- Vành mép ly ngoài cùng ở thân dưới -->
+      <ellipse cx="32.5" cy="56" rx="16" ry="3.2" fill="url(#cupRimGrad_${size})" stroke="#3A2012" stroke-width="1.5"/>
+
+      <!-- Tem tròn in size M hoặc L phong cách cà phê retro -->
+      <circle cx="32.5" cy="72" r="9.5" fill="#FFFDF8" stroke="#3A2012" stroke-width="1.6"/>
+      <circle cx="32.5" cy="72" r="8" fill="${isActive ? '#DCFCE7' : '#F8FAFC'}" stroke="${isActive ? '#16A34A' : '#E2E8F0'}" stroke-width="0.8"/>
+      <text x="32.5" y="76.2" font-family="'Paytone One', 'Nunito', sans-serif" font-size="11.5" font-weight="900" fill="${isActive ? '#15803D' : '#3A2012'}" text-anchor="middle">${label}</text>
+
+      <!-- Huy hiệu số lượng tồn kho tròn ở trên (Chuẩn ảnh 2) -->
+      <circle cx="50" cy="11" r="8.5" fill="#FFFDF8" stroke="#3A2012" stroke-width="1.5"/>
+      <text x="50" y="14.2" font-family="'Nunito', sans-serif" font-size="8.5" font-weight="900" fill="#3A2012" text-anchor="middle">${qty}</text>
+    </svg>
+  `;
+}
+
+// 1. Bình trà thuỷ tinh nắp bạc và vòi rót kim loại (Chuẩn Ảnh 2)
 function renderDispenserSvg(t, isSelected, qty, isPouring = false) {
   return `
-    <svg viewBox="0 0 75 110" width="100%" height="100%" class="vivid-svg ${isPouring ? 'anim-pouring' : ''}">
+    <svg viewBox="0 0 68 105" width="100%" height="100%" class="vivid-svg ${isPouring ? 'anim-pouring' : ''}">
       <defs>
-        <linearGradient id="lid_${t.id}" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#FFFFFF"/>
-          <stop offset="30%" stop-color="#CBD5E1"/>
+        <!-- Nắp kim loại chrome sáng bóng -->
+        <linearGradient id="lid_${t.id}" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#E2E8F0"/>
+          <stop offset="25%" stop-color="#FFFFFF"/>
+          <stop offset="65%" stop-color="#CBD5E1"/>
           <stop offset="100%" stop-color="#64748B"/>
         </linearGradient>
-        <linearGradient id="tea_${t.id}" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stop-color="${t.liquid}" stop-opacity="0.95"/>
-          <stop offset="50%" stop-color="${t.liquid}"/>
-          <stop offset="100%" stop-color="${t.liquid}" stop-opacity="0.9"/>
+        
+        <!-- Màu nước trà sóng sánh đa tầng -->
+        <linearGradient id="teaGrad_${t.id}" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="${t.liquid}" stop-opacity="0.9"/>
+          <stop offset="35%" stop-color="${t.liquid}"/>
+          <stop offset="70%" stop-color="${t.liquid}" stop-opacity="0.95"/>
+          <stop offset="100%" stop-color="${t.liquid}" stop-opacity="0.85"/>
+        </linearGradient>
+
+        <linearGradient id="spigotGrad_${t.id}" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#94A3B8"/>
+          <stop offset="50%" stop-color="#E2E8F0"/>
+          <stop offset="100%" stop-color="#475569"/>
         </linearGradient>
       </defs>
-      
-      <!-- Nắp kim loại sáng loáng -->
-      <path d="M12 7 C12 2, 63 2, 63 7 L60 14 L15 14 Z" fill="url(#lid_${t.id})" stroke="#334155" stroke-width="1.6"/>
-      <ellipse cx="37.5" cy="4" rx="6" ry="2.5" fill="#E2E8F0" stroke="#334155" stroke-width="1.2"/>
 
-      <!-- Thân bình thuỷ tinh trong suốt -->
-      <rect x="8" y="13" width="59" height="78" rx="6" fill="rgba(255,255,255,0.4)" stroke="#94A3B8" stroke-width="2"/>
-      
-      <!-- Nước trà sóng sánh bên trong -->
-      <path d="M10.5 24 Q24 21 37.5 24 T64.5 24 L64.5 86 Q64.5 89 59 89 L16 89 Q10.5 89 10.5 86 Z" fill="url(#tea_${t.id})"/>
-      <path d="M11 25 Q24 23 37.5 25 T64 25" stroke="rgba(255,255,255,0.6)" stroke-width="1.5" fill="none"/>
+      <!-- Bóng đổ bình -->
+      <ellipse cx="34" cy="92" rx="22" ry="3.5" fill="rgba(61, 34, 20, 0.18)"/>
 
-      <!-- Vệt sáng phản quang -->
-      <path d="M13 16 L13 83" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" opacity="0.75"/>
-      
-      <!-- Biểu tượng hoa/trái cây -->
-      <text x="37.5" y="46" font-size="16" text-anchor="middle" filter="drop-shadow(0 2px 2px rgba(0,0,0,0.5))">${t.icon}</text>
+      <!-- Nắp vòm kim loại có núm tròn phía trên -->
+      <circle cx="34" cy="7" r="4" fill="url(#lid_${t.id})" stroke="#3A2012" stroke-width="1.3"/>
+      <circle cx="32.8" cy="5.8" r="1.2" fill="#FFF" opacity="0.9"/>
+      <path d="M14 17 C14 10, 54 10, 54 17 L51 22 L17 22 Z" fill="url(#lid_${t.id})" stroke="#3A2012" stroke-width="1.5" stroke-linejoin="round"/>
+      <line x1="18" y1="17" x2="50" y2="17" stroke="#FFF" stroke-width="1.2" opacity="0.8"/>
 
-      <!-- Nhãn chữ to đậm viền bo góc -->
-      <rect x="4" y="58" width="67" height="20" rx="3.5" fill="#FFFFFF" stroke="#3D2214" stroke-width="1.8"/>
-      <text x="37.5" y="72" font-family="'Paytone One', 'Nunito', sans-serif" font-size="8.8" font-weight="900" fill="#3D2214" text-anchor="middle">${t.name}</text>
+      <!-- Thân bình thuỷ tinh trong suốt dày dặn -->
+      <rect x="10" y="21" width="48" height="65" rx="6" fill="rgba(255, 255, 255, 0.55)" stroke="#3A2012" stroke-width="1.7"/>
 
-      <!-- Vòi rót kim loại đen ở đáy -->
-      <g class="spout-assembly ${isPouring ? 'spout-open' : ''}">
-        <path d="M31 91 L44 91 L41 100 L34 100 Z" fill="#1E293B" stroke="#0F172A" stroke-width="1.2"/>
-        <path d="M35 100 L40 100 L39 107 L36 107 Z" fill="#0F172A"/>
-        <circle cx="37.5" cy="95" r="2.5" fill="#64748B"/>
-        <path d="M37.5 95 L46 ${isPouring ? 101 : 93}" stroke="#EF4444" stroke-width="2" stroke-linecap="round"/>
+      <!-- Nước trà bên trong có mặt nước uốn lượn -->
+      <path d="M12 34 Q23 31 34 34 T56 34 L56 80 Q56 84 51 84 L17 84 Q12 84 12 80 Z" fill="url(#teaGrad_${t.id})"/>
+      <path d="M12.5 34.5 Q23 32 34 34.5 T55.5 34.5" stroke="rgba(255, 255, 255, 0.7)" stroke-width="1.5" fill="none"/>
+
+      <!-- Vệt phản quang ánh sáng thuỷ tinh hai bên -->
+      <path d="M14 25 L14 78" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" opacity="0.75"/>
+      <path d="M18 27 L18 40" stroke="#FFFFFF" stroke-width="1.2" stroke-linecap="round" opacity="0.5"/>
+
+      <!-- Nhãn giấy vintage cổ điển ở giữa bình (Chuẩn Ảnh 2) -->
+      <rect x="9" y="47" width="50" height="23" rx="3" fill="#FFFDF8" stroke="#3A2012" stroke-width="1.5"/>
+      <rect x="11" y="49" width="46" height="19" rx="1.8" fill="none" stroke="#D5B084" stroke-width="0.8"/>
+      <text x="34" y="62" font-family="'Paytone One', 'Nunito', sans-serif" font-size="8.2" font-weight="900" fill="#3A2012" text-anchor="middle" letter-spacing="0.01em">${t.name}</text>
+
+      <!-- Vòi rót kim loại inox / chrome ở đáy -->
+      <g class="spigot-assembly ${isPouring ? 'spout-open' : ''}">
+        <!-- Cổ nối vòi -->
+        <rect x="28" y="85" width="12" height="6" rx="1.5" fill="url(#spigotGrad_${t.id})" stroke="#3A2012" stroke-width="1.2"/>
+        <!-- Đầu vòi chúc xuống -->
+        <path d="M31 90 L37 90 L36 98 L32 98 Z" fill="#334155" stroke="#3A2012" stroke-width="1.2"/>
+        <!-- Núm xoay vòi kim loại -->
+        <circle cx="34" cy="88" r="2.5" fill="#E2E8F0" stroke="#3A2012" stroke-width="1"/>
+        <line x1="34" y1="88" x2="${isPouring ? 41 : 34}" y2="${isPouring ? 94 : 83}" stroke="#EF4444" stroke-width="2" stroke-linecap="round"/>
+        ${isPouring ? `
+          <!-- Dòng nước trà đang rót xuống -->
+          <path d="M34 98 L34 104" stroke="${t.liquid}" stroke-width="2.8" stroke-linecap="round"/>
+          <circle cx="34" cy="104" r="1.5" fill="${t.liquid}"/>
+        ` : ''}
       </g>
+
+      <!-- Huy hiệu số lượng tồn kho tròn ở góc phải trên (Chuẩn Ảnh 2) -->
+      <circle cx="54" cy="11" r="8" fill="#FFFDF8" stroke="#3A2012" stroke-width="1.4"/>
+      <text x="54" y="14" font-family="'Nunito', sans-serif" font-size="8" font-weight="900" fill="#3A2012" text-anchor="middle">${qty}</text>
     </svg>
   `;
 }
 
-// 2. Máy đóng nắp retro vintage với cuộn hoa xoay
+// 2. Máy dập nắp ly trà sữa Retro (Chuẩn Máy Dập Ảnh 2)
 function renderSealerMachineSvg(isSealing, isReady) {
   return `
-    <svg viewBox="0 0 110 130" width="100%" height="100%" class="vivid-svg ${isSealing ? 'anim-stamping' : ''}">
+    <svg viewBox="0 0 76 105" width="100%" height="100%" class="vivid-svg ${isSealing ? 'anim-stamping' : ''}">
       <defs>
-        <linearGradient id="sealerGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#FB923C"/>
-          <stop offset="100%" stop-color="#EA580C"/>
+        <linearGradient id="sealerBodyGrad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#F58748"/>
+          <stop offset="40%" stop-color="#E26A2C"/>
+          <stop offset="85%" stop-color="#C2410C"/>
+          <stop offset="100%" stop-color="#9A3412"/>
+        </linearGradient>
+        <linearGradient id="sealerPanelGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#FFFDF8"/>
+          <stop offset="100%" stop-color="#F3E8DB"/>
         </linearGradient>
       </defs>
-      
-      <!-- Cuộn màng hoa xoay tròn -->
+
+      <!-- Bóng máy dập -->
+      <ellipse cx="38" cy="100" rx="28" ry="3.5" fill="rgba(61, 34, 20, 0.22)"/>
+
+      <!-- Khung thân máy chính retro cam ấm -->
+      <path d="M9 25 C9 19, 67 19, 67 25 L64 96 L12 96 Z" fill="url(#sealerBodyGrad)" stroke="#3A2012" stroke-width="1.8" stroke-linejoin="round"/>
+
+      <!-- Mái vòm trong suốt hiển thị cuộn màng dập bên trong (Chuẩn Ảnh 2) -->
+      <rect x="16" y="7" width="44" height="22" rx="7" fill="#FEF3C7" stroke="#3A2012" stroke-width="1.5"/>
       <g class="film-roll ${isSealing ? 'anim-spin' : ''}">
-        <circle cx="25" cy="18" r="13" fill="url(#sealerGrad)" stroke="#9A3412" stroke-width="1.5"/>
-        <circle cx="85" cy="18" r="13" fill="url(#sealerGrad)" stroke="#9A3412" stroke-width="1.5"/>
-        <rect x="25" y="7" width="60" height="22" rx="3.5" fill="#FEF3C7" stroke="#EA580C" stroke-width="1.5"/>
-        <text x="55" y="22" font-size="11" text-anchor="middle" fill="#EA580C">🌸 🌸 🌸</text>
+        <circle cx="27" cy="18" r="7" fill="#F472B6" stroke="#9D174D" stroke-width="1.1"/>
+        <circle cx="49" cy="18" r="7" fill="#F472B6" stroke="#9D174D" stroke-width="1.1"/>
+        <line x1="27" y1="18" x2="49" y2="18" stroke="#FBCFE8" stroke-width="2.5"/>
+        <text x="38" y="21" font-size="7.5" text-anchor="middle">🌸🌸</text>
       </g>
 
-      <!-- Khung máy -->
-      <path d="M12 30 L98 30 L94 90 L16 90 Z" fill="#F8FAFC" stroke="#334155" stroke-width="2"/>
-      <rect x="18" y="36" width="74" height="34" rx="4" fill="#E2E8F0" stroke="#64748B" stroke-width="1.6"/>
-      
-      <!-- Nút ĐÓNG NẮP to nổi bật -->
-      <rect x="25" y="43" width="60" height="21" rx="4.5" fill="${isReady ? '#22C55E' : '#64748B'}" stroke="#0F172A" stroke-width="1.6"/>
-      <text x="55" y="57" font-family="'Paytone One', 'Nunito', sans-serif" font-size="9" font-weight="900" fill="#FFFFFF" text-anchor="middle">ĐÓNG NẮP</text>
-      
-      <!-- Trục dập nắp -->
-      <rect x="35" y="72" width="40" height="${isSealing ? 26 : 14}" rx="2" fill="#475569" stroke="#0F172A" stroke-width="1.6"/>
+      <!-- Bảng điều khiển màu kem cổ điển -->
+      <rect x="16" y="33" width="44" height="33" rx="4" fill="url(#sealerPanelGrad)" stroke="#3A2012" stroke-width="1.5"/>
 
-      <!-- Khay đặt ly -->
-      <ellipse cx="55" cy="112" rx="28" ry="9" fill="#E2E8F0" stroke="#334155" stroke-width="1.8"/>
-      <ellipse cx="55" cy="112" rx="18" ry="5.5" fill="#CBD5E1" stroke="#64748B" stroke-width="1.2"/>
+      <!-- Màn hình LED nhỏ báo nhiệt độ -->
+      <rect x="20" y="37" width="18" height="10" rx="2" fill="#18181B" stroke="#3A2012" stroke-width="0.8"/>
+      <text x="29" y="44.8" font-family="'Nunito', monospace" font-size="6.8" font-weight="900" fill="#4ADE80" text-anchor="middle">165°</text>
+
+      <!-- Đèn báo trạng thái READY -->
+      <circle cx="44" cy="42" r="2.8" fill="${isReady ? '#22C55E' : '#64748B'}" stroke="#3A2012" stroke-width="0.8"/>
+      <text x="52" y="44.2" font-family="'Nunito', sans-serif" font-size="5.5" font-weight="900" fill="#3A2012">OK</text>
+
+      <!-- Nút bấm dập nắp to nổi bật -->
+      <rect x="20" y="50" width="36" height="12" rx="2.8" fill="${isReady ? '#22C55E' : '#475569'}" stroke="#3A2012" stroke-width="1.2"/>
+      <text x="38" y="58.5" font-family="'Paytone One', 'Nunito', sans-serif" font-size="6.5" font-weight="900" fill="#FFF" text-anchor="middle">DẬP NẮP</text>
+
+      <!-- Trục dập nắp kim loại trượt lên xuống -->
+      <rect x="26" y="68" width="24" height="${isSealing ? 20 : 10}" rx="1.8" fill="#94A3B8" stroke="#3A2012" stroke-width="1.3"/>
+
+      <!-- Khay trượt chứa ly ở đáy -->
+      <ellipse cx="38" cy="94" rx="22" ry="5.5" fill="#E2E8F0" stroke="#3A2012" stroke-width="1.5"/>
+      <ellipse cx="38" cy="94" rx="14" ry="3.5" fill="#94A3B8" stroke="#3A2012" stroke-width="1"/>
     </svg>
   `;
 }
 
-// 3. Khay Topping trong suốt với hình ảnh đồ ăn 3D
+// 3. Khay Topping Inox Gastronorm (Chuẩn Khay Buffet Inox Đẹp Như Ảnh 2)
 function renderToppingSvg(tp, inCup, qty) {
   return `
-    <svg viewBox="0 0 85 85" width="100%" height="100%" class="vivid-svg ${inCup ? 'bounce-in' : ''}">
+    <svg viewBox="0 0 88 80" width="100%" height="100%" class="vivid-svg ${inCup ? 'bounce-in' : ''}">
       <defs>
-        <linearGradient id="trayGlass" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.95"/>
-          <stop offset="100%" stop-color="#E2E8F0" stop-opacity="0.6"/>
+        <!-- Viền Inox kim loại sáng bóng của khay chuẩn nhà hàng -->
+        <linearGradient id="metalRimGrad" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#FFFFFF"/>
+          <stop offset="25%" stop-color="#E2E8F0"/>
+          <stop offset="60%" stop-color="#94A3B8"/>
+          <stop offset="85%" stop-color="#CBD5E1"/>
+          <stop offset="100%" stop-color="#64748B"/>
+        </linearGradient>
+
+        <!-- Lòng khay sâu có bóng đổ bên trong -->
+        <linearGradient id="panInnerGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#1E293B"/>
+          <stop offset="100%" stop-color="#334155"/>
         </linearGradient>
       </defs>
-      <!-- Khay thuỷ tinh viền kép -->
-      <rect x="2" y="2" width="81" height="81" rx="8" fill="url(#trayGlass)" stroke="#94A3B8" stroke-width="2.2"/>
-      <rect x="5.5" y="5.5" width="74" height="74" rx="6" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="1"/>
+
+      <!-- Bóng đổ khay -->
+      <rect x="3" y="4" width="82" height="73" rx="7" fill="rgba(61, 34, 20, 0.22)"/>
+
+      <!-- Vành khay Inox kim loại kép bo góc (Chuẩn Ảnh 2) -->
+      <rect x="2" y="2" width="84" height="74" rx="7" fill="url(#metalRimGrad)" stroke="#3A2012" stroke-width="1.8"/>
       
-      <!-- Đồ hoạ món ăn topping -->
+      <!-- Gờ viền trong của khay Inox -->
+      <rect x="4.5" y="4.5" width="79" height="69" rx="5" fill="#F8FAFC" stroke="#94A3B8" stroke-width="0.8"/>
+      
+      <!-- Lòng khay sâu chứa topping -->
+      <rect x="6" y="6" width="76" height="52" rx="4" fill="url(#panInnerGrad)"/>
+      <rect x="6" y="6" width="76" height="52" rx="4" fill="rgba(0,0,0,0.2)"/>
+
+      <!-- Hình ảnh món ăn Topping cực kỳ ngon mắt và chi tiết -->
       ${renderFoodGraphics(tp.id)}
-      
-      <!-- Bảng tên chữ to đậm viền đen bo góc -->
-      <rect x="2" y="58" width="81" height="21" rx="3.5" fill="#FFFFFF" stroke="#3D2214" stroke-width="1.8"/>
-      <text x="42.5" y="72.5" font-family="'Paytone One', 'Nunito', sans-serif" font-size="8.2" font-weight="900" fill="#3D2214" text-anchor="middle">${tp.name}</text>
+
+      <!-- Thẻ tên nguyên liệu kiểu vintage bên dưới (Chuẩn Ảnh 2) -->
+      <rect x="6" y="58" width="76" height="17" rx="3" fill="#FFFDF8" stroke="#3A2012" stroke-width="1.4"/>
+      <text x="44" y="69.8" font-family="'Paytone One', 'Nunito', sans-serif" font-size="7.6" font-weight="900" fill="#3A2012" text-anchor="middle" letter-spacing="0.01em">${tp.name}</text>
+
+      <!-- Huy hiệu số lượng tròn phong cách anime Image 2 -->
+      <circle cx="74" cy="11" r="8" fill="#FFFDF8" stroke="#3A2012" stroke-width="1.4"/>
+      <text x="74" y="14" font-family="'Nunito', sans-serif" font-size="8" font-weight="900" fill="#3A2012" text-anchor="middle">${qty}</text>
     </svg>
   `;
 }
 
+// Đồ hoạ món ăn chi tiết từng loại Topping (THỰC TẾ, TỰ NHIÊN, KHÔNG KHỐI HỘP MINECRAFT)
 function renderFoodGraphics(id) {
-  // Trân châu đen óng ánh
+  // 1. Trân châu đen óng ánh ngập siro đường đen (Black Tapioca Boba)
   if (id === 'tranChau') {
     return `
       <g>
-        <circle cx="26" cy="26" r="9" fill="#181311"/><circle cx="23.5" cy="23.5" r="2.5" fill="#FFF" opacity="0.9"/>
-        <circle cx="47" cy="24" r="9.5" fill="#181311"/><circle cx="44.5" cy="21.5" r="2.5" fill="#FFF" opacity="0.9"/>
-        <circle cx="36" cy="40" r="10" fill="#181311"/><circle cx="33" cy="36.5" r="3" fill="#FFF" opacity="0.95"/>
-        <circle cx="56" cy="40" r="8.5" fill="#181311"/><circle cx="53.5" cy="37.5" r="2.2" fill="#FFF" opacity="0.9"/>
+        <!-- Lớp siro đường đen sâu ở đáy -->
+        <path d="M8 48 C16 42, 28 44, 44 42 C60 40, 72 44, 80 48 L80 54 L8 54 Z" fill="#120A05"/>
+        <ellipse cx="44" cy="46" rx="34" ry="7" fill="#201108" opacity="0.8"/>
+        
+        <!-- Lớp hạt trân châu tự nhiên dày đặc đan xen -->
+        <circle cx="16" cy="40" r="6.2" fill="#1A110B"/><circle cx="14.5" cy="38.5" r="1.8" fill="#FFF" opacity="0.85"/>
+        <circle cx="28" cy="42" r="6.5" fill="#150D08"/><circle cx="26.5" cy="40.5" r="1.8" fill="#FFF" opacity="0.9"/>
+        <circle cx="41" cy="43" r="6.8" fill="#1A110B"/><circle cx="39.5" cy="41.2" r="2" fill="#FFF" opacity="0.95"/>
+        <circle cx="55" cy="42" r="6.5" fill="#150D08"/><circle cx="53.5" cy="40.5" r="1.8" fill="#FFF" opacity="0.9"/>
+        <circle cx="68" cy="40" r="6.2" fill="#1A110B"/><circle cx="66.5" cy="38.5" r="1.8" fill="#FFF" opacity="0.85"/>
+
+        <circle cx="13" cy="29" r="6.5" fill="#1F130C"/><circle cx="11.5" cy="27.2" r="2" fill="#FFF" opacity="0.9"/>
+        <circle cx="24" cy="31" r="7" fill="#170F09"/><circle cx="22.2" cy="29" r="2.2" fill="#FFF" opacity="0.95"/>
+        <circle cx="37" cy="32" r="7.2" fill="#1F130C"/><circle cx="35" cy="29.8" r="2.3" fill="#FFF" opacity="0.98"/><circle cx="38.8" cy="33.8" r="1" fill="#FFF" opacity="0.5"/>
+        <circle cx="50" cy="31" r="7" fill="#170F09"/><circle cx="48.2" cy="29" r="2.2" fill="#FFF" opacity="0.95"/>
+        <circle cx="63" cy="29" r="6.8" fill="#1F130C"/><circle cx="61.2" cy="27.2" r="2.1" fill="#FFF" opacity="0.95"/>
+        <circle cx="74" cy="32" r="6" fill="#150D08"/><circle cx="72.8" cy="30.5" r="1.6" fill="#FFF" opacity="0.85"/>
+
+        <circle cx="19" cy="19" r="6.8" fill="#24150D"/><circle cx="17.2" cy="17" r="2.2" fill="#FFF" opacity="0.95"/>
+        <circle cx="32" cy="18" r="7.2" fill="#1B1009"/><circle cx="30" cy="15.8" r="2.4" fill="#FFF" opacity="0.98"/><circle cx="33.8" cy="19.5" r="1.1" fill="#FFF" opacity="0.6"/>
+        <circle cx="46" cy="17" r="7.4" fill="#24150D"/><circle cx="44" cy="14.8" r="2.5" fill="#FFF" opacity="0.98"/><circle cx="48" cy="18.8" r="1.1" fill="#FFF" opacity="0.6"/>
+        <circle cx="59" cy="19" r="7" fill="#1B1009"/><circle cx="57.2" cy="17" r="2.3" fill="#FFF" opacity="0.98"/>
+        <circle cx="71" cy="21" r="6.2" fill="#24150D"/><circle cx="69.5" cy="19.5" r="1.8" fill="#FFF" opacity="0.9"/>
+        
+        <circle cx="39" cy="10" r="6.8" fill="#2A1910"/><circle cx="37.2" cy="8" r="2.3" fill="#FFF" opacity="0.98"/>
+        <circle cx="52" cy="10" r="6.8" fill="#24150D"/><circle cx="50.2" cy="8" r="2.3" fill="#FFF" opacity="0.98"/>
       </g>
     `;
   }
-  // Trân châu hoàng kim
+
+  // 2. Trân châu hoàng kim màu mật ong óng ả (Golden Honey Boba)
   if (id === 'tranChauHoangKim') {
     return `
       <g>
-        <circle cx="26" cy="26" r="9" fill="#EAB308"/><circle cx="23.5" cy="23.5" r="2.8" fill="#FFF" opacity="0.95"/>
-        <circle cx="47" cy="24" r="9.5" fill="#CA8A04"/><circle cx="44.5" cy="21.5" r="2.8" fill="#FFF" opacity="0.95"/>
-        <circle cx="36" cy="40" r="10" fill="#EAB308"/><circle cx="33" cy="36.5" r="3.2" fill="#FFF" opacity="0.98"/>
-        <circle cx="56" cy="40" r="8.5" fill="#CA8A04"/>
+        <path d="M8 48 C16 42, 28 44, 44 42 C60 40, 72 44, 80 48 L80 54 L8 54 Z" fill="#78350F"/>
+        <ellipse cx="44" cy="46" rx="34" ry="7" fill="#B45309" opacity="0.8"/>
+        
+        <circle cx="16" cy="40" r="6.2" fill="#D97706"/><circle cx="14.5" cy="38.5" r="1.8" fill="#FEF08A" opacity="0.95"/>
+        <circle cx="28" cy="42" r="6.5" fill="#B45309"/><circle cx="26.5" cy="40.5" r="1.8" fill="#FFF" opacity="0.95"/>
+        <circle cx="41" cy="43" r="6.8" fill="#D97706"/><circle cx="39.5" cy="41.2" r="2" fill="#FFF" opacity="0.98"/>
+        <circle cx="55" cy="42" r="6.5" fill="#B45309"/><circle cx="53.5" cy="40.5" r="1.8" fill="#FEF08A" opacity="0.95"/>
+        <circle cx="68" cy="40" r="6.2" fill="#D97706"/><circle cx="66.5" cy="38.5" r="1.8" fill="#FFF" opacity="0.95"/>
+
+        <circle cx="13" cy="29" r="6.5" fill="#F59E0B"/><circle cx="11.5" cy="27.2" r="2" fill="#FFF" opacity="0.95"/>
+        <circle cx="24" cy="31" r="7" fill="#D97706"/><circle cx="22.2" cy="29" r="2.2" fill="#FFF" opacity="0.98"/>
+        <circle cx="37" cy="32" r="7.2" fill="#FBBF24"/><circle cx="35" cy="29.8" r="2.4" fill="#FFF" opacity="0.98"/>
+        <circle cx="50" cy="31" r="7" fill="#D97706"/><circle cx="48.2" cy="29" r="2.2" fill="#FFF" opacity="0.98"/>
+        <circle cx="63" cy="29" r="6.8" fill="#F59E0B"/><circle cx="61.2" cy="27.2" r="2.1" fill="#FFF" opacity="0.95"/>
+        <circle cx="74" cy="32" r="6" fill="#D97706"/><circle cx="72.8" cy="30.5" r="1.6" fill="#FFF" opacity="0.9"/>
+
+        <circle cx="19" cy="19" r="6.8" fill="#FBBF24"/><circle cx="17.2" cy="17" r="2.3" fill="#FFF" opacity="0.98"/>
+        <circle cx="32" cy="18" r="7.2" fill="#F59E0B"/><circle cx="30" cy="15.8" r="2.5" fill="#FFF" opacity="0.98"/>
+        <circle cx="46" cy="17" r="7.4" fill="#FBBF24"/><circle cx="44" cy="14.8" r="2.6" fill="#FFF" opacity="0.98"/>
+        <circle cx="59" cy="19" r="7" fill="#F59E0B"/><circle cx="57.2" cy="17" r="2.4" fill="#FFF" opacity="0.98"/>
+        <circle cx="71" cy="21" r="6.2" fill="#FBBF24"/><circle cx="69.5" cy="19.5" r="1.8" fill="#FFF" opacity="0.95"/>
+
+        <circle cx="39" cy="10" r="6.8" fill="#FDE047"/><circle cx="37.2" cy="8" r="2.4" fill="#FFF" opacity="0.98"/>
+        <circle cx="52" cy="10" r="6.8" fill="#FBBF24"/><circle cx="50.2" cy="8" r="2.4" fill="#FFF" opacity="0.98"/>
       </g>
     `;
   }
-  // Thạch matcha xanh mướt
+
+  // 3. Thạch Matcha Uji tự nhiên (Natural Cut Uji Matcha Jelly)
   if (id === 'thachMatcha') {
     return `
       <g>
-        <rect x="16" y="18" width="18" height="18" rx="2.5" fill="#15803D"/><polygon points="16,18 23,11 41,11 34,18" fill="#4ADE80"/><polygon points="34,18 41,11 41,29 34,36" fill="#166534"/>
-        <rect x="39" y="27" width="19" height="19" rx="2.5" fill="#15803D"/><polygon points="39,27 46,20 65,20 58,27" fill="#4ADE80"/>
+        <path d="M8 48 C20 42, 40 44, 80 48 L80 54 L8 54 Z" fill="#052E16"/>
+        <!-- Các miếng thạch matcha cắt vát tự nhiên óng ánh, không phải khối hộp -->
+        <path d="M12 36 Q18 30 28 32 Q34 38 30 46 Q20 48 12 44 Z" fill="#15803D" stroke="#166534" stroke-width="1"/>
+        <path d="M14 34 Q22 30 28 34" stroke="#86EFAC" stroke-width="2" fill="none" stroke-linecap="round"/>
+
+        <path d="M26 34 Q38 28 48 32 Q54 40 46 48 Q32 48 26 42 Z" fill="#16A34A" stroke="#14532D" stroke-width="1"/>
+        <path d="M28 32 Q38 28 46 32" stroke="#BBF7D0" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+
+        <path d="M48 34 Q62 28 72 34 Q76 44 68 48 Q54 48 48 42 Z" fill="#15803D" stroke="#166534" stroke-width="1"/>
+        <path d="M50 32 Q62 28 70 34" stroke="#86EFAC" stroke-width="2" fill="none" stroke-linecap="round"/>
+
+        <path d="M16 20 Q28 14 38 18 Q42 26 36 32 Q24 34 16 28 Z" fill="#22C55E" stroke="#15803D" stroke-width="1"/>
+        <path d="M18 18 Q28 14 36 18" stroke="#DCFCE7" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <circle cx="28" cy="22" r="1.5" fill="#FFF" opacity="0.9"/>
+
+        <path d="M38 16 Q52 10 64 16 Q68 26 58 32 Q46 32 38 24 Z" fill="#16A34A" stroke="#14532D" stroke-width="1"/>
+        <path d="M40 14 Q52 10 62 16" stroke="#BBF7D0" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <circle cx="52" cy="18" r="1.6" fill="#FFF" opacity="0.9"/>
+
+        <path d="M28 8 Q42 4 52 8 Q56 16 46 20 Q32 20 28 14 Z" fill="#4ADE80" stroke="#16A34A" stroke-width="1"/>
+        <path d="M30 6 Q42 4 50 8" stroke="#FFF" stroke-width="2.5" fill="none" stroke-linecap="round"/>
       </g>
     `;
   }
-  // Thạch 3Q / Trái cây
-  if (id === 'thach3Q' || id === 'thachTraiCay') {
+
+  // 4. Thạch 3Q ngọc trai giòn sần sật (3Q Crystal Boba Pearls)
+  if (id === 'thach3Q') {
     return `
       <g>
-        <rect x="16" y="19" width="16" height="16" rx="2.5" fill="#F97316"/><polygon points="16,19 22,13 38,13 32,19" fill="#FDBA74"/>
-        <rect x="42" y="15" width="17" height="17" rx="2.5" fill="#EF4444"/><polygon points="42,15 48,9 65,9 59,15" fill="#FCA5A5"/>
-        <rect x="33" y="32" width="18" height="18" rx="2.5" fill="#22C55E"/><polygon points="33,32 39,26 57,26 51,32" fill="#86EFAC"/>
+        <ellipse cx="44" cy="46" rx="34" ry="7" fill="#CBD5E1" opacity="0.4"/>
+        <!-- Dày đặc các hạt thạch ngọc trai trong suốt lấp lánh -->
+        <circle cx="16" cy="40" r="6.2" fill="#F1F5F9" opacity="0.9"/><circle cx="14.5" cy="38.5" r="1.8" fill="#FFF"/>
+        <circle cx="28" cy="42" r="6.5" fill="#FFFFFF" opacity="0.95"/><circle cx="26.5" cy="40.5" r="2" fill="#FFF"/>
+        <circle cx="41" cy="43" r="6.8" fill="#F8FAFC" opacity="0.95"/><circle cx="39.5" cy="41.2" r="2.2" fill="#FFF"/>
+        <circle cx="55" cy="42" r="6.5" fill="#FFFFFF" opacity="0.95"/><circle cx="53.5" cy="40.5" r="2" fill="#FFF"/>
+        <circle cx="68" cy="40" r="6.2" fill="#F1F5F9" opacity="0.9"/><circle cx="66.5" cy="38.5" r="1.8" fill="#FFF"/>
+
+        <circle cx="13" cy="29" r="6.5" fill="#F8FAFC" opacity="0.95"/><circle cx="11.5" cy="27.2" r="2" fill="#FFF"/>
+        <circle cx="24" cy="31" r="7" fill="#FFFFFF" opacity="0.98"/><circle cx="22.2" cy="29" r="2.4" fill="#FFF"/>
+        <circle cx="37" cy="32" r="7.2" fill="#F1F5F9" opacity="0.95"/><circle cx="35" cy="29.8" r="2.5" fill="#FFF"/>
+        <circle cx="50" cy="31" r="7" fill="#FFFFFF" opacity="0.98"/><circle cx="48.2" cy="29" r="2.4" fill="#FFF"/>
+        <circle cx="63" cy="29" r="6.8" fill="#F8FAFC" opacity="0.95"/><circle cx="61.2" cy="27.2" r="2.2" fill="#FFF"/>
+        <circle cx="74" cy="32" r="6" fill="#F1F5F9" opacity="0.9"/><circle cx="72.8" cy="30.5" r="1.8" fill="#FFF"/>
+
+        <circle cx="19" cy="19" r="6.8" fill="#FFFFFF" opacity="0.98"/><circle cx="17.2" cy="17" r="2.5" fill="#FFF"/>
+        <circle cx="32" cy="18" r="7.2" fill="#F8FAFC" opacity="0.95"/><circle cx="30" cy="15.8" r="2.6" fill="#FFF"/>
+        <circle cx="46" cy="17" r="7.4" fill="#FFFFFF" opacity="0.98"/><circle cx="44" cy="14.8" r="2.8" fill="#FFF"/>
+        <circle cx="59" cy="19" r="7" fill="#F8FAFC" opacity="0.95"/><circle cx="57.2" cy="17" r="2.5" fill="#FFF"/>
+        <circle cx="71" cy="21" r="6.2" fill="#FFFFFF" opacity="0.98"/><circle cx="69.5" cy="19.5" r="2" fill="#FFF"/>
+
+        <circle cx="39" cy="10" r="6.8" fill="#FFFFFF" opacity="0.98"/><circle cx="37.2" cy="8" r="2.6" fill="#FFF"/>
+        <circle cx="52" cy="10" r="6.8" fill="#FFFFFF" opacity="0.98"/><circle cx="50.2" cy="8" r="2.6" fill="#FFF"/>
       </g>
     `;
   }
-  // Kem phô mai
+
+  // 5. Kem phô mai béo ngậy mềm mịn với muỗng inox (Velvet Cheese Foam with Metal Scoop)
   if (id === 'kemPhoMai') {
     return `
       <g>
-        <path d="M20 46 C20 32, 31 22, 42 16 C53 22, 64 32, 64 46 Z" fill="#FEF08A"/>
-        <path d="M26 43 C32 32, 52 32, 58 43" stroke="#FACC15" stroke-width="2.5" fill="none"/>
-        <path d="M42 16 C38 10, 46 8, 42 6" stroke="#FEF08A" stroke-width="3.5" stroke-linecap="round"/>
+        <!-- Lớp kem phô mai béo ngậy uốn lượn mềm mịn -->
+        <path d="M8 50 C14 36, 26 32, 42 35 C58 38, 70 30, 80 44 L80 54 L8 54 Z" fill="#FDE047"/>
+        <path d="M8 44 C20 24, 38 28, 54 22 C68 18, 76 26, 80 34 L80 52 L8 52 Z" fill="#FEF08A"/>
+        
+        <!-- Sóng vân kem xoáy mềm mại -->
+        <path d="M12 42 Q28 28 46 34 Q64 40 76 30" fill="none" stroke="#FDE68A" stroke-width="3" stroke-linecap="round"/>
+        <path d="M18 36 Q36 20 54 26 Q70 32 78 22" fill="none" stroke="#FFF" stroke-width="3.5" stroke-linecap="round" opacity="0.9"/>
+        <path d="M26 26 Q40 12 56 16" fill="none" stroke="#FFF" stroke-width="3" stroke-linecap="round" opacity="0.95"/>
+        <path d="M34 16 Q44 6 52 10" fill="none" stroke="#FFF" stroke-width="2.5" stroke-linecap="round"/>
+
+        <!-- Muỗng múc inox cắm xéo góc phải chuẩn Ảnh 2 -->
+        <g transform="translate(44, 4) rotate(26)">
+          <path d="M10 2 L14 2 L13 30 L9 30 Z" fill="#CBD5E1" stroke="#334155" stroke-width="1.2"/>
+          <line x1="12" y1="2" x2="11" y2="30" stroke="#FFF" stroke-width="1"/>
+          <ellipse cx="11" cy="31" rx="6.5" ry="7.5" fill="#E2E8F0" stroke="#334155" stroke-width="1.2"/>
+          <ellipse cx="10" cy="30" rx="4.5" ry="5.5" fill="#94A3B8"/>
+          <path d="M9 28 Q11 26 13 28" stroke="#FFF" stroke-width="1" fill="none"/>
+        </g>
       </g>
     `;
   }
-  // Pudding trứng
+
+  // 6. Pudding trứng mềm mượt sốt caramel (Silky Custard Pudding with Caramel Sauce)
   if (id === 'pudding') {
     return `
       <g>
-        <rect x="18" y="20" width="20" height="20" rx="3.5" fill="#FACC15"/><polygon points="18,20 25,13 45,13 38,20" fill="#FEF08A"/>
-        <rect x="40" y="28" width="22" height="22" rx="3.5" fill="#FACC15"/><polygon points="40,28 47,21 69,21 62,28" fill="#FEF08A"/>
+        <!-- Nước sốt caramel nâu óng ở đáy -->
+        <path d="M8 48 C20 40, 44 42, 80 48 L80 54 L8 54 Z" fill="#9A3412"/>
+        
+        <!-- Từng miếng bánh flan custard mềm mại, cạnh bo tròn mềm mại không vuông vức -->
+        <!-- Miếng 1 -->
+        <path d="M12 36 Q18 28 30 30 Q36 38 32 46 Q20 48 12 44 Z" fill="#F59E0B" stroke="#D97706" stroke-width="1"/>
+        <path d="M14 34 Q22 26 30 30" stroke="#FEF08A" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <path d="M22 36 Q24 44 26 46" stroke="#9A3412" stroke-width="2" fill="none" stroke-linecap="round"/>
+
+        <!-- Miếng 2 (chính giữa) -->
+        <path d="M28 32 Q40 24 54 28 Q60 38 52 48 Q36 48 28 40 Z" fill="#FBBF24" stroke="#D97706" stroke-width="1"/>
+        <path d="M30 30 Q42 22 52 28" stroke="#FFF" stroke-width="2.8" fill="none" stroke-linecap="round"/>
+        <!-- Vệt caramel chảy xuống -->
+        <path d="M38 30 Q40 40 42 46" stroke="#B45309" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+
+        <!-- Miếng 3 -->
+        <path d="M52 34 Q66 26 76 32 Q80 42 70 48 Q58 48 52 42 Z" fill="#F59E0B" stroke="#D97706" stroke-width="1"/>
+        <path d="M54 32 Q66 26 74 32" stroke="#FEF08A" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+
+        <!-- Tầng trên đỉnh mềm mịn -->
+        <path d="M22 18 Q36 10 50 14 Q56 24 46 30 Q30 30 22 24 Z" fill="#FDE047" stroke="#F59E0B" stroke-width="1"/>
+        <path d="M24 16 Q36 10 48 14" stroke="#FFF" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <circle cx="36" cy="18" r="1.8" fill="#FFF" opacity="0.95"/>
+        <!-- Dòng caramel đậm đà trên đỉnh -->
+        <path d="M40 12 Q44 20 42 26" stroke="#9A3412" stroke-width="2.5" fill="none" stroke-linecap="round"/>
       </g>
     `;
   }
-  // Sương sáo / Thạch đen
+
+  // 7. Thạch trái cây tươi đa sắc (Fresh Diced Fruit Medley - Dâu, Xoài, Kiwi)
+  if (id === 'thachTraiCay') {
+    return `
+      <g>
+        <!-- Nước siro hoa quả bóng bẩy ở đáy -->
+        <path d="M8 48 C20 42, 40 44, 80 48 L80 54 L8 54 Z" fill="#991B1B" opacity="0.6"/>
+        
+        <!-- Miếng Dâu tây đỏ tươi có hạt (trái) -->
+        <path d="M12 36 Q18 28 28 30 Q34 38 28 46 Q18 48 12 42 Z" fill="#DC2626" stroke="#B91C1C" stroke-width="1"/>
+        <path d="M14 34 Q20 28 26 32" stroke="#FCA5A5" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <circle cx="20" cy="38" r="0.8" fill="#FEF08A"/><circle cx="24" cy="42" r="0.8" fill="#FEF08A"/>
+
+        <!-- Miếng Xoài vàng cam mọng nước (giữa) -->
+        <path d="M28 32 Q40 24 50 28 Q56 38 48 48 Q34 48 28 40 Z" fill="#EA580C" stroke="#C2410C" stroke-width="1"/>
+        <path d="M30 30 Q40 24 48 28" stroke="#FED7AA" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+        <circle cx="38" cy="36" r="1.6" fill="#FFF" opacity="0.9"/>
+
+        <!-- Miếng Kiwi xanh tươi có hạt đen (phải) -->
+        <path d="M48 34 Q62 26 74 32 Q78 42 70 48 Q56 48 48 40 Z" fill="#16A34A" stroke="#15803D" stroke-width="1"/>
+        <path d="M50 32 Q62 26 72 32" stroke="#BBF7D0" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <circle cx="58" cy="38" r="0.8" fill="#18181B"/><circle cx="62" cy="40" r="0.8" fill="#18181B"/><circle cx="66" cy="37" r="0.8" fill="#18181B"/>
+
+        <!-- Tầng trên: Miếng dâu tây đỏ đỉnh -->
+        <path d="M18 18 Q30 10 40 14 Q44 24 36 30 Q24 30 18 24 Z" fill="#EF4444" stroke="#DC2626" stroke-width="1"/>
+        <path d="M20 16 Q30 10 38 14" stroke="#FFF" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <circle cx="26" cy="22" r="0.9" fill="#FEF08A"/><circle cx="32" cy="24" r="0.9" fill="#FEF08A"/>
+
+        <!-- Miếng xoài chín vàng đỉnh -->
+        <path d="M38 14 Q52 8 62 14 Q66 24 58 30 Q44 30 38 22 Z" fill="#F97316" stroke="#EA580C" stroke-width="1"/>
+        <path d="M40 12 Q52 8 60 14" stroke="#FFEDD5" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <circle cx="48" cy="18" r="1.8" fill="#FFF" opacity="0.95"/>
+      </g>
+    `;
+  }
+
+  // 8. Thạch trắng ngọc bích (White Crystal Jelly)
+  if (id === 'thachTrang') {
+    return `
+      <g>
+        <path d="M8 48 C20 40, 44 42, 80 48 L80 54 L8 54 Z" fill="#94A3B8" opacity="0.4"/>
+        <!-- Các miếng thạch trắng trong veo cắt vát tự nhiên óng ả -->
+        <path d="M12 36 Q18 28 28 30 Q34 38 30 46 Q20 48 12 44 Z" fill="#E2E8F0" opacity="0.9"/>
+        <path d="M14 34 Q22 28 28 32" stroke="#FFFFFF" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+
+        <path d="M26 32 Q38 24 50 28 Q56 38 48 48 Q32 48 26 40 Z" fill="#F1F5F9" opacity="0.95"/>
+        <path d="M28 30 Q38 24 48 28" stroke="#FFFFFF" stroke-width="2.8" fill="none" stroke-linecap="round"/>
+        <circle cx="36" cy="34" r="1.8" fill="#BAE6FD"/>
+
+        <path d="M48 34 Q62 26 74 32 Q78 42 70 48 Q56 48 48 40 Z" fill="#E2E8F0" opacity="0.9"/>
+        <path d="M50 32 Q62 26 72 32" stroke="#FFFFFF" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+
+        <path d="M18 18 Q30 10 40 14 Q44 24 36 30 Q24 30 18 24 Z" fill="#F8FAFC" opacity="0.95"/>
+        <path d="M20 16 Q30 10 38 14" stroke="#FFFFFF" stroke-width="3" fill="none" stroke-linecap="round"/>
+
+        <path d="M38 14 Q52 8 62 14 Q66 24 58 30 Q44 30 38 22 Z" fill="#FFFFFF" opacity="0.98"/>
+        <path d="M40 12 Q52 8 60 14" stroke="#BAE6FD" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <circle cx="48" cy="18" r="2" fill="#FFF"/>
+      </g>
+    `;
+  }
+
+  // 9. Sương sáo / Thạch đen (Herbal Grass Jelly Chunks)
   if (id === 'suongSao' || id === 'thachDen') {
     return `
       <g>
-        <rect x="16" y="18" width="18" height="18" rx="2" fill="#1E293B"/><polygon points="16,18 23,11 41,11 34,18" fill="#475569"/><polygon points="34,18 41,11 41,29 34,36" fill="#0F172A"/>
-        <rect x="40" y="27" width="20" height="20" rx="2" fill="#1E293B"/><polygon points="40,27 47,20 67,20 60,27" fill="#64748B"/>
+        <path d="M8 48 C20 40, 44 42, 80 48 L80 54 L8 54 Z" fill="#020617"/>
+        <!-- Các miếng sương sáo cắt khúc tự nhiên đen bóng -->
+        <path d="M12 36 Q18 28 28 30 Q34 38 30 46 Q20 48 12 44 Z" fill="#0F172A" stroke="#020617" stroke-width="1"/>
+        <path d="M14 34 Q22 28 28 32" stroke="#475569" stroke-width="2" fill="none" stroke-linecap="round"/>
+
+        <path d="M26 32 Q38 24 50 28 Q56 38 48 48 Q32 48 26 40 Z" fill="#1E293B" stroke="#0F172A" stroke-width="1"/>
+        <path d="M28 30 Q38 24 48 28" stroke="#94A3B8" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <circle cx="38" cy="34" r="1.6" fill="#FFF" opacity="0.9"/>
+
+        <path d="M48 34 Q62 26 74 32 Q78 42 70 48 Q56 48 48 40 Z" fill="#0F172A" stroke="#020617" stroke-width="1"/>
+        <path d="M50 32 Q62 26 72 32" stroke="#475569" stroke-width="2" fill="none" stroke-linecap="round"/>
+
+        <path d="M18 18 Q30 10 40 14 Q44 24 36 30 Q24 30 18 24 Z" fill="#1E293B" stroke="#0F172A" stroke-width="1"/>
+        <path d="M20 16 Q30 10 38 14" stroke="#94A3B8" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+
+        <path d="M38 14 Q52 8 62 14 Q66 24 58 30 Q44 30 38 22 Z" fill="#334155" stroke="#1E293B" stroke-width="1"/>
+        <path d="M40 12 Q52 8 60 14" stroke="#CBD5E1" stroke-width="2.8" fill="none" stroke-linecap="round"/>
+        <circle cx="48" cy="18" r="1.8" fill="#FFF" opacity="0.95"/>
       </g>
     `;
   }
-  // Đậu đỏ
+
+  // 10. Đậu đỏ nấu đường hạt mẩy bóng bẩy (Sweet Azuki Red Beans - Real Bean Shape)
   if (id === 'dauDo') {
     return `
       <g>
-        <ellipse cx="26" cy="24" rx="8" ry="6" fill="#7F1D1D" transform="rotate(-15 26 24)"/><circle cx="24" cy="22" r="1.8" fill="#FFF" opacity="0.75"/>
-        <ellipse cx="46" cy="21" rx="8" ry="6.5" fill="#991B1B" transform="rotate(20 46 21)"/><circle cx="44" cy="19" r="1.8" fill="#FFF" opacity="0.75"/>
-        <ellipse cx="35" cy="36" rx="9" ry="6.5" fill="#7F1D1D"/><circle cx="33" cy="33.5" r="2" fill="#FFF" opacity="0.8"/>
+        <path d="M8 48 C20 40, 44 42, 80 48 L80 54 L8 54 Z" fill="#450A0A" opacity="0.7"/>
+        <!-- Từng hạt đậu đỏ Azuki hình hạt đậu thật cong mẩy căng mọng -->
+        <!-- Hạt 1 -->
+        <path d="M12 40 C12 34, 18 32, 24 35 C28 38, 26 46, 20 46 C15 46, 12 44, 12 40 Z" fill="#7F1D1D" stroke="#450A0A" stroke-width="1"/>
+        <path d="M15 36 Q20 34 24 38" stroke="#FCA5A5" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+        <line x1="17" y1="39" x2="21" y2="41" stroke="#FFF" stroke-width="0.9"/>
+
+        <!-- Hạt 2 -->
+        <path d="M26 38 C26 32, 34 30, 40 33 C44 36, 42 45, 36 45 C30 45, 26 42, 26 38 Z" fill="#991B1B" stroke="#581C1C" stroke-width="1"/>
+        <path d="M29 34 Q36 32 40 36" stroke="#FFF" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+        <line x1="32" y1="38" x2="36" y2="39" stroke="#FEF08A" stroke-width="1"/>
+
+        <!-- Hạt 3 -->
+        <path d="M44 40 C44 34, 52 32, 58 35 C62 38, 60 46, 54 46 C48 46, 44 44, 44 40 Z" fill="#7F1D1D" stroke="#450A0A" stroke-width="1"/>
+        <path d="M47 36 Q54 34 58 38" stroke="#FCA5A5" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+
+        <!-- Hạt 4 -->
+        <path d="M60 38 C60 32, 68 30, 74 34 C78 37, 76 45, 70 45 C64 45, 60 42, 60 38 Z" fill="#991B1B" stroke="#581C1C" stroke-width="1"/>
+        <path d="M63 34 Q70 32 74 36" stroke="#FFF" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+
+        <!-- Tầng trên -->
+        <path d="M18 24 C18 18, 26 16, 32 19 C36 22, 34 31, 28 31 C22 31, 18 28, 18 24 Z" fill="#991B1B" stroke="#581C1C" stroke-width="1"/>
+        <path d="M21 20 Q28 18 32 22" stroke="#FFF" stroke-width="2" fill="none" stroke-linecap="round"/>
+
+        <path d="M36 22 C36 16, 44 14, 50 17 C54 20, 52 29, 46 29 C40 29, 36 26, 36 22 Z" fill="#B91C1C" stroke="#7F1D1D" stroke-width="1"/>
+        <path d="M39 18 Q46 16 50 20" stroke="#FFF" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+        <circle cx="43" cy="22" r="1.3" fill="#FFF"/>
+
+        <path d="M54 24 C54 18, 62 16, 68 19 C72 22, 70 31, 64 31 C58 31, 54 28, 54 24 Z" fill="#7F1D1D" stroke="#450A0A" stroke-width="1"/>
+        <path d="M57 20 Q64 18 68 22" stroke="#FCA5A5" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+
+        <!-- Hạt đỉnh chóp -->
+        <path d="M28 10 C28 4, 38 2, 44 6 C48 9, 46 18, 40 18 C34 18, 28 15, 28 10 Z" fill="#B91C1C" stroke="#7F1D1D" stroke-width="1"/>
+        <path d="M32 6 Q40 4 44 8" stroke="#FFF" stroke-width="2.4" fill="none" stroke-linecap="round"/>
       </g>
     `;
   }
-  // Nha đam / Thạch trắng / Thạch dừa
+
+  // 11. Thạch dừa Nata de Coco giòn dai mọng nước (Chewy Coconut Jelly)
+  if (id === 'thachDua') {
+    return `
+      <g>
+        <path d="M8 48 C20 40, 44 42, 80 48 L80 54 L8 54 Z" fill="#BAE6FD" opacity="0.3"/>
+        <!-- Các miếng thạch dừa trắng đục giòn dai với nước dừa trong suốt -->
+        <path d="M12 36 Q18 28 28 30 Q34 38 30 46 Q20 48 12 44 Z" fill="#F1F5F9" opacity="0.95"/>
+        <path d="M14 34 Q22 28 28 32" stroke="#FFFFFF" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+
+        <path d="M26 32 Q38 24 50 28 Q56 38 48 48 Q32 48 26 40 Z" fill="#FFFFFF" opacity="0.98"/>
+        <path d="M28 30 Q38 24 48 28" stroke="#BAE6FD" stroke-width="2.8" fill="none" stroke-linecap="round"/>
+        <circle cx="36" cy="34" r="1.8" fill="#FFF"/>
+
+        <path d="M48 34 Q62 26 74 32 Q78 42 70 48 Q56 48 48 40 Z" fill="#F1F5F9" opacity="0.95"/>
+        <path d="M50 32 Q62 26 72 32" stroke="#FFFFFF" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+
+        <path d="M18 18 Q30 10 40 14 Q44 24 36 30 Q24 30 18 24 Z" fill="#FFFFFF" opacity="0.98"/>
+        <path d="M20 16 Q30 10 38 14" stroke="#E0F2FE" stroke-width="3" fill="none" stroke-linecap="round"/>
+
+        <path d="M38 14 Q52 8 62 14 Q66 24 58 30 Q44 30 38 22 Z" fill="#FFFFFF" opacity="0.98"/>
+        <path d="M40 12 Q52 8 60 14" stroke="#FFF" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <circle cx="48" cy="18" r="2.2" fill="#BAE6FD"/>
+      </g>
+    `;
+  }
+
+  // 12. Nha đam tươi giòn mọng nước (Fresh Succulent Aloe Vera)
+  if (id === 'nhaDam') {
+    return `
+      <g>
+        <path d="M8 48 C20 40, 44 42, 80 48 L80 54 L8 54 Z" fill="#A7F3D0" opacity="0.4"/>
+        <!-- Nha đam trong veo ánh ngọc bích non mọng nước -->
+        <path d="M12 36 Q18 28 28 30 Q34 38 30 46 Q20 48 12 44 Z" fill="#D1FAE5" opacity="0.9"/>
+        <path d="M14 34 Q22 28 28 32" stroke="#A7F3D0" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+
+        <path d="M26 32 Q38 24 50 28 Q56 38 48 48 Q32 48 26 40 Z" fill="#ECFDF5" opacity="0.95"/>
+        <path d="M28 30 Q38 24 48 28" stroke="#6EE7B7" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+        <circle cx="36" cy="34" r="1.8" fill="#FFF"/>
+
+        <path d="M48 34 Q62 26 74 32 Q78 42 70 48 Q56 48 48 40 Z" fill="#D1FAE5" opacity="0.9"/>
+        <path d="M50 32 Q62 26 72 32" stroke="#A7F3D0" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+
+        <path d="M18 18 Q30 10 40 14 Q44 24 36 30 Q24 30 18 24 Z" fill="#ECFDF5" opacity="0.95"/>
+        <path d="M20 16 Q30 10 38 14" stroke="#FFF" stroke-width="2.8" fill="none" stroke-linecap="round"/>
+
+        <path d="M38 14 Q52 8 62 14 Q66 24 58 30 Q44 30 38 22 Z" fill="#D1FAE5" opacity="0.95"/>
+        <path d="M40 12 Q52 8 60 14" stroke="#6EE7B7" stroke-width="2.8" fill="none" stroke-linecap="round"/>
+        <circle cx="48" cy="18" r="2" fill="#FFF" opacity="0.95"/>
+      </g>
+    `;
+  }
+
+  // 13. Đậu xanh nghiền bùi béo (Sweet Mung Bean Puree with Split Beans)
+  if (id === 'dauXanh') {
+    return `
+      <g>
+        <path d="M8 50 C14 36, 26 32, 42 35 C58 38, 70 30, 80 44 L80 54 L8 54 Z" fill="#BEF264"/>
+        <path d="M8 44 C20 24, 38 28, 54 22 C68 18, 76 26, 80 34 L80 52 L8 52 Z" fill="#D9F99D"/>
+        
+        <!-- Sóng đậu xanh mịn màng -->
+        <path d="M12 40 Q28 28 46 32 Q64 36 76 28" fill="none" stroke="#A3E635" stroke-width="3" stroke-linecap="round"/>
+        <path d="M18 34 Q36 20 54 24 Q70 28 78 20" fill="none" stroke="#FFF" stroke-width="3" stroke-linecap="round" opacity="0.8"/>
+
+        <!-- Từng hạt đậu xanh cà vỏ rắc tự nhiên lên bề mặt -->
+        <ellipse cx="22" cy="36" rx="3.5" ry="2.6" fill="#65A30D"/><circle cx="21" cy="35" r="0.8" fill="#FFF"/>
+        <ellipse cx="36" cy="38" rx="4" ry="2.8" fill="#84CC16"/><circle cx="35" cy="37" r="0.9" fill="#FFF"/>
+        <ellipse cx="50" cy="34" rx="3.8" ry="2.6" fill="#65A30D"/>
+        <ellipse cx="66" cy="32" rx="3.5" ry="2.5" fill="#84CC16"/>
+        <ellipse cx="28" cy="22" rx="4" ry="2.8" fill="#84CC16"/><circle cx="27" cy="21" r="1" fill="#FFF"/>
+        <ellipse cx="44" cy="20" rx="4.2" ry="3" fill="#65A30D"/><circle cx="43" cy="19" r="1" fill="#FFF"/>
+        <ellipse cx="60" cy="22" rx="3.8" ry="2.8" fill="#84CC16"/>
+        <ellipse cx="38" cy="10" rx="4" ry="2.8" fill="#84CC16"/><circle cx="37" cy="9" r="1" fill="#FFF"/>
+      </g>
+    `;
+  }
+
+  // 14. Hạt chia ngâm nở trong veo (Bloomed Chia Seeds in Jelly)
   return `
     <g>
-      <rect x="16" y="19" width="18" height="18" rx="2.5" fill="#ECFDF5" stroke="#A7F3D0" stroke-width="1.5"/><polygon points="16,19 23,12 41,12 34,19" fill="#FFFFFF"/>
-      <rect x="40" y="26" width="20" height="20" rx="2.5" fill="#ECFDF5" stroke="#A7F3D0" stroke-width="1.5"/><polygon points="40,26 47,19 67,19 60,26" fill="#FFFFFF"/>
+      <!-- Nước gel thạch trong suốt chứa hàng chục hạt chia đen ngâm nở tự nhiên -->
+      <path d="M8 48 C20 40, 44 42, 80 48 L80 54 L8 54 Z" fill="#E2E8F0" opacity="0.6"/>
+      <ellipse cx="44" cy="32" rx="34" ry="18" fill="#F8FAFC" opacity="0.85"/>
+      <ellipse cx="44" cy="32" rx="34" ry="18" stroke="#E2E8F0" stroke-width="1.2" fill="none"/>
+      
+      <!-- Hạt chia tự nhiên rải đều có vòng gel trong suốt bao quanh -->
+      ${[
+        [16, 24], [26, 18], [38, 19], [50, 18], [62, 22], [72, 26],
+        [20, 32], [32, 28], [44, 27], [56, 30], [68, 34],
+        [14, 40], [25, 42], [37, 39], [49, 41], [61, 43], [73, 42],
+        [22, 48], [34, 47], [46, 49], [58, 48],
+        [30, 13], [44, 11], [58, 12]
+      ].map(([x, y]) => `
+        <ellipse cx="${x}" cy="${y}" rx="3.4" ry="2.6" fill="#E2E8F0" opacity="0.85"/>
+        <ellipse cx="${x}" cy="${y}" rx="2" ry="1.5" fill="#18181B"/>
+        <circle cx="${x - 0.6}" cy="${y - 0.5}" r="0.6" fill="#FFF"/>
+      `).join('')}
     </g>
   `;
 }
 
-// 4. Chai siro thuỷ tinh có vòi bơm lò xo
+// 4. Chai siro thuỷ tinh dáng Torani/Monin có vòi bơm lò xo (Chuẩn Ảnh 2)
 function renderSyrupSvg(s, inCup, qty, isPumping = false) {
   return `
-    <svg viewBox="0 0 75 110" width="100%" height="100%" class="vivid-svg ${isPumping ? 'anim-pumping' : ''}">
+    <svg viewBox="0 0 68 105" width="100%" height="100%" class="vivid-svg ${isPumping ? 'anim-pumping' : ''}">
       <defs>
-        <linearGradient id="syrup_${s.id}" x1="0" y1="0" x2="1" y2="0">
+        <!-- Nước siro trong suốt phản quang -->
+        <linearGradient id="syrupGrad_${s.id}" x1="0" y1="0" x2="1" y2="0">
           <stop offset="0%" stop-color="${s.color}" stop-opacity="0.95"/>
-          <stop offset="50%" stop-color="${s.color}"/>
-          <stop offset="100%" stop-color="${s.color}" stop-opacity="0.9"/>
+          <stop offset="35%" stop-color="${s.color}"/>
+          <stop offset="70%" stop-color="${s.color}" stop-opacity="0.98"/>
+          <stop offset="100%" stop-color="${s.color}" stop-opacity="0.85"/>
         </linearGradient>
       </defs>
 
-      <!-- Đầu vòi bơm lò xo -->
+      <!-- Bóng đổ chai siro -->
+      <ellipse cx="34" cy="94" rx="20" ry="3.5" fill="rgba(61, 34, 20, 0.2)"/>
+
+      <!-- Đầu vòi bơm siro lò xo màu đen/inox (Pump Mechanism) -->
       <g class="pump-mechanism ${isPumping ? 'pressed' : ''}">
-        <path d="M32 15 L43 15 L43 21 L32 21 Z" fill="#334155"/>
-        <path d="M37.5 6 L37.5 15" stroke="#334155" stroke-width="3" stroke-linecap="round"/>
-        <path d="M20 5 L45 5 C47 5, 48 8, 46 10 L37.5 11" fill="#1E293B" stroke="#0F172A" stroke-width="1.4"/>
+        <!-- Cổ nắp chai -->
+        <rect x="29" y="19" width="10" height="6" rx="1.5" fill="#1E293B" stroke="#3A2012" stroke-width="1.2"/>
+        <!-- Trục piston kim loại -->
+        <line x1="34" y1="${isPumping ? 13 : 9}" x2="34" y2="19" stroke="#94A3B8" stroke-width="3" stroke-linecap="round"/>
+        <!-- Đầu vòi pump cong chúc xuống -->
+        <path d="M18 ${isPumping ? 14 : 10} L34 ${isPumping ? 11 : 7} Q37 ${isPumping ? 11 : 7} 38 ${isPumping ? 14 : 10} L36 ${isPumping ? 16 : 12} L19 ${isPumping ? 17 : 13} Z" 
+              fill="#0F172A" stroke="#3A2012" stroke-width="1.3"/>
+        ${isPumping ? `
+          <!-- Giọt siro nhỏ ra khi bơm -->
+          <circle cx="18" cy="20" r="1.8" fill="${s.color}"/>
+        ` : ''}
       </g>
 
-      <!-- Thân chai vai cong -->
-      <path d="M20 29 C20 22, 55 22, 55 29 L58 92 C58 96, 17 96, 17 92 Z" fill="rgba(255,255,255,0.35)" stroke="#94A3B8" stroke-width="1.8"/>
-      
-      <!-- Nước siro tươi sáng -->
-      <path d="M19 39 C19 37, 56 37, 56 39 L56 91 Q56 94 51 94 L24 94 Q19 94 19 91 Z" fill="url(#syrup_${s.id})"/>
-      <path d="M22 32 L22 88" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" opacity="0.7"/>
+      <!-- Cổ chai thuỷ tinh thon dài -->
+      <path d="M29 25 L29 35 C29 39, 16 42, 16 48 L17 91 Q17 94 34 94 Q51 94 51 91 L52 48 C52 42, 39 39, 39 35 L39 25 Z" 
+            fill="rgba(255, 255, 255, 0.55)" stroke="#3A2012" stroke-width="1.8" stroke-linejoin="round"/>
 
-      <!-- Thẻ nhãn to rõ -->
-      <rect x="11" y="54" width="53" height="36" rx="3.5" fill="#FFFFFF" stroke="#3D2214" stroke-width="1.6"/>
-      <text x="37.5" y="68" font-family="'Paytone One', 'Nunito', sans-serif" font-size="8.8" font-weight="900" fill="#3D2214" text-anchor="middle">${s.name}</text>
-      <text x="37.5" y="85" font-size="15" text-anchor="middle">${s.icon}</text>
+      <!-- Nước siro tươi sáng ngập tràn trong chai -->
+      <path d="M18 50 C18 45, 50 45, 50 50 L49 90 Q49 92 34 92 Q19 92 19 90 Z" fill="url(#syrupGrad_${s.id})"/>
+      <path d="M18.5 50 Q34 47 49.5 50" stroke="rgba(255, 255, 255, 0.7)" stroke-width="1.5" fill="none"/>
+
+      <!-- Vệt phản quang thân chai thuỷ tinh -->
+      <path d="M21 44 L21 88" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" opacity="0.75"/>
+
+      <!-- Nhãn chai vintage sang trọng với hình trái cây (Chuẩn Ảnh 2) -->
+      <rect x="15" y="55" width="38" height="30" rx="3" fill="#FFFDF8" stroke="#3A2012" stroke-width="1.4"/>
+      <rect x="17" y="57" width="34" height="26" rx="2" fill="none" stroke="#E2D0B6" stroke-width="0.8"/>
+      <text x="34" y="66" font-family="'Paytone One', 'Nunito', sans-serif" font-size="7.5" font-weight="900" fill="#3A2012" text-anchor="middle">${s.name}</text>
+      <text x="34" y="78" font-size="12" text-anchor="middle">${s.icon}</text>
+
+      <!-- Huy hiệu số lượng tròn ở trên (Chuẩn Ảnh 2) -->
+      <circle cx="54" cy="11" r="8" fill="#FFFDF8" stroke="#3A2012" stroke-width="1.4"/>
+      <text x="54" y="14" font-family="'Nunito', sans-serif" font-size="8" font-weight="900" fill="#3A2012" text-anchor="middle">${qty}</text>
     </svg>
   `;
 }
+
 
 // 5. LY TRÀ SỮA TO SỐNG ĐỘNG TRÊN BÀN PHA (BIG WORKBENCH CUP)
 function renderBigWorkbenchCupSvg(currentCup) {
@@ -1000,7 +1475,6 @@ class GameApp {
                 const qty = state.getTotalQty(t.id);
                 return `
                   <button class="dispenser-col-btn ${isSelected ? 'selected' : ''}" data-pick-tea="${t.id}" title="${t.name}">
-                    <span class="qty-tag">${qty}</span>
                     ${renderDispenserSvg(t, isSelected, qty, isPouring)}
                   </button>
                 `;
@@ -1009,7 +1483,7 @@ class GameApp {
 
             <!-- Máy đóng nắp retro bên phải -->
             <div class="sealer-retro-box">
-              <button class="sealer-btn-touch" id="btnManualSealServe">
+              <button class="sealer-btn-touch" id="btnManualSealServe" title="Dập nắp ly trà sữa">
                 ${renderSealerMachineSvg(this.currentCup.isSealing, isMatched)}
               </button>
             </div>
@@ -1025,17 +1499,13 @@ class GameApp {
               <span class="shelf-title-badge">🧋 PHA LY</span>
             </div>
 
-            <!-- Chọn ly M / L -->
+            <!-- Cọc ly xếp chồng M / L (Chuẩn Ảnh 2) -->
             <div class="cups-select-row">
-              <button class="cup-item-pill ${this.currentCup.cup === 'M' ? 'active' : ''}" data-pick-cup="M">
-                <span class="qty-tag">${state.getTotalQty('cupM')}</span>
-                <span style="font-size: 16px;">🥤</span>
-                <span class="cup-name-label">Ly M</span>
+              <button class="cup-stack-btn ${this.currentCup.cup === 'M' ? 'active' : ''}" data-pick-cup="M" title="Lấy Ly M (500ml)">
+                ${renderCupStackSvg('M', state.getTotalQty('cupM'), this.currentCup.cup === 'M')}
               </button>
-              <button class="cup-item-pill ${this.currentCup.cup === 'L' ? 'active' : ''}" data-pick-cup="L">
-                <span class="qty-tag">${state.getTotalQty('cupL')}</span>
-                <span style="font-size: 18px;">🧋</span>
-                <span class="cup-name-label">Ly L</span>
+              <button class="cup-stack-btn ${this.currentCup.cup === 'L' ? 'active' : ''}" data-pick-cup="L" title="Lấy Ly L (700ml)">
+                ${renderCupStackSvg('L', state.getTotalQty('cupL'), this.currentCup.cup === 'L')}
               </button>
             </div>
 
@@ -1046,7 +1516,7 @@ class GameApp {
               ` : `
                 <div class="empty-cup-ghost">
                   <span style="font-size: 32px; opacity: 0.6;">🧋</span>
-                  <span class="ghost-text">Chạm chọn Ly M hoặc Ly L để bắt đầu pha</span>
+                  <span class="ghost-text">Lấy ly M hoặc L</span>
                 </div>
               `}
             </div>
@@ -1093,8 +1563,7 @@ class GameApp {
                   const inCup = this.currentCup.toppings.includes(tp.id);
                   const qty = state.getTotalQty(tp.id);
                   return `
-                    <button class="topping-tray-btn ${inCup ? 'in-cup' : ''}" data-pick-topping="${tp.id}">
-                      <span class="qty-tag">${qty}</span>
+                    <button class="topping-tray-btn ${inCup ? 'in-cup' : ''}" data-pick-topping="${tp.id}" title="${tp.name}">
                       ${renderToppingSvg(tp, inCup, qty)}
                     </button>
                   `;
@@ -1117,8 +1586,7 @@ class GameApp {
               const isPumping = this.activePumpingSyrup === s.id;
               const qty = state.getTotalQty(s.id);
               return `
-                <button class="syrup-bottle-btn ${inCup ? 'in-cup' : ''}" data-pick-syrup="${s.id}">
-                  <span class="qty-tag">${qty}</span>
+                <button class="syrup-bottle-btn ${inCup ? 'in-cup' : ''}" data-pick-syrup="${s.id}" title="${s.name}">
                   ${renderSyrupSvg(s, inCup, qty, isPumping)}
                 </button>
               `;
