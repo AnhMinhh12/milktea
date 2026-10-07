@@ -1,22 +1,20 @@
 :root {
   color-scheme: light;
   --font-display: 'Paytone One', 'Arial Rounded MT Bold', sans-serif;
-  --font-body: 'Mali', 'Be Vietnam Pro', system-ui, sans-serif;
+  --font-body: 'Nunito', 'Mali', system-ui, sans-serif;
 
-  /* Bảng màu quầy trà sữa phong cách Cozy Pastel Anime */
+  /* Bảng màu quầy trà sữa Anime Cozy Cafe */
   --wood-counter: #F4E2CD;
   --wood-border: #D1A87D;
   --wood-dark: #8C5429;
   --wood-shadow: #B88959;
-  --cream-panel: #FFF8EE;
-  --cream-card: #FFFFFF;
-  --glass-border: #C8D8E4;
-
+  --cream-shelf: #FFF8EE;
+  --shelf-border: #E6CEB3;
   --boba-dark: #3D2214;
-  --boba-primary: #7A4222;
-  --status-green: #38A169;
-  --status-red: #E53E3E;
-  --status-blue: #3182CE;
+  --status-green: #22C55E;
+  --status-red: #EF4444;
+  --status-blue: #3B82F6;
+  --status-orange: #F97316;
 }
 
 * {
@@ -31,10 +29,10 @@ html, body {
   margin: 0;
   padding: 0;
   overflow: hidden;
-  background-color: #2D180C;
+  background-color: #26140A;
   background-image: 
-    radial-gradient(circle at 10% 10%, #4D2B17 0, transparent 40%),
-    radial-gradient(circle at 90% 90%, #201007 0, transparent 40%);
+    radial-gradient(circle at 10% 10%, #3D2010 0, transparent 40%),
+    radial-gradient(circle at 90% 90%, #1A0D06 0, transparent 40%);
   font-family: var(--font-body);
   color: var(--boba-dark);
 }
@@ -50,10 +48,10 @@ button {
 }
 
 button:active {
-  transform: translateY(1.5px) scale(0.98);
+  transform: translateY(2px) scale(0.97);
 }
 
-/* ================= CONTAINER CHÍNH (RỘNG RÃI TRÊN DESKTOP) ================= */
+/* ================= APP CONTAINER ================= */
 #app {
   max-width: 1200px;
   width: 100%;
@@ -64,22 +62,22 @@ button:active {
   flex-direction: column;
   position: relative;
   background: var(--wood-counter);
-  box-shadow: 0 0 50px rgba(0, 0, 0, 0.7);
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.75);
   overflow: hidden;
 }
 
-/* ================= THANH TOP BAR ================= */
+/* ================= TOP BAR ================= */
 #top {
   flex: none;
   z-index: 30;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 4px 10px;
-  background: linear-gradient(180deg, #5C3217, #44210B);
+  padding: 5px 12px;
+  background: linear-gradient(180deg, #5C3217, #3D1C08);
   color: #FFF6EC;
   border-bottom: 2px solid #2B1204;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.3);
 }
 
 .top-left, .top-right {
@@ -89,14 +87,14 @@ button:active {
 }
 
 .top-icon-btn {
-  width: 28px;
-  height: 28px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.18);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.35);
   display: grid;
   place-items: center;
-  font-size: 13px;
+  font-size: 14px;
   color: #FFF;
 }
 
@@ -108,15 +106,15 @@ button:active {
 
 .top-day-title {
   font-family: var(--font-display);
-  font-size: 14px;
+  font-size: 15px;
   color: #FEEBC8;
   letter-spacing: 0.04em;
 }
 
 .top-day-clock {
   font-size: 11px;
-  font-weight: 700;
-  background: rgba(0,0,0,0.3);
+  font-weight: 800;
+  background: rgba(0,0,0,0.35);
   padding: 1px 8px;
   border-radius: 12px;
   color: #E2E8F0;
@@ -125,25 +123,23 @@ button:active {
 .top-money-badge {
   background: #FFF;
   color: var(--boba-dark);
-  padding: 2px 8px;
+  padding: 2px 9px;
   border-radius: 14px;
   font-family: var(--font-display);
-  font-size: 12px;
+  font-size: 12.5px;
   border: 1.5px solid #F6D686;
   font-weight: bold;
 }
 
 .top-rating-badge {
-  background: rgba(0,0,0,0.3);
-  padding: 2px 6px;
+  background: rgba(0,0,0,0.35);
+  padding: 2px 7px;
   border-radius: 14px;
-  font-size: 10px;
+  font-size: 10.5px;
   color: #ECC94B;
 }
 
-.brand-strip {
-  display: none; /* Ẩn bớt để nhường toàn bộ diện tích cho quầy pha chế */
-}
+.brand-strip { display: none; }
 
 #view {
   flex: 1;
@@ -153,24 +149,24 @@ button:active {
   overflow: hidden;
 }
 
-/* ================= 1. MÀN HÌNH BÁN HÀNG (SHOP COUNTER SCREEN) ================= */
+/* ================= MÀN HÌNH BÁN HÀNG ================= */
 .shop-counter-screen {
   flex: 1;
   min-height: 0;
   display: flex;
   flex-direction: column;
   padding: 4px 8px 6px;
-  gap: 4px;
+  gap: 5px;
   background: #EEDBC2;
   overflow: hidden;
 }
 
-/* ================= DÃY ORDER CARD NGANG Ở TRÊN ================= */
+/* ================= ORDER CARDS Ở TRÊN ================= */
 .orders-top-strip {
   flex: none;
   min-height: 52px;
-  background: rgba(255, 255, 255, 0.7);
-  border: 1.5px solid var(--wood-border);
+  background: rgba(255, 255, 255, 0.75);
+  border: 2px solid var(--wood-border);
   border-radius: 10px;
   padding: 4px;
   overflow-x: auto;
@@ -200,19 +196,14 @@ button:active {
 .order-h-card.active {
   border-color: var(--status-green);
   background: #F8FFF6;
-  box-shadow: 0 0 0 2px rgba(56, 161, 105, 0.4);
+  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.4);
 }
 
-.order-h-card.app-type {
-  border-left: 4px solid var(--status-blue);
-}
-
-.order-h-card.counter-type {
-  border-left: 4px solid #ED8936;
-}
+.order-h-card.app-type { border-left: 4px solid var(--status-blue); }
+.order-h-card.counter-type { border-left: 4px solid var(--status-orange); }
 
 .order-h-icon {
-  font-size: 18px;
+  font-size: 20px;
   flex: none;
 }
 
@@ -243,7 +234,7 @@ button:active {
 }
 
 .badge-counter {
-  background: #ED8936;
+  background: var(--status-orange);
   color: #FFF;
   font-size: 8px;
   font-weight: 800;
@@ -259,7 +250,7 @@ button:active {
 .order-h-drink {
   font-size: 10px;
   color: var(--wood-dark);
-  font-weight: 700;
+  font-weight: 800;
   overflow: hidden;
   text-overflow: ellipsis;
 }
@@ -273,7 +264,7 @@ button:active {
 
 .req-tag {
   font-size: 8px;
-  font-weight: 700;
+  font-weight: 800;
   padding: 0.5px 3.5px;
   border-radius: 3px;
   border: 1px solid;
@@ -281,13 +272,13 @@ button:active {
 
 .req-tag.pending {
   border-color: var(--status-red);
-  background: #FFF5F5;
+  background: #FEF2F2;
   color: var(--status-red);
 }
 
 .req-tag.done {
   border-color: var(--status-green);
-  background: #F0FFF4;
+  background: #F0FDF4;
   color: var(--status-green);
 }
 
@@ -295,15 +286,13 @@ button:active {
   font-size: 8.5px;
   font-weight: 800;
   margin-left: auto;
-  color: #718096;
+  color: #64748B;
 }
 
-.order-percent.done {
-  color: var(--status-green);
-}
+.order-percent.done { color: var(--status-green); }
 
 .patience-track-horizontal {
-  height: 2.5px;
+  height: 3px;
   background: #E2E8F0;
   border-radius: 2px;
   overflow: hidden;
@@ -316,7 +305,7 @@ button:active {
   transition: width 0.25s linear;
 }
 
-/* ================= 2. QUẦY GỖ PHA CHẾ CHÍNH (THEO HÌNH ẢNH MẪU) ================= */
+/* ================= 2. QUẦY PHA CHẾ CHÍNH (THEO HÌNH ẢNH MẪU) ================= */
 .cozy-kitchen-table {
   flex: 1;
   min-height: 0;
@@ -326,11 +315,11 @@ button:active {
   border: 3px solid var(--wood-border);
   border-radius: 14px;
   padding: 6px;
-  box-shadow: inset 0 2px 6px rgba(255,255,255,0.7), 0 4px 10px rgba(78, 43, 23, 0.15);
+  box-shadow: inset 0 2px 6px rgba(255,255,255,0.7), 0 4px 12px rgba(78, 43, 23, 0.2);
   overflow: hidden;
 }
 
-/* CỘT TRÁI (LY, ĐƯỜNG, ĐÁ) */
+/* CỘT BÊN TRÁI: LY, ĐƯỜNG, ĐÁ */
 .left-ingredients-panel {
   width: 96px;
   flex: none;
@@ -340,7 +329,7 @@ button:active {
 }
 
 .panel-section-box {
-  background: var(--cream-panel);
+  background: var(--cream-shelf);
   border: 2px solid var(--wood-border);
   border-radius: 10px;
   padding: 4px;
@@ -358,7 +347,6 @@ button:active {
   margin-bottom: 2px;
 }
 
-/* CHỌN LY M & L */
 .cups-vertical-stack {
   display: flex;
   flex-direction: column;
@@ -366,7 +354,7 @@ button:active {
   width: 100%;
 }
 
-.cup-item-art {
+.cup-btn-card {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -374,48 +362,34 @@ button:active {
   background: #FFF;
   border: 1.5px solid var(--wood-border);
   border-radius: 8px;
-  padding: 3px 2px;
+  padding: 2px;
   position: relative;
-  height: 48px;
+  height: 50px;
 }
 
-.cup-item-art.selected {
+.cup-btn-card.selected {
   border-color: var(--status-green);
-  background: #F0FFF4;
+  background: #F0FDF4;
   box-shadow: 0 0 0 2px var(--status-green);
 }
 
-.cup-glass-art {
-  width: 32px;
-  border: 1.5px solid #8C5429;
-  border-radius: 2px 2px 6px 6px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(220,235,245,0.6));
+.qty-bubble {
+  position: absolute;
+  top: 1px;
+  right: 2px;
+  background: rgba(15, 23, 42, 0.7);
+  color: #FFF;
+  font-size: 7.5px;
+  font-weight: 800;
+  padding: 0 3px;
+  border-radius: 4px;
+  z-index: 6;
+}
+
+.condiment-bowl-svg-wrap {
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
-}
-
-.cup-glass-art.cup-m { height: 32px; }
-.cup-glass-art.cup-l { height: 38px; }
-
-.cup-badge-letter {
-  font-family: var(--font-display);
-  font-size: 11px;
-  color: #8C5429;
-  background: #FFF;
-  border: 1px solid #8C5429;
-  border-radius: 50%;
-  width: 16px;
-  height: 16px;
-  display: grid;
-  place-items: center;
-}
-
-/* ĐƯỜNG & ĐÁ */
-.condiment-bowl-art {
-  font-size: 20px;
-  line-height: 1;
   margin: 1px 0 2px;
 }
 
@@ -445,11 +419,11 @@ button:active {
   border: 1px solid var(--status-green);
 }
 
-.btn-trash-bowl {
+.btn-trash-action {
   margin-top: auto;
-  background: #FFF5F5;
-  border: 1.5px solid #FEB2B2;
-  color: #C53030;
+  background: #FEF2F2;
+  border: 1.5px solid #FECACA;
+  color: #DC2626;
   font-size: 9.5px;
   font-weight: 800;
   padding: 4px 6px;
@@ -457,7 +431,7 @@ button:active {
   text-align: center;
 }
 
-/* CỘT PHẢI (3 KỆ NGUYÊN LIỆU) */
+/* CỘT BÊN PHẢI (KỆ NGUYÊN LIỆU) */
 .right-shelves-panel {
   flex: 1;
   min-width: 0;
@@ -471,7 +445,7 @@ button:active {
   background: #FDF3E7;
   border: 2px solid var(--wood-border);
   border-radius: 10px;
-  padding: 3px 5px 4px;
+  padding: 3px 6px 4px;
   display: flex;
   flex-direction: column;
   box-shadow: inset 0 1px 2px rgba(255,255,255,0.8);
@@ -490,23 +464,22 @@ button:active {
   margin-bottom: 2px;
 }
 
-.qty-pill {
-  position: absolute;
-  top: 1px;
-  right: 1.5px;
-  background: rgba(0,0,0,0.65);
-  color: #FFF;
-  font-size: 7px;
-  font-weight: 800;
-  padding: 0 3px;
-  border-radius: 4px;
-  z-index: 5;
+.game-asset-svg {
+  display: block;
+  filter: drop-shadow(0 2px 3px rgba(61, 34, 20, 0.12));
+  transition: transform 0.12s ease;
 }
 
-/* ================= 1. KỆ 9 BÌNH TRÀ & MÁY ĐÓNG NẮP ================= */
-.teas-and-sealer-row {
+.dispenser-btn:hover .game-asset-svg,
+.topping-btn:hover .game-asset-svg,
+.syrup-btn:hover .game-asset-svg {
+  transform: translateY(-2px);
+}
+
+/* ================= 1. KỆ BÌNH TRÀ & MÁY ĐÓNG NẮP ================= */
+.teas-and-sealer-flex {
   display: flex;
-  gap: 5px;
+  gap: 6px;
   align-items: stretch;
 }
 
@@ -517,201 +490,77 @@ button:active {
   gap: 3px;
 }
 
-.dispenser-card-art {
+.dispenser-btn {
   display: flex;
   flex-direction: column;
   align-items: center;
   position: relative;
-  padding: 1px 0;
+  height: 68px;
 }
 
-.dispenser-card-art.selected .dispenser-body {
-  border-color: var(--status-green);
-  box-shadow: 0 0 0 2px var(--status-green);
+.dispenser-btn.selected .game-asset-svg {
+  filter: drop-shadow(0 0 4px #22C55E);
+  transform: scale(1.04);
 }
 
-/* Nắp bạc */
-.dispenser-cap {
-  width: 80%;
-  height: 5px;
-  background: linear-gradient(180deg, #E2E8F0, #A0AEC0);
-  border: 1px solid #718096;
-  border-radius: 3px 3px 0 0;
-  position: relative;
-}
-
-.dispenser-cap::before {
-  content: '';
-  position: absolute;
-  top: -2.5px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 6px;
-  height: 2.5px;
-  background: #CBD5E0;
-  border-radius: 2px;
-}
-
-/* Thân bình thuỷ tinh */
-.dispenser-body {
-  width: 100%;
-  height: 54px;
-  background: rgba(255, 255, 255, 0.4);
-  border: 1.5px solid #CBD5E0;
-  border-radius: 3px;
-  position: relative;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  padding: 1px;
-}
-
-.tea-liquid-fill {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 75%;
-  opacity: 0.9;
-  border-top: 1px solid rgba(255,255,255,0.4);
-}
-
-.tea-art-icon {
-  position: absolute;
-  top: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 11px;
-  z-index: 2;
-  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.5));
-}
-
-.tea-label-banner {
-  position: relative;
-  z-index: 3;
-  background: #FFF;
-  border: 1px solid var(--boba-dark);
-  border-radius: 3px;
-  font-family: var(--font-display);
-  font-size: 7px;
-  color: var(--boba-dark);
-  text-align: center;
-  padding: 0.5px 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  margin-bottom: 2px;
-  line-height: 1.1;
-}
-
-/* Vòi rót đen */
-.dispenser-spout {
-  width: 6px;
-  height: 7px;
-  background: #2D3748;
-  border-radius: 0 0 3px 3px;
-  margin-top: 0.5px;
-}
-
-/* MÁY ĐÓNG NẮP VINTAGE RETRO */
-.retro-sealer-art-box {
-  width: 82px;
+/* MÁY ĐÓNG NẮP RETRO */
+.sealer-machine-box {
+  width: 90px;
   flex: none;
   background: #FFF;
-  border: 2px solid #ED8936;
+  border: 2px solid #FB923C;
   border-radius: 10px;
   padding: 3px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
   position: relative;
 }
 
-.sealer-film-roll {
-  display: flex;
-  align-items: center;
-  gap: 2px;
-  background: #FEEBC8;
-  border: 1px solid #ED8936;
-  border-radius: 4px;
-  padding: 1px 3px;
-  font-size: 8px;
-}
-
-.film-gear {
-  font-size: 9px;
-}
-
-.film-tape-pattern {
-  font-size: 7px;
-  color: #DD6B20;
-}
-
-.sealer-head-block {
+.sealer-interactive-btn {
   width: 100%;
+  height: 72px;
+  display: block;
 }
 
-.btn-seal-stamp {
-  width: 100%;
-  background: #CBD5E0;
-  color: #4A5568;
-  border: 1.5px solid #A0AEC0;
-  border-radius: 5px;
-  font-family: var(--font-display);
-  font-size: 8px;
-  padding: 2px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 3px;
+.staged-cup-slot {
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  pointer-events: none;
+  z-index: 10;
 }
 
-.btn-seal-stamp.ready {
-  background: linear-gradient(180deg, #48BB78, #2F855A);
-  color: #FFF;
-  border-color: #276749;
-  box-shadow: 0 0 6px rgba(72, 187, 120, 0.6);
-  animation: pulse 0.8s infinite alternate;
+.staged-cup-svg {
+  display: block;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+  animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.led-light {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: #E53E3E;
+@keyframes popIn {
+  0% { transform: scale(0.6); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
 }
 
-.led-light.on {
-  background: #48BB78;
-  box-shadow: 0 0 4px #48BB78;
+.sealer-machine-box.sealing {
+  border-color: #22C55E;
+  box-shadow: 0 0 10px rgba(34, 197, 94, 0.5);
 }
 
-.sealer-cup-stage {
-  width: 100%;
-  height: 48px;
-  background: #F7FAFC;
-  border: 1.5px dashed #CBD5E0;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.film-roll.anim-rotate {
+  animation: rotateReel 0.4s linear infinite;
 }
 
-.empty-stage-ring {
-  font-size: 8px;
-  color: #A0AEC0;
+@keyframes rotateReel {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
-.retro-sealer-art-box.sealing-active {
-  border-color: #48BB78;
-  animation: pulse 0.4s infinite alternate;
-}
-
-/* ================= 2. KỆ 15 KHAY TOPPING (9 HÀNG 1, 6 HÀNG 2) ================= */
-.toppings-container-grid {
+/* ================= 2. KỆ 15 KHAY TOPPING ================= */
+.toppings-grid-container {
   display: flex;
   flex-direction: column;
   gap: 3px;
@@ -727,191 +576,39 @@ button:active {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   gap: 3px;
-  width: 66.66%; /* Chiếm 6/9 chiều ngang giống hệt thiết kế mẫu */
+  width: 66.66%;
 }
 
-.topping-tray-art {
+.topping-btn {
   display: flex;
   flex-direction: column;
   position: relative;
-  background: #FFF;
-  border: 1.5px solid #CBD5E0;
-  border-radius: 6px;
-  padding: 2px;
-  height: 44px;
+  height: 50px;
 }
 
-.topping-tray-art.in-cup {
-  border-color: var(--status-green);
-  background: #F0FFF4;
-  box-shadow: 0 0 0 2px var(--status-green);
-}
-
-.tray-glass-inner {
-  width: 100%;
-  height: 100%;
-  border-radius: 4px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
-  overflow: hidden;
-}
-
-.tray-food-graphic {
-  flex: 1;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding-top: 2px;
-}
-
-/* Hiệu ứng hạt trân châu / thạch / đậu */
-.pearls-cluster, .cubes-cluster, .beans-cluster {
-  display: grid;
-  grid-template-columns: repeat(2, 6px);
-  gap: 1.5px;
-}
-
-.pearls-cluster span {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  box-shadow: inset 1px 1px 1px rgba(255,255,255,0.7);
-}
-
-.cubes-cluster span {
-  width: 6px;
-  height: 6px;
-  border-radius: 1px;
-  opacity: 0.9;
-  box-shadow: inset 1px 1px 1px rgba(255,255,255,0.8);
-}
-
-.beans-cluster span {
-  width: 6px;
-  height: 4.5px;
-  border-radius: 50%;
-}
-
-.foam-swirl {
-  width: 16px;
-  height: 14px;
-  border-radius: 50% 50% 20% 20%;
-  border: 1px solid #ECC94B;
-}
-
-.seeds-cluster {
-  width: 14px;
-  height: 10px;
-  border-radius: 4px;
-  opacity: 0.8;
-}
-
-.tray-white-badge {
-  background: #FFF;
-  border: 1px solid var(--boba-dark);
-  border-radius: 3px;
-  font-family: var(--font-display);
-  font-size: 6.5px;
-  color: var(--boba-dark);
-  text-align: center;
-  padding: 0.5px 1px;
-  width: 100%;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  line-height: 1.1;
+.topping-btn.in-cup .game-asset-svg {
+  filter: drop-shadow(0 0 4px #22C55E);
+  transform: scale(1.04);
 }
 
 /* ================= 3. KỆ 9 CHAI SIRO ================= */
-.syrups-bottles-grid-9 {
+.syrups-grid-9 {
   display: grid;
   grid-template-columns: repeat(9, 1fr);
   gap: 3px;
 }
 
-.syrup-bottle-art {
+.syrup-btn {
   display: flex;
   flex-direction: column;
   align-items: center;
   position: relative;
-  height: 52px;
+  height: 66px;
 }
 
-.syrup-bottle-art.in-cup .bottle-glass-body {
-  border-color: var(--status-green);
-  box-shadow: 0 0 0 2px var(--status-green);
-}
-
-/* Vòi bơm đen */
-.pump-head-art {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  position: relative;
-}
-
-.pump-spout-lip {
-  width: 10px;
-  height: 4px;
-  background: #2D3748;
-  border-radius: 3px 0 0 3px;
-}
-
-.pump-stem {
-  width: 4px;
-  height: 4px;
-  background: #4A5568;
-}
-
-/* Thân chai thuỷ tinh */
-.bottle-glass-body {
-  width: 100%;
-  flex: 1;
-  background: rgba(255, 255, 255, 0.4);
-  border: 1.5px solid #CBD5E0;
-  border-radius: 4px;
-  position: relative;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  padding: 1px;
-}
-
-.syrup-liquid-fill {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 70%;
-  opacity: 0.85;
-}
-
-.bottle-label-card {
-  position: relative;
-  z-index: 2;
-  background: #FFF;
-  border: 1px solid var(--boba-dark);
-  border-radius: 3px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 1px 0;
-}
-
-.bottle-label-card b {
-  font-family: var(--font-display);
-  font-size: 7px;
-  color: var(--boba-dark);
-  line-height: 1.1;
-}
-
-.bottle-label-card .fruit-ico {
-  font-size: 9px;
-  line-height: 1;
+.syrup-btn.in-cup .game-asset-svg {
+  filter: drop-shadow(0 0 4px #22C55E);
+  transform: scale(1.04);
 }
 
 /* ================= MODAL & POPUP ================= */
@@ -930,7 +627,7 @@ button:active {
   position: absolute;
   inset: 0;
   background: rgba(0, 0, 0, 0.65);
-  backdrop-filter: blur(2px);
+  backdrop-filter: blur(3px);
 }
 
 #modalCard {
@@ -940,72 +637,66 @@ button:active {
   max-width: 420px;
   background: #FFF;
   border: 3px solid var(--wood-border);
-  border-radius: 14px;
-  padding: 14px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.4);
   text-align: center;
 }
 
 #modalCard h2 {
   font-family: var(--font-display);
-  font-size: 16px;
+  font-size: 17px;
   color: var(--boba-dark);
   margin: 0 0 6px;
 }
 
-.modal-btns {
-  display: flex;
-  gap: 8px;
-  justify-content: center;
-}
-
 .btn-modal-primary {
-  background: linear-gradient(180deg, #529B2B, #38A169);
+  background: linear-gradient(180deg, #22C55E, #16A34A);
   color: #FFF;
   font-family: var(--font-display);
-  font-size: 13px;
-  padding: 8px 14px;
-  border-radius: 8px;
-  box-shadow: 0 3px 0 #276749;
+  font-size: 14px;
+  padding: 9px 16px;
+  border-radius: 10px;
+  box-shadow: 0 3px 0 #15803D;
 }
 
 .btn-modal-cancel {
-  background: #EDF2F7;
-  color: #4A5568;
-  font-weight: 700;
-  font-size: 12px;
-  padding: 8px 14px;
-  border-radius: 8px;
+  background: #F1F5F9;
+  color: #475569;
+  font-weight: 800;
+  font-size: 13px;
+  padding: 9px 16px;
+  border-radius: 10px;
 }
 
 .btn-modal-confirm {
-  background: #E53E3E;
+  background: #EF4444;
   color: #FFF;
   font-family: var(--font-display);
-  font-size: 12px;
-  padding: 8px 14px;
-  border-radius: 8px;
-  box-shadow: 0 3px 0 #9B2C2C;
+  font-size: 13px;
+  padding: 9px 16px;
+  border-radius: 10px;
+  box-shadow: 0 3px 0 #B91C1C;
 }
 
 /* TOAST */
 #toast {
   position: absolute;
-  top: 42px;
+  top: 44px;
   left: 50%;
   transform: translateX(-50%) translateY(-20px);
-  background: rgba(45, 26, 14, 0.94);
+  background: rgba(38, 20, 10, 0.95);
   color: #FFF;
-  padding: 5px 14px;
-  border-radius: 20px;
-  font-size: 11px;
-  font-weight: 700;
+  padding: 6px 16px;
+  border-radius: 24px;
+  font-size: 11.5px;
+  font-weight: 800;
   z-index: 90;
   opacity: 0;
   pointer-events: none;
   transition: all 0.25s ease-out;
-  border: 1px solid #F6D686;
-  box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+  border: 1.5px solid #F6D686;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.35);
   white-space: nowrap;
 }
 
@@ -1016,11 +707,11 @@ button:active {
 
 .day-end-summary-box {
   background: #FDF4E7;
-  border-radius: 8px;
-  padding: 8px;
+  border-radius: 10px;
+  padding: 10px;
   text-align: left;
-  font-size: 11px;
-  margin: 6px 0 10px;
+  font-size: 12px;
+  margin: 8px 0 12px;
 }
 
 .summary-line {
@@ -1030,37 +721,116 @@ button:active {
 }
 
 .summary-line.sub {
-  padding-left: 6px;
-  color: #553C9A;
+  padding-left: 8px;
+  color: #6D28D9;
 }
 
 .summary-line.total {
-  font-size: 13px;
-  font-weight: 800;
+  font-size: 14px;
+  font-weight: 900;
   padding-top: 4px;
 }
 
 .pos { color: var(--status-green); }
 .neg { color: var(--status-red); }
 
-@keyframes pulse {
-  0% { transform: scale(1); }
-  100% { transform: scale(1.03); }
-}
-
-/* ================= RESPONSIVE ================= */
-@media (max-width: 768px) {
+/* ================= 📱 THÍCH ỨNG MOBILE PORTRAIT (KHÔNG BAO GIỜ BỊ CẮT XÉN!) ================= */
+@media (max-width: 768px) and (orientation: portrait) {
   #app {
     max-width: 100%;
   }
+
+  .cozy-kitchen-table {
+    flex-direction: column;
+    overflow-y: auto;
+    gap: 6px;
+  }
+
+  /* Cột bên trái đặt ngang ở trên */
   .left-ingredients-panel {
-    width: 82px;
+    width: 100%;
+    flex-direction: row;
+    gap: 4px;
   }
-  .tea-label-banner, .tray-white-badge, .bottle-label-card b {
-    font-size: 5.5px;
+
+  .panel-section-box {
+    flex: 1;
+    padding: 2px 3px;
   }
-  .dispenser-body { height: 46px; }
-  .topping-tray-art { height: 38px; }
-  .syrup-bottle-art { height: 46px; }
-  .retro-sealer-art-box { width: 70px; }
+
+  .cups-vertical-stack {
+    flex-direction: row;
+    gap: 3px;
+  }
+
+  .cup-btn-card {
+    flex: 1;
+    height: 42px;
+  }
+
+  .condiment-bowl-svg-wrap svg {
+    width: 36px;
+    height: 22px;
+  }
+
+  .btn-trash-action {
+    padding: 2px 4px;
+    font-size: 8px;
+  }
+
+  /* Kệ trà chia làm 2 hàng (5 + 4) để không bị tràn màn hình */
+  .teas-and-sealer-flex {
+    flex-direction: column;
+  }
+
+  .dispensers-grid-9 {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 3px;
+  }
+
+  .dispenser-btn {
+    height: 60px;
+  }
+
+  .sealer-machine-box {
+    width: 100%;
+    height: 65px;
+    flex-direction: row;
+    padding: 2px 8px;
+  }
+
+  .sealer-interactive-btn {
+    width: 120px;
+    height: 58px;
+  }
+
+  .staged-cup-slot {
+    position: relative;
+    bottom: auto;
+    left: auto;
+    transform: none;
+  }
+
+  /* 15 Topping chia làm 3 hàng x 5 khay */
+  .toppings-row-1 {
+    grid-template-columns: repeat(5, 1fr);
+  }
+
+  .toppings-row-2 {
+    grid-template-columns: repeat(5, 1fr);
+    width: 100%;
+  }
+
+  .topping-btn {
+    height: 46px;
+  }
+
+  /* 9 Siro chia làm 2 hàng (5 + 4) */
+  .syrups-grid-9 {
+    grid-template-columns: repeat(5, 1fr);
+  }
+
+  .syrup-btn {
+    height: 58px;
+  }
 }

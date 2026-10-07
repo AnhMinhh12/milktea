@@ -1,12 +1,13 @@
 /**
  * 🧋 TIỆM TRÀ SỮA CỦA RÙA (Boba Shop Simulator)
- * GIAO DIỆN QUẦY CHUẨN XỊN THEO HÌNH ẢNH THIẾT KẾ:
- * - 9 Bình trà thuỷ tinh nắp bạc vòi rót đen
- * - 15 Khay topping trong suốt (Hàng 1: 9 khay, Hàng 2: 6 khay)
- * - 9 Chai siro có vòi bơm và hình trái cây
- * - Cột bên trái: Ly M / L, Chén đường, Chén đá
- * - Góc trên bên phải: Máy đóng nắp vintage retro có cuộn màng hoa
- * - Card order ngang dễ nhìn, không bị che khuất
+ * GIAO DIỆN CHUẨN XỊN ĐẸP LUNG LINH 100% THEO HÌNH MẪU THIẾT KẾ:
+ * - 9 Bình trà thuỷ tinh nắp bạc vòi rót đen cực kỳ sống động
+ * - 15 Khay topping trong suốt với đồ hoạ món ăn 2.5D chân thực, ngon mắt
+ * - 9 Chai siro có vòi bơm, thân thuỷ tinh và hình trái cây sắc nét
+ * - Máy đóng nắp retro vintage với cuộn màng hoa đào và nút bấm phát sáng
+ * - Ly M/L trong suốt, chén đường và chén đá viên pha lê
+ * - Hiệu ứng pháo hoa confetti, âm thanh tươi vui, thao tác chạm cực nhạy
+ * - Tự động thích ứng trên cả điện thoại (Dọc & Ngang) và máy tính, KHÔNG BAO GIỜ BỊ CẮT XÉN!
  */
 
 // ================= 1. HỆ THỐNG ÂM THANH =================
@@ -74,6 +75,16 @@ class SoundEngine {
     notes.forEach((f, idx) => {
       setTimeout(() => this.playBeep(f, 'sine', 0.12, 0.18), idx * 50);
     });
+    // Bắn pháo hoa ăn mừng nếu có thư viện
+    if (typeof confetti === 'function') {
+      try {
+        confetti({
+          particleCount: 45,
+          spread: 60,
+          origin: { y: 0.6 }
+        });
+      } catch (e) {}
+    }
   }
   trash() {
     this.playBeep(200, 'sawtooth', 0.12, 0.15);
@@ -87,7 +98,7 @@ class SoundEngine {
 
 const audio = new SoundEngine();
 
-// ================= 2. DANH MỤC NGUYÊN LIỆU (CHUẨN 100% THEO HÌNH ẢNH) =================
+// ================= 2. DANH MỤC NGUYÊN LIỆU (100% THEO ẢNH MẪU) =================
 const CUPS = [
   { id: 'M', name: 'Ly M', ml: '500ml', cost: 500, priceBonus: 0, shelfLife: 999 },
   { id: 'L', name: 'Ly L', ml: '700ml', cost: 800, priceBonus: 8000, shelfLife: 999 }
@@ -95,12 +106,12 @@ const CUPS = [
 
 // 9 BÌNH TRÀ / NƯỚC NỀN
 const TEAS = [
-  { id: 'traDen', name: 'TRÀ ĐEN', icon: '🍂', liquid: '#663319', cost: 3000, price: 20000, shelfLife: 2 },
-  { id: 'oolong', name: 'TRÀ Ô LONG', icon: '🪵', liquid: '#9E5828', cost: 3000, price: 20000, shelfLife: 2 },
-  { id: 'traXanh', name: 'TRÀ XANH', icon: '🌿', liquid: '#7A9A48', cost: 3000, price: 20000, shelfLife: 2 },
-  { id: 'traNhai', name: 'TRÀ NHÀI', icon: '🌸', liquid: '#D4B856', cost: 3500, price: 22000, shelfLife: 2 },
+  { id: 'traDen', name: 'TRÀ ĐEN', icon: '🍂', liquid: '#683319', cost: 3000, price: 20000, shelfLife: 2 },
+  { id: 'oolong', name: 'TRÀ Ô LONG', icon: '🪵', liquid: '#A85E28', cost: 3000, price: 20000, shelfLife: 2 },
+  { id: 'traXanh', name: 'TRÀ XANH', icon: '🌿', liquid: '#7CA046', cost: 3000, price: 20000, shelfLife: 2 },
+  { id: 'traNhai', name: 'TRÀ NHÀI', icon: '🌸', liquid: '#D8BD54', cost: 3500, price: 22000, shelfLife: 2 },
   { id: 'hongTra', name: 'HỒNG TRÀ', icon: '🍵', liquid: '#BD3D35', cost: 3200, price: 22000, shelfLife: 2 },
-  { id: 'lucTra', name: 'LỤC TRÀ', icon: '🍃', liquid: '#5E973B', cost: 3000, price: 20000, shelfLife: 2 },
+  { id: 'lucTra', name: 'LỤC TRÀ', icon: '🍃', liquid: '#5C9A38', cost: 3000, price: 20000, shelfLife: 2 },
   { id: 'traThai', name: 'TRÀ THÁI', icon: '🧋', liquid: '#E67228', cost: 3500, price: 22000, shelfLife: 2 },
   { id: 'suaTuoi', name: 'SỮA TƯƠI', icon: '🥛', liquid: '#FFFDF5', cost: 3000, price: 20000, shelfLife: 1 },
   { id: 'duongDen', name: 'ĐƯỜNG ĐEN', icon: '🟤', liquid: '#3F2013', cost: 4000, price: 25000, shelfLife: 2 }
@@ -112,22 +123,22 @@ const ICE_LEVELS = ['Không', 'Ít', 'Bình thường', 'Nhiều'];
 // 15 KHAY TOPPING (HÀNG 1: 9 KHAY, HÀNG 2: 6 KHAY)
 const TOPPINGS = [
   // Hàng 1
-  { id: 'tranChau', name: 'TRÂN CHÂU', icon: '🟤', color: '#1A1412', cost: 2000, price: 5000, shelfLife: 2, type: 'pearl' },
-  { id: 'thachTrang', name: 'THẠCH TRẮNG', icon: '⚪', color: '#EDF2F7', cost: 2500, price: 6000, shelfLife: 2, type: 'pearl' },
-  { id: 'thachDen', name: 'THẠCH ĐEN', icon: '⬛', color: '#1A202C', cost: 2000, price: 5000, shelfLife: 2, type: 'cube' },
-  { id: 'thach3Q', name: 'THẠCH 3Q', icon: '🔶', color: '#ED8936', cost: 2500, price: 6000, shelfLife: 2, type: 'cube' },
-  { id: 'thachTraiCay', name: 'THẠCH TRÁI CÂY', icon: '🍓', color: '#E53E3E', cost: 2500, price: 6000, shelfLife: 2, type: 'cube' },
-  { id: 'kemPhoMai', name: 'KEM PHÔ MAI', icon: '🧀', color: '#FEFCBF', cost: 3500, price: 8000, shelfLife: 2, type: 'foam' },
-  { id: 'pudding', name: 'PUDDING', icon: '🍮', color: '#ECC94B', cost: 3000, price: 7000, shelfLife: 2, type: 'cube' },
-  { id: 'thachMatcha', name: 'THẠCH MATCHA', icon: '🍵', color: '#48BB78', cost: 2500, price: 6000, shelfLife: 2, type: 'cube' },
-  { id: 'suongSao', name: 'SƯƠNG SÁO', icon: '🫘', color: '#2D3748', cost: 2000, price: 5000, shelfLife: 2, type: 'cube' },
+  { id: 'tranChau', name: 'TRÂN CHÂU', icon: '🟤', cost: 2000, price: 5000, shelfLife: 2 },
+  { id: 'thachTrang', name: 'THẠCH TRẮNG', icon: '⚪', cost: 2500, price: 6000, shelfLife: 2 },
+  { id: 'thachDen', name: 'THẠCH ĐEN', icon: '⬛', cost: 2000, price: 5000, shelfLife: 2 },
+  { id: 'thach3Q', name: 'THẠCH 3Q', icon: '🔶', cost: 2500, price: 6000, shelfLife: 2 },
+  { id: 'thachTraiCay', name: 'THẠCH TRÁI CÂY', icon: '🍓', cost: 2500, price: 6000, shelfLife: 2 },
+  { id: 'kemPhoMai', name: 'KEM PHÔ MAI', icon: '🧀', cost: 3500, price: 8000, shelfLife: 2 },
+  { id: 'pudding', name: 'PUDDING', icon: '🍮', cost: 3000, price: 7000, shelfLife: 2 },
+  { id: 'thachMatcha', name: 'THẠCH MATCHA', icon: '🍵', cost: 2500, price: 6000, shelfLife: 2 },
+  { id: 'suongSao', name: 'SƯƠNG SÁO', icon: '🫘', cost: 2000, price: 5000, shelfLife: 2 },
   // Hàng 2
-  { id: 'dauDo', name: 'ĐẬU ĐỎ', icon: '🫘', color: '#742A2A', cost: 2500, price: 6000, shelfLife: 3, type: 'bean' },
-  { id: 'dauXanh', name: 'ĐẬU XANH', icon: '🟢', color: '#687F3B', cost: 2500, price: 6000, shelfLife: 3, type: 'bean' },
-  { id: 'hatChia', name: 'HẠT CHIA', icon: '⚫', color: '#2D3748', cost: 2000, price: 5000, shelfLife: 3, type: 'seed' },
-  { id: 'nhaDam', name: 'NHA ĐAM', icon: '🌱', color: '#E2E8F0', cost: 2200, price: 5000, shelfLife: 3, type: 'cube' },
-  { id: 'tranChauHoangKim', name: 'TRÂN CHÂU HOÀNG KIM', icon: '✨', color: '#D69E2E', cost: 2800, price: 6500, shelfLife: 2, type: 'pearl' },
-  { id: 'thachDua', name: 'THẠCH DỪA', icon: '🥥', color: '#F7FAFC', cost: 2000, price: 5000, shelfLife: 3, type: 'cube' }
+  { id: 'dauDo', name: 'ĐẬU ĐỎ', icon: '🫘', cost: 2500, price: 6000, shelfLife: 3 },
+  { id: 'dauXanh', name: 'ĐẬU XANH', icon: '🟢', cost: 2500, price: 6000, shelfLife: 3 },
+  { id: 'hatChia', name: 'HẠT CHIA', icon: '⚫', cost: 2000, price: 5000, shelfLife: 3 },
+  { id: 'nhaDam', name: 'NHA ĐAM', icon: '🌱', cost: 2200, price: 5000, shelfLife: 3 },
+  { id: 'tranChauHoangKim', name: 'TRÂN CHÂU HOÀNG KIM', icon: '✨', cost: 2800, price: 6500, shelfLife: 2 },
+  { id: 'thachDua', name: 'THẠCH DỪA', icon: '🥥', cost: 2000, price: 5000, shelfLife: 3 }
 ];
 
 // 9 CHAI SIRO CÓ VÒI BƠM
@@ -149,103 +160,41 @@ const CUSTOMER_NAMES = [
 ];
 
 const STAFF_LIST = [
-  {
-    id: 'minhTea',
-    name: 'Minh - Rót Trà',
-    avatar: '🍵',
-    role: 'Tự động lấy đúng nền trà/nước theo order',
-    unlockDay: 1,
-    hireCost: 50000,
-    baseSalary: 5000,
-    baseInterval: 1400
-  },
-  {
-    id: 'linhHelper',
-    name: 'Linh - Pha Chế Đa Nhiệm',
-    avatar: '🧑‍🍹',
-    role: 'Tự thêm Topping + Đường + Đá + Siro',
-    unlockDay: 2,
-    hireCost: 80000,
-    baseSalary: 8000,
-    baseInterval: 1200
-  },
-  {
-    id: 'vyOnline',
-    name: 'Vy - Online & Ship',
-    avatar: '📱',
-    role: 'Chuyên xử lý & hoàn tất Đơn App/Ship',
-    unlockDay: 2,
-    hireCost: 100000,
-    baseSalary: 10000,
-    baseInterval: 2000
-  }
+  { id: 'minhTea', name: 'Minh - Rót Trà', avatar: '🍵', role: 'Tự lấy đúng nền trà theo đơn', unlockDay: 1, hireCost: 50000, baseSalary: 5000 },
+  { id: 'linhHelper', name: 'Linh - Pha Chế Đa Nhiệm', avatar: '🧑‍🍹', role: 'Tự thêm Topping + Đường + Đá + Siro', unlockDay: 2, hireCost: 80000, baseSalary: 8000 },
+  { id: 'vyOnline', name: 'Vy - Online & Ship', avatar: '📱', role: 'Chuyên hoàn tất đơn App/Ship', unlockDay: 2, hireCost: 100000, baseSalary: 10000 }
 ];
 
-const UPGRADES_LIST = [
-  { id: 'fastSealer', name: 'Máy dập nắp siêu tốc', icon: '⚡', desc: 'Dập nắp tự động nhanh gấp đôi', cost: 150000 },
-  { id: 'turtleCharm', name: 'Bùa Rùa May Mắn', icon: '🐢', desc: 'Tăng 25% tiền Tip khách thưởng', cost: 200000 },
-  { id: 'coolerAir', name: 'Điều hòa mát rượi', icon: '❄️', desc: 'Khách đứng chờ kiên nhẫn hơn 35%', cost: 250000 },
-  { id: 'lofiMusic', name: 'Loa Lofi Chill', icon: '📻', desc: 'Khách vui vẻ đánh giá 5 sao dễ hơn', cost: 180000 }
-];
-
-// ================= 3. TRẠNG THÁI GAME & QUẢN LÝ LÔ HÀNG =================
+// ================= 3. TRẠNG THÁI GAME & KHO LÔ HÀNG =================
 class GameState {
   constructor() {
     this.shopName = 'Tiệm Trà Sữa Của Rùa';
     this.day = 1;
     this.money = 250000;
     this.rating = 5.0;
-    this.ratingCount = 8;
     this.level = 1;
     this.exp = 0;
     this.expMax = 100;
 
     this.inventoryLots = {};
-
     this.staff = {
-      minhTea: { hired: false, level: 1, status: 'waiting' },
-      linhHelper: { hired: false, level: 1, status: 'waiting' },
-      vyOnline: { hired: false, level: 1, status: 'waiting' }
+      minhTea: { hired: false, level: 1 },
+      linhHelper: { hired: false, level: 1 },
+      vyOnline: { hired: false, level: 1 }
     };
-
     this.upgrades = {};
-
-    this.stats = {
-      totalCupsSold: 120,
-      totalProfitAllTime: 1645100
-    };
-
+    this.stats = { totalCupsSold: 120, totalProfitAllTime: 1645100 };
     this.today = {
-      revenueDrinks: 0,
-      revenueTips: 0,
-      revenueApp: 0,
-      costRestock: 0,
-      costRent: 45000,
-      costUtilities: 15000,
-      costSalaries: 0,
-      wasteExpiredTopping: 0,
-      wasteExpiredSyrup: 0,
-      wasteExpiredTea: 0,
-      wasteDiscardedCups: 0
+      revenueDrinks: 0, revenueTips: 0, revenueApp: 0,
+      costRestock: 0, costRent: 45000, costUtilities: 15000, costSalaries: 0,
+      wasteExpiredTopping: 0, wasteExpiredSyrup: 0, wasteExpiredTea: 0, wasteDiscardedCups: 0
     };
-
     this.history10Days = [
-      { day: 'N1', cups: 12, profit: 145000 },
-      { day: 'N2', cups: 15, profit: 180000 },
-      { day: 'N3', cups: 14, profit: 165000 },
-      { day: 'N4', cups: 18, profit: 210000 },
-      { day: 'N5', cups: 16, profit: 195000 },
-      { day: 'N6', cups: 20, profit: 240000 },
-      { day: 'N7', cups: 22, profit: 275000 },
-      { day: 'N8', cups: 21, profit: 260000 },
-      { day: 'N9', cups: 25, profit: 310000 },
-      { day: 'N10', cups: 26, profit: 340000 }
-    ];
-
-    this.reviews = [
-      { name: "Chị Lan", stars: 5, comment: "Trà sữa đậm vị, trân châu mềm dẻo 10 điểm!" },
-      { name: "Anh Nam", stars: 5, comment: "Máy dập nắp xịn xò, giao hàng online đóng gói kỹ lưỡng." },
-      { name: "Bảo Châu", stars: 5, comment: "Quán Rùa cưng xỉu, siro đào thơm ngát tự nhiên." }
+      { day: 'N1', cups: 12, profit: 145000 }, { day: 'N2', cups: 15, profit: 180000 },
+      { day: 'N3', cups: 14, profit: 165000 }, { day: 'N4', cups: 18, profit: 210000 },
+      { day: 'N5', cups: 16, profit: 195000 }, { day: 'N6', cups: 20, profit: 240000 },
+      { day: 'N7', cups: 22, profit: 275000 }, { day: 'N8', cups: 21, profit: 260000 },
+      { day: 'N9', cups: 25, profit: 310000 }, { day: 'N10', cups: 26, profit: 340000 }
     ];
 
     this.initDefaultInventoryLots();
@@ -256,23 +205,10 @@ class GameState {
   initDefaultInventoryLots() {
     const addInitial = (id, count, cost, shelf) => {
       this.inventoryLots[id] = [
-        {
-          id: 'lot_init_1_' + id,
-          qty: Math.ceil(count * 0.4),
-          buyDay: 1,
-          expireDay: shelf >= 900 ? 999 : (1 + Math.max(1, shelf - 1)),
-          cost
-        },
-        {
-          id: 'lot_init_2_' + id,
-          qty: Math.floor(count * 0.6),
-          buyDay: 1,
-          expireDay: shelf >= 900 ? 999 : (1 + shelf),
-          cost
-        }
+        { id: 'lot_init_1_' + id, qty: Math.ceil(count * 0.4), buyDay: 1, expireDay: shelf >= 900 ? 999 : (1 + Math.max(1, shelf - 1)), cost },
+        { id: 'lot_init_2_' + id, qty: Math.floor(count * 0.6), buyDay: 1, expireDay: shelf >= 900 ? 999 : (1 + shelf), cost }
       ];
     };
-
     CUPS.forEach(c => addInitial('cup' + c.id, 40, c.cost, c.shelfLife));
     TEAS.forEach(t => addInitial(t.id, 30, t.cost, t.shelfLife));
     TOPPINGS.forEach(tp => addInitial(tp.id, 25, tp.cost, tp.shelfLife));
@@ -306,41 +242,20 @@ class GameState {
   save() {
     try {
       const data = {
-        shopName: this.shopName,
-        day: this.day,
-        money: this.money,
-        rating: this.rating,
-        ratingCount: this.ratingCount,
-        level: this.level,
-        exp: this.exp,
-        expMax: this.expMax,
-        inventoryLots: this.inventoryLots,
-        staff: this.staff,
-        upgrades: this.upgrades,
-        stats: this.stats,
-        today: this.today,
-        history10Days: this.history10Days,
-        reviews: this.reviews
+        shopName: this.shopName, day: this.day, money: this.money, rating: this.rating,
+        level: this.level, exp: this.exp, expMax: this.expMax,
+        inventoryLots: this.inventoryLots, staff: this.staff, upgrades: this.upgrades,
+        stats: this.stats, today: this.today, history10Days: this.history10Days
       };
-      localStorage.setItem('tiemTraSuaRua_save_v3', JSON.stringify(data));
-    } catch (e) {
-      console.error("Lỗi lưu game", e);
-    }
+      localStorage.setItem('tiemTraSuaRua_save_v4', JSON.stringify(data));
+    } catch (e) {}
   }
 
   load() {
     try {
-      const str = localStorage.getItem('tiemTraSuaRua_save_v3');
-      if (str) {
-        const obj = JSON.parse(str);
-        Object.assign(this, obj);
-      }
-      if (!this.staff.minhTea) this.staff.minhTea = { hired: false, level: 1, status: 'waiting' };
-      if (!this.staff.linhHelper) this.staff.linhHelper = { hired: false, level: 1, status: 'waiting' };
-      if (!this.staff.vyOnline) this.staff.vyOnline = { hired: false, level: 1, status: 'waiting' };
-    } catch (e) {
-      console.error("Lỗi nạp game", e);
-    }
+      const str = localStorage.getItem('tiemTraSuaRua_save_v4');
+      if (str) Object.assign(this, JSON.parse(str));
+    } catch (e) {}
   }
 
   getTotalQty(itemId) {
@@ -348,46 +263,10 @@ class GameState {
     return lots.reduce((sum, l) => sum + (l.qty || 0), 0);
   }
 
-  getExpiringLotsSummary(itemId) {
-    const lots = this.inventoryLots[itemId] || [];
-    let expToday = 0;
-    let expIn1Day = 0;
-    let expLater = 0;
-
-    lots.forEach(l => {
-      if (l.expireDay <= this.day) {
-        expToday += l.qty;
-      } else if (l.expireDay === this.day + 1) {
-        expIn1Day += l.qty;
-      } else {
-        expLater += l.qty;
-      }
-    });
-
-    return { expToday, expIn1Day, expLater, lots };
-  }
-
-  buyItemLot(itemId, qty, cost, shelfLife) {
-    if (!this.inventoryLots[itemId]) this.inventoryLots[itemId] = [];
-    const expireDay = shelfLife >= 900 ? 999 : (this.day + shelfLife);
-    const newLot = {
-      id: 'lot_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
-      qty,
-      buyDay: this.day,
-      expireDay,
-      cost
-    };
-    this.inventoryLots[itemId].push(newLot);
-    this.today.costRestock += qty * cost;
-    this.save();
-  }
-
   consumeItem(itemId, qty = 1) {
     const lots = this.inventoryLots[itemId];
     if (!lots || lots.length === 0) return false;
-
     lots.sort((a, b) => a.expireDay - b.expireDay);
-
     let needed = qty;
     for (let i = 0; i < lots.length; i++) {
       const lot = lots[i];
@@ -400,49 +279,9 @@ class GameState {
         break;
       }
     }
-
     this.inventoryLots[itemId] = lots.filter(l => l.qty > 0);
     this.save();
     return true;
-  }
-
-  processEndOfDayExpiry() {
-    let expiredToppingCost = 0;
-    let expiredSyrupCost = 0;
-    let expiredTeaCost = 0;
-    let totalExpiredCount = 0;
-
-    const checkLots = (list, type) => {
-      list.forEach(item => {
-        const key = type === 'cup' ? ('cup' + item.id) : item.id;
-        const lots = this.inventoryLots[key] || [];
-        const validLots = [];
-
-        lots.forEach(lot => {
-          if (lot.expireDay <= this.day) {
-            const loss = lot.qty * lot.cost;
-            totalExpiredCount += lot.qty;
-            if (type === 'topping') expiredToppingCost += loss;
-            else if (type === 'syrup') expiredSyrupCost += loss;
-            else if (type === 'tea') expiredTeaCost += loss;
-          } else {
-            validLots.push(lot);
-          }
-        });
-        this.inventoryLots[key] = validLots;
-      });
-    };
-
-    checkLots(TEAS, 'tea');
-    checkLots(TOPPINGS, 'topping');
-    checkLots(SYRUPS, 'syrup');
-
-    this.today.wasteExpiredTea = expiredTeaCost;
-    this.today.wasteExpiredTopping = expiredToppingCost;
-    this.today.wasteExpiredSyrup = expiredSyrupCost;
-
-    this.save();
-    return totalExpiredCount;
   }
 
   addExp(amount) {
@@ -459,16 +298,293 @@ class GameState {
 
 const state = new GameState();
 
-// ================= 4. APP CONTROLLER =================
+// ================= 4. BỘ TẠO ĐỒ HOẠ SVG CHÂN THỰC (GAME ART ENGINE) =================
+
+// 1. Bình trà thuỷ tinh nắp bạc vòi đen
+function renderDispenserSvg(t, isSelected, qty) {
+  return `
+    <svg viewBox="0 0 76 114" width="100%" height="100%" class="game-asset-svg">
+      <defs>
+        <linearGradient id="lid_${t.id}" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#F1F5F9"/>
+          <stop offset="40%" stop-color="#CBD5E1"/>
+          <stop offset="100%" stop-color="#94A3B8"/>
+        </linearGradient>
+        <linearGradient id="tea_${t.id}" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="${t.liquid}" stop-opacity="0.95"/>
+          <stop offset="50%" stop-color="${t.liquid}"/>
+          <stop offset="100%" stop-color="${t.liquid}" stop-opacity="0.9"/>
+        </linearGradient>
+      </defs>
+      <!-- Nắp bạc -->
+      <path d="M12 7 C12 3, 64 3, 64 7 L62 14 L14 14 Z" fill="url(#lid_${t.id})" stroke="#475569" stroke-width="1.4"/>
+      <ellipse cx="38" cy="4" rx="5" ry="2" fill="#E2E8F0" stroke="#475569" stroke-width="1.2"/>
+      <rect x="36" y="1" width="4" height="4" rx="1" fill="#475569"/>
+      <!-- Thân bình thuỷ tinh -->
+      <rect x="8" y="13" width="60" height="84" rx="6" fill="rgba(255,255,255,0.3)" stroke="#CBD5E1" stroke-width="1.8"/>
+      <!-- Nước trà bên trong -->
+      <path d="M10 28 Q24 26 38 28 T66 28 L66 90 Q66 95 60 95 L16 95 Q10 95 10 90 Z" fill="url(#tea_${t.id})"/>
+      <!-- Vệt sáng thuỷ tinh phản chiếu -->
+      <path d="M13 18 L13 88" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" opacity="0.6"/>
+      <path d="M18 18 L18 84" stroke="#FFFFFF" stroke-width="1" stroke-linecap="round" opacity="0.3"/>
+      <!-- Icon trên bình -->
+      <text x="38" y="52" font-size="16" text-anchor="middle" filter="drop-shadow(0 1px 2px rgba(0,0,0,0.5))">${t.icon}</text>
+      <!-- Nhãn tên màu trắng chữ đen đậm -->
+      <rect x="5" y="66" width="66" height="20" rx="3.5" fill="#FFFFFF" stroke="#3D2214" stroke-width="1.6"/>
+      <text x="38" y="80" font-family="'Paytone One', 'Nunito', sans-serif" font-size="8.2" font-weight="900" fill="#3D2214" text-anchor="middle" letter-spacing="0.2">${t.name}</text>
+      <!-- Vòi rót đen ở đáy -->
+      <path d="M33 97 L43 97 L41 106 L35 106 Z" fill="#1E293B" stroke="#0F172A" stroke-width="1.2"/>
+      <path d="M36 106 L40 106 L39 113 L37 113 Z" fill="#0F172A"/>
+      <circle cx="38" cy="101" r="2.2" fill="#64748B"/>
+    </svg>
+  `;
+}
+
+// 2. Khay Topping trong suốt với đồ hoạ 2.5D thơm ngon
+function renderToppingSvg(tp, inCup, qty) {
+  return `
+    <svg viewBox="0 0 86 86" width="100%" height="100%" class="game-asset-svg">
+      <defs>
+        <linearGradient id="trayBg" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.9"/>
+          <stop offset="100%" stop-color="#E2E8F0" stop-opacity="0.5"/>
+        </linearGradient>
+      </defs>
+      <!-- Khay thuỷ tinh trong suốt bo góc -->
+      <rect x="2.5" y="2.5" width="81" height="81" rx="8" fill="url(#trayBg)" stroke="#CBD5E1" stroke-width="2.2"/>
+      <rect x="5.5" y="5.5" width="75" height="75" rx="6" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="1"/>
+      <!-- Đồ hoạ món ăn topping -->
+      ${renderDeliciousFoodGraphic(tp.id)}
+      <!-- Dải nhãn tên màu trắng viền đen -->
+      <rect x="3.5" y="60" width="79" height="19" rx="3.5" fill="#FFFFFF" stroke="#3D2214" stroke-width="1.6"/>
+      <text x="43" y="73.5" font-family="'Paytone One', 'Nunito', sans-serif" font-size="7.6" font-weight="900" fill="#3D2214" text-anchor="middle">${tp.name}</text>
+    </svg>
+  `;
+}
+
+function renderDeliciousFoodGraphic(id) {
+  // Trân châu đen óng ánh
+  if (id === 'tranChau') {
+    return `
+      <g>
+        <circle cx="28" cy="28" r="9" fill="#1A1412"/><circle cx="25" cy="25" r="2.5" fill="#FFF" opacity="0.85"/>
+        <circle cx="48" cy="26" r="9.5" fill="#1A1412"/><circle cx="45" cy="23" r="2.5" fill="#FFF" opacity="0.85"/>
+        <circle cx="36" cy="42" r="10" fill="#1A1412"/><circle cx="33" cy="38" r="3" fill="#FFF" opacity="0.9"/>
+        <circle cx="56" cy="42" r="8.5" fill="#1A1412"/><circle cx="53" cy="39" r="2.2" fill="#FFF" opacity="0.85"/>
+        <circle cx="22" cy="44" r="8" fill="#1A1412"/><circle cx="19" cy="41" r="2" fill="#FFF" opacity="0.8"/>
+      </g>
+    `;
+  }
+  // Thạch trắng pha lê phát sáng
+  if (id === 'thachTrang') {
+    return `
+      <g>
+        <circle cx="28" cy="28" r="8.5" fill="#E2E8F0" stroke="#CBD5E1" stroke-width="1"/><circle cx="26" cy="25" r="3" fill="#FFF"/>
+        <circle cx="48" cy="26" r="9" fill="#E2E8F0" stroke="#CBD5E1" stroke-width="1"/><circle cx="46" cy="23" r="3" fill="#FFF"/>
+        <circle cx="37" cy="42" r="9.5" fill="#E2E8F0" stroke="#CBD5E1" stroke-width="1"/><circle cx="34" cy="38" r="3.5" fill="#FFF"/>
+        <circle cx="56" cy="42" r="8" fill="#E2E8F0" stroke="#CBD5E1" stroke-width="1"/><circle cx="54" cy="39" r="2.5" fill="#FFF"/>
+      </g>
+    `;
+  }
+  // Thạch đen bóng 3D
+  if (id === 'thachDen' || id === 'suongSao') {
+    return `
+      <g>
+        <rect x="20" y="20" width="16" height="16" rx="2" fill="#1E293B"/><polygon points="20,20 26,14 42,14 36,20" fill="#334155"/><polygon points="36,20 42,14 42,30 36,36" fill="#0F172A"/>
+        <rect x="42" y="30" width="18" height="18" rx="2" fill="#1E293B"/><polygon points="42,30 48,24 66,24 60,30" fill="#475569"/><polygon points="60,30 66,24 66,42 60,48" fill="#0F172A"/>
+        <rect x="18" y="38" width="16" height="16" rx="2" fill="#1E293B"/><polygon points="18,38 24,32 40,32 34,38" fill="#334155"/>
+      </g>
+    `;
+  }
+  // Thạch 3Q & Thạch trái cây nhiều màu
+  if (id === 'thach3Q' || id === 'thachTraiCay') {
+    return `
+      <g>
+        <rect x="20" y="22" width="14" height="14" rx="2" fill="#F6AD55" opacity="0.9"/><polygon points="20,22 25,17 39,17 34,22" fill="#FBD38D"/>
+        <rect x="42" y="18" width="15" height="15" rx="2" fill="#FC8181" opacity="0.9"/><polygon points="42,18 47,13 62,13 57,18" fill="#FEB2B2"/>
+        <rect x="34" y="34" width="16" height="16" rx="2" fill="#68D391" opacity="0.9"/><polygon points="34,34 39,29 55,29 50,34" fill="#9AE6B4"/>
+        <rect x="16" y="38" width="13" height="13" rx="2" fill="#ECC94B" opacity="0.9"/>
+      </g>
+    `;
+  }
+  // Kem phô mai mịn màng
+  if (id === 'kemPhoMai') {
+    return `
+      <g>
+        <path d="M22 48 C22 36, 32 26, 43 20 C54 26, 64 36, 64 48 C64 54, 22 54, 22 48 Z" fill="#FEF08A"/>
+        <path d="M28 46 C34 36, 52 36, 58 46" stroke="#FDE047" stroke-width="2.5" fill="none"/>
+        <path d="M43 20 C40 15, 46 14, 43 12" stroke="#FEF08A" stroke-width="3" stroke-linecap="round"/>
+      </g>
+    `;
+  }
+  // Pudding trứng vàng óng
+  if (id === 'pudding') {
+    return `
+      <g>
+        <rect x="22" y="24" width="18" height="18" rx="3" fill="#FACC15"/><polygon points="22,24 28,18 46,18 40,24" fill="#FEF08A"/>
+        <rect x="42" y="32" width="19" height="19" rx="3" fill="#FACC15"/><polygon points="42,32 48,26 67,26 61,32" fill="#FEF08A"/>
+        <path d="M24 26 Q32 22 40 26" stroke="#B45309" stroke-width="2.5" fill="none"/><!-- Lớp caramen -->
+      </g>
+    `;
+  }
+  // Thạch matcha xanh biếc
+  if (id === 'thachMatcha') {
+    return `
+      <g>
+        <rect x="20" y="22" width="16" height="16" rx="2" fill="#16A34A"/><polygon points="20,22 26,16 42,16 36,22" fill="#4ADE80"/><polygon points="36,22 42,16 42,32 36,38" fill="#15803D"/>
+        <rect x="40" y="30" width="17" height="17" rx="2" fill="#16A34A"/><polygon points="40,30 46,24 63,24 57,30" fill="#4ADE80"/>
+      </g>
+    `;
+  }
+  // Đậu đỏ & Đậu xanh
+  if (id === 'dauDo') {
+    return `
+      <g>
+        <ellipse cx="28" cy="26" rx="7" ry="5" fill="#7F1D1D" transform="rotate(-15 28 26)"/><circle cx="26" cy="24" r="1.5" fill="#FFF" opacity="0.6"/>
+        <ellipse cx="46" cy="24" rx="7" ry="5.5" fill="#991B1B" transform="rotate(20 46 24)"/><circle cx="44" cy="22" r="1.5" fill="#FFF" opacity="0.6"/>
+        <ellipse cx="36" cy="38" rx="8" ry="5.5" fill="#7F1D1D" transform="rotate(5 36 38)"/><circle cx="34" cy="36" r="1.8" fill="#FFF" opacity="0.7"/>
+        <ellipse cx="54" cy="40" rx="7" ry="5" fill="#991B1B" transform="rotate(-25 54 40)"/>
+      </g>
+    `;
+  }
+  if (id === 'dauXanh') {
+    return `
+      <g>
+        <circle cx="28" cy="26" r="6" fill="#65A30D"/><circle cx="26" cy="24" r="1.5" fill="#FFF" opacity="0.6"/>
+        <circle cx="46" cy="24" r="6" fill="#4D7C0F"/><circle cx="44" cy="22" r="1.5" fill="#FFF" opacity="0.6"/>
+        <circle cx="36" cy="38" r="6.5" fill="#65A30D"/><circle cx="34" cy="36" r="1.6" fill="#FFF" opacity="0.7"/>
+        <circle cx="52" cy="40" r="5.5" fill="#4D7C0F"/>
+      </g>
+    `;
+  }
+  // Hạt chia
+  if (id === 'hatChia') {
+    return `
+      <g fill="#1E293B">
+        <circle cx="24" cy="22" r="2.5"/><circle cx="36" cy="20" r="2.2"/><circle cx="48" cy="23" r="2.5"/><circle cx="60" cy="21" r="2.2"/>
+        <circle cx="28" cy="32" r="2.4"/><circle cx="42" cy="31" r="2.6"/><circle cx="54" cy="33" r="2.3"/>
+        <circle cx="23" cy="42" r="2.3"/><circle cx="35" cy="43" r="2.5"/><circle cx="48" cy="42" r="2.4"/><circle cx="59" cy="44" r="2.2"/>
+      </g>
+    `;
+  }
+  // Nha đam trong suốt thanh mát
+  if (id === 'nhaDam') {
+    return `
+      <g>
+        <rect x="22" y="24" width="15" height="15" rx="3" fill="#ECFDF5" stroke="#A7F3D0" stroke-width="1.2"/>
+        <rect x="42" y="28" width="17" height="17" rx="3" fill="#ECFDF5" stroke="#A7F3D0" stroke-width="1.2"/>
+        <rect x="26" y="38" width="16" height="16" rx="3" fill="#ECFDF5" stroke="#A7F3D0" stroke-width="1.2"/>
+      </g>
+    `;
+  }
+  // Trân châu hoàng kim vàng rực
+  if (id === 'tranChauHoangKim') {
+    return `
+      <g>
+        <circle cx="28" cy="28" r="8.5" fill="#EAB308"/><circle cx="26" cy="25" r="2.5" fill="#FFF" opacity="0.9"/>
+        <circle cx="48" cy="26" r="9" fill="#CA8A04"/><circle cx="45" cy="23" r="2.5" fill="#FFF" opacity="0.9"/>
+        <circle cx="36" cy="42" r="9.5" fill="#EAB308"/><circle cx="33" cy="38" r="3" fill="#FFF" opacity="0.95"/>
+        <circle cx="56" cy="42" r="8" fill="#CA8A04"/><circle cx="54" cy="39" r="2.2" fill="#FFF" opacity="0.9"/>
+      </g>
+    `;
+  }
+  // Thạch dừa trắng tinh khôi
+  return `
+    <g>
+      <rect x="20" y="22" width="16" height="16" rx="2" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.2"/><polygon points="20,22 26,16 42,16 36,22" fill="#F8FAFC"/>
+      <rect x="42" y="28" width="18" height="18" rx="2" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.2"/><polygon points="42,28 48,22 66,22 60,28" fill="#F8FAFC"/>
+      <rect x="24" y="38" width="16" height="16" rx="2" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.2"/>
+    </g>
+  `;
+}
+
+// 3. Chai siro có vòi bơm và hình trái cây
+function renderSyrupSvg(s, inCup, qty) {
+  return `
+    <svg viewBox="0 0 76 114" width="100%" height="100%" class="game-asset-svg">
+      <defs>
+        <linearGradient id="syrup_${s.id}" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="${s.color}" stop-opacity="0.95"/>
+          <stop offset="50%" stop-color="${s.color}"/>
+          <stop offset="100%" stop-color="${s.color}" stop-opacity="0.9"/>
+        </linearGradient>
+      </defs>
+      <!-- Đầu vòi bơm đen -->
+      <path d="M34 16 L42 16 L42 22 L34 22 Z" fill="#334155"/>
+      <path d="M38 7 L38 16" stroke="#334155" stroke-width="3" stroke-linecap="round"/>
+      <path d="M22 6 L44 6 C46 6, 47 8, 45 10 L38 11" fill="#1E293B" stroke="#0F172A" stroke-width="1.2"/>
+      <path d="M22 6 L19 10 L25 9 Z" fill="#0F172A"/>
+      <!-- Thân chai thuỷ tinh -->
+      <path d="M22 32 C22 26, 54 26, 54 32 L58 98 C58 103, 18 103, 18 98 Z" fill="rgba(255,255,255,0.3)" stroke="#CBD5E1" stroke-width="1.8"/>
+      <!-- Siro bên trong -->
+      <path d="M20 42 C20 40, 56 40, 56 42 L56 97 Q56 101 50 101 L26 101 Q20 101 20 97 Z" fill="url(#syrup_${s.id})"/>
+      <!-- Phản quang thuỷ tinh -->
+      <path d="M23 36 L23 94" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+      <!-- Thẻ nhãn trắng -->
+      <rect x="13" y="58" width="50" height="36" rx="3.5" fill="#FFFFFF" stroke="#3D2214" stroke-width="1.6"/>
+      <text x="38" y="72" font-family="'Paytone One', 'Nunito', sans-serif" font-size="8.8" font-weight="900" fill="#3D2214" text-anchor="middle">${s.name}</text>
+      <!-- Icon trái cây -->
+      <text x="38" y="89" font-size="14" text-anchor="middle" filter="drop-shadow(0 1px 2px rgba(0,0,0,0.3))">${s.icon}</text>
+    </svg>
+  `;
+}
+
+// 4. Máy Đóng Nắp Retro Vintage
+function renderSealerMachineSvg(isSealing, isReady) {
+  return `
+    <svg viewBox="0 0 110 130" width="100%" height="100%" class="game-asset-svg">
+      <defs>
+        <linearGradient id="sealerOrange" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#FB923C"/>
+          <stop offset="100%" stop-color="#EA580C"/>
+        </linearGradient>
+      </defs>
+      <!-- Cuộn màng hoa văn trên cùng -->
+      <g class="film-roll ${isSealing ? 'anim-rotate' : ''}">
+        <circle cx="26" cy="20" r="13" fill="url(#sealerOrange)" stroke="#C2410C" stroke-width="1.4"/>
+        <circle cx="84" cy="20" r="13" fill="url(#sealerOrange)" stroke="#C2410C" stroke-width="1.4"/>
+        <rect x="26" y="9" width="58" height="22" rx="4" fill="#FEF3C7" stroke="#EA580C" stroke-width="1.4"/>
+        <text x="55" y="24" font-size="10" text-anchor="middle" fill="#EA580C">🌸 🌸 🌸</text>
+      </g>
+      <!-- Thân máy kim loại vintage -->
+      <path d="M16 34 L94 34 L90 94 L20 94 Z" fill="#F1F5F9" stroke="#334155" stroke-width="2"/>
+      <rect x="22" y="40" width="66" height="34" rx="4" fill="#E2E8F0" stroke="#64748B" stroke-width="1.5"/>
+      <!-- Nút bấm ĐÓNG NẮP -->
+      <rect x="28" y="46" width="54" height="22" rx="4" fill="${isReady ? '#22C55E' : '#64748B'}" stroke="#0F172A" stroke-width="1.5"/>
+      <text x="55" y="60.5" font-family="'Paytone One', 'Nunito', sans-serif" font-size="8.5" font-weight="900" fill="#FFFFFF" text-anchor="middle">ĐÓNG NẮP</text>
+      <circle cx="88" cy="57" r="3" fill="${isReady ? '#22C55E' : '#EF4444'}" stroke="#0F172A" stroke-width="1"/>
+      <!-- Piston dập nắp -->
+      <rect x="36" y="76" width="38" height="${isSealing ? 26 : 14}" rx="2" fill="#475569" stroke="#0F172A" stroke-width="1.5"/>
+      <!-- Khay đế đựng ly tròn -->
+      <ellipse cx="55" cy="114" rx="28" ry="9" fill="#E2E8F0" stroke="#334155" stroke-width="1.8"/>
+      <ellipse cx="55" cy="114" rx="19" ry="6" fill="#CBD5E1" stroke="#64748B" stroke-width="1.4"/>
+    </svg>
+  `;
+}
+
+// 5. Ly M và L trong suốt
+function renderCupArtSvg(size) {
+  const isL = size === 'L';
+  const h = isL ? 38 : 32;
+  return `
+    <svg viewBox="0 0 44 48" width="34" height="42" class="cup-asset-svg">
+      <path d="M6 6 L10 ${h + 6} Q11 ${h + 8} 16 ${h + 8} L28 ${h + 8} Q33 ${h + 8} 34 ${h + 6} L38 6 Z" fill="rgba(255,255,255,0.6)" stroke="#7A4222" stroke-width="1.8"/>
+      <ellipse cx="22" cy="6" rx="16" ry="3" fill="none" stroke="#7A4222" stroke-width="1.6"/>
+      <circle cx="22" cy="${isL ? 25 : 22}" r="8" fill="#FFFFFF" stroke="#7A4222" stroke-width="1.4"/>
+      <text x="22" y="${isL ? 29 : 26}" font-family="'Paytone One', 'Nunito', sans-serif" font-size="10" font-weight="900" fill="#7A4222" text-anchor="middle">${size}</text>
+    </svg>
+  `;
+}
+
+// ================= 5. CONTROLLER GAME =================
 class GameApp {
   constructor() {
-    this.viewMode = 'sell'; // Mở thẳng màn bán hàng cho trực quan
-    this.activeTab = 'restock';
+    this.viewMode = 'sell';
+    this.layoutMode = 'auto'; // 'auto', 'portrait', 'landscape'
     this.isPaused = false;
 
     this.sellTimer = null;
     this.staffTimer = null;
-    this.vyTimer = null;
     this.gameSeconds = 0;
     this.maxDaySeconds = 90;
 
@@ -477,22 +593,12 @@ class GameApp {
     this.orderCounterId = 2960;
 
     this.currentCup = {
-      cup: null,
-      tea: null,
-      syrup: null,
-      sugar: null,
-      ice: null,
-      toppings: [],
-      isSealing: false,
-      isDelivering: false
+      cup: null, tea: null, syrup: null,
+      sugar: null, ice: null, toppings: [],
+      isSealing: false, isDelivering: false
     };
 
-    this.dailyReport = {
-      served: 0,
-      mistakes: 0,
-      revenue: 0,
-      tips: 0
-    };
+    this.dailyReport = { served: 0, mistakes: 0, revenue: 0, tips: 0 };
 
     this.elTopDay = document.getElementById('topDay');
     this.elTopClock = document.getElementById('topClock');
@@ -505,7 +611,6 @@ class GameApp {
     this.elModal = document.getElementById('modal');
     this.elModalCard = document.getElementById('modalCard');
     this.elToast = document.getElementById('toast');
-    this.elFxLayer = document.getElementById('fxLayer');
 
     this.initEvents();
     this.startSellPhase();
@@ -548,31 +653,25 @@ class GameApp {
   }
 
   togglePause() {
-    if (this.viewMode !== 'sell') {
-      this.viewMode = 'sell';
-      this.render();
-      return;
-    }
-
     this.isPaused = !this.isPaused;
     audio.click();
 
     if (this.isPaused) {
       this.openModal(`
         <h2>⏸ QUẢN LÝ TIỆM TRÀ SỮA</h2>
-        <p style="color: #7C5B49; margin-bottom: 12px; font-size: 13px;">Tạm dừng trò chơi hoặc mở giao diện kho & nhân viên</p>
-        <div style="display: flex; flex-direction: column; gap: 8px;">
+        <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 12px;">
           <button class="btn-modal-primary" id="btnResume">▶️ Tiếp Tục Pha Chế</button>
-          <button class="btn-modal-confirm" id="btnGoToPrepView" style="background: #3182CE; box-shadow: 0 3px 0 #2B6CB0;">📦 Mở Kho & Nhân Viên</button>
+          <button class="btn-modal-confirm" id="btnResetCupEarly">🗑 Đổ Ly Đang Pha</button>
           <button class="btn-modal-cancel" id="btnEndDayEarly">🌙 Đóng Cửa Tiệm Sớm</button>
         </div>
       `);
 
       document.getElementById('btnResume').onclick = () => this.togglePause();
-      document.getElementById('btnGoToPrepView').onclick = () => {
+      document.getElementById('btnResetCupEarly').onclick = () => {
+        this.resetCup();
+        this.showToast('Đã đổ ly làm lại!');
         this.closeModal();
         this.isPaused = false;
-        this.viewMode = 'prep';
         this.render();
       };
       document.getElementById('btnEndDayEarly').onclick = () => {
@@ -587,11 +686,7 @@ class GameApp {
 
   render() {
     this.renderTopBar();
-    if (this.viewMode === 'prep') {
-      this.renderPrepView();
-    } else {
-      this.renderSellView();
-    }
+    this.renderSellView();
   }
 
   renderTopBar() {
@@ -600,374 +695,14 @@ class GameApp {
     this.elTopRating.textContent = state.rating.toFixed(1);
     this.elTopStars.textContent = '⭐'.repeat(Math.max(1, Math.round(state.rating)));
 
-    if (this.viewMode === 'sell') {
-      const startHour = 8;
-      const progress = this.gameSeconds / this.maxDaySeconds;
-      const totalMinutes = Math.floor(progress * 14 * 60);
-      const currentH = startHour + Math.floor(totalMinutes / 60);
-      const currentM = totalMinutes % 60;
-      this.elTopClock.textContent = `${String(currentH).padStart(2, '0')}:${String(currentM).padStart(2, '0')}`;
-    } else {
-      this.elTopClock.textContent = "Chuẩn bị";
-    }
+    const startHour = 8;
+    const progress = this.gameSeconds / this.maxDaySeconds;
+    const totalMinutes = Math.floor(progress * 14 * 60);
+    const currentH = startHour + Math.floor(totalMinutes / 60);
+    const currentM = totalMinutes % 60;
+    this.elTopClock.textContent = `${String(currentH).padStart(2, '0')}:${String(currentM).padStart(2, '0')}`;
   }
 
-  // ================= 4.1. GIAO DIỆN CHUẨN BỊ (PREP VIEW) =================
-  renderPrepView() {
-    const expPercent = Math.min(100, Math.round((state.exp / state.expMax) * 100));
-
-    this.elView.innerHTML = `
-      <div class="prep-view">
-        <div class="prep-left-col">
-          <div class="shop-sign">
-            <h1>${state.shopName}</h1>
-            <p>Trà sữa thơm béo • Rùa pha tận tâm</p>
-            <div class="level-row">
-              <span>Cấp quán: <b>Level ${state.level}</b></span>
-              <div class="level-bar"><i style="width: ${expPercent}%"></i></div>
-              <small>${state.exp}/${state.expMax} EXP</small>
-            </div>
-          </div>
-        </div>
-
-        <div class="prep-right-col">
-          <div class="tabs-nav">
-            <button class="tab-btn ${this.activeTab === 'restock' ? 'active' : ''}" data-tab="restock">📦 Kho & Hạn</button>
-            <button class="tab-btn ${this.activeTab === 'staff' ? 'active' : ''}" data-tab="staff">👥 Nhân Viên</button>
-            <button class="tab-btn ${this.activeTab === 'upgrades' ? 'active' : ''}" data-tab="upgrades">✨ Nâng Cấp</button>
-            <button class="tab-btn ${this.activeTab === 'ledger' ? 'active' : ''}" data-tab="ledger">📊 Sổ Sách</button>
-          </div>
-
-          <div class="tab-content">
-            ${this.getTabContentHtml()}
-          </div>
-        </div>
-
-        <div class="dock-bar">
-          <button class="btn-big-open" id="btnStartSellDay">
-            <span>🐢</span> VÀO QUẦY BÁN HÀNG NGÀY ${state.day}
-          </button>
-        </div>
-      </div>
-    `;
-
-    this.elView.querySelectorAll('.tab-btn').forEach(btn => {
-      btn.onclick = () => {
-        audio.click();
-        this.activeTab = btn.dataset.tab;
-        this.render();
-      };
-    });
-
-    const btnStart = document.getElementById('btnStartSellDay');
-    if (btnStart) {
-      btnStart.onclick = () => {
-        this.viewMode = 'sell';
-        this.render();
-      };
-    }
-
-    this.attachTabEvents();
-  }
-
-  getTabContentHtml() {
-    if (this.activeTab === 'restock') {
-      const renderItemRow = (item, type) => {
-        const key = type === 'cup' ? ('cup' + item.id) : item.id;
-        const totalQty = state.getTotalQty(key);
-        const summary = state.getExpiringLotsSummary(key);
-
-        return `
-          <div class="restock-item-card">
-            <div class="item-meta">
-              <div class="item-meta-title">
-                <b>${item.icon || '🥤'} ${item.name}</b>
-                <span class="sub-desc">${item.cost.toLocaleString()}đ/phần • Còn ${totalQty}</span>
-              </div>
-              <div class="lot-badges-row">
-                ${summary.expToday > 0 ? `<span class="lot-badge badge-today">🔴 ${summary.expToday} hết hạn tối nay</span>` : ''}
-                ${summary.expIn1Day > 0 ? `<span class="lot-badge badge-soon">🟡 Còn 1 ngày (${summary.expIn1Day})</span>` : ''}
-                ${summary.expLater > 0 ? `<span class="lot-badge badge-ok">🟢 Còn ${summary.expLater} dài hạn</span>` : ''}
-              </div>
-            </div>
-            <div class="item-actions">
-              <button class="btn-view-lots" data-view-lots="${key}" data-item-name="${item.name}">📋 Xem lô</button>
-              <div class="qty-control">
-                <button class="qty-btn" data-act="sub" data-item="${key}">-</button>
-                <span class="qty-val">${totalQty}</span>
-                <button class="qty-btn plus" data-act="add" data-item="${key}" data-cost="${item.cost}" data-shelflife="${item.shelfLife}">+5</button>
-              </div>
-            </div>
-          </div>
-        `;
-      };
-
-      return `
-        <div class="restock-header">
-          <h3>📦 Kho Nguyên Liệu Theo Lô Hạn Dùng</h3>
-          <small>Tự động xuất lô sắp hết hạn trước (FIFO)</small>
-        </div>
-        <div class="restock-scroll-list">
-          <div class="category-header">🥤 LY NHỰA (2 LOẠI)</div>
-          ${CUPS.map(c => renderItemRow(c, 'cup')).join('')}
-
-          <div class="category-header">🍵 CỐT TRÀ & NƯỚC NỀN (9 LOẠI)</div>
-          ${TEAS.map(t => renderItemRow(t, 'tea')).join('')}
-
-          <div class="category-header">🧋 TOPPING (15 LOẠI)</div>
-          ${TOPPINGS.map(tp => renderItemRow(tp, 'topping')).join('')}
-
-          <div class="category-header">🍓 SIRO TRÁI CÂY (9 LOẠI)</div>
-          ${SYRUPS.map(s => renderItemRow(s, 'syrup')).join('')}
-        </div>
-      `;
-    }
-
-    if (this.activeTab === 'staff') {
-      return `
-        <div class="restock-header">
-          <h3>👩‍🍳 Đội Ngũ 3 Nhân Viên Quán Rùa</h3>
-          <small>Tự động hóa pha chế và đơn online</small>
-        </div>
-        <div class="staff-list">
-          ${STAFF_LIST.map(st => {
-            const current = state.staff[st.id] || { hired: false, level: 1, status: 'waiting' };
-            const isUnlocked = state.day >= st.unlockDay || current.hired;
-            const currentSalary = st.baseSalary + (current.level - 1) * 2000;
-            const upgradeCost = current.level * 40000 + 30000;
-
-            return `
-              <div class="staff-card ${current.hired ? 'hired' : ''}">
-                <div class="staff-avatar">${st.avatar}</div>
-                <div class="staff-info">
-                  <div class="staff-name-row">
-                    <b>${st.name}</b>
-                    ${current.hired ? `<span class="staff-level-badge">Lv.${current.level}</span>` : ''}
-                  </div>
-                  <small class="staff-role-desc">${st.role}</small>
-                  <div class="staff-status-row">
-                    ${isUnlocked 
-                      ? (current.hired 
-                          ? `<span class="staff-badge doing">🟢 Đang làm việc • Lương: ${currentSalary.toLocaleString()}đ/ca</span>` 
-                          : `<span class="staff-badge waiting">🟡 Sẵn sàng thuê</span>`)
-                      : `<span class="staff-badge locked">🔒 Mở khóa ở Ngày ${st.unlockDay}</span>`
-                    }
-                  </div>
-                </div>
-                <div>
-                  ${isUnlocked 
-                    ? (current.hired 
-                        ? (current.level < 5 
-                            ? `<button class="btn-hire upgrade" data-upgrade-staff="${st.id}" data-cost="${upgradeCost}">⬆️ Lên Lv.${current.level + 1}<br><small>${upgradeCost.toLocaleString()}đ</small></button>`
-                            : `<button class="btn-hire owned" disabled>Max Lv.5</button>`)
-                        : `<button class="btn-hire" data-hire="${st.id}" data-cost="${st.hireCost}">💰 Thuê<br><small>${st.hireCost.toLocaleString()}đ</small></button>`)
-                    : `<button class="btn-hire locked-btn" disabled>Chưa mở</button>`
-                  }
-                </div>
-              </div>
-            `;
-          }).join('')}
-        </div>
-      `;
-    }
-
-    if (this.activeTab === 'upgrades') {
-      return `
-        <div class="restock-header">
-          <h3>✨ Nâng Cấp Tiệm</h3>
-        </div>
-        <div class="upgrades-list">
-          ${UPGRADES_LIST.map(u => {
-            const owned = state.upgrades[u.id];
-            return `
-              <div class="staff-card ${owned ? 'hired' : ''}">
-                <div class="staff-avatar">${u.icon}</div>
-                <div class="staff-info">
-                  <b>${u.name}</b>
-                  <small>${u.desc}</small>
-                </div>
-                <div>
-                  ${owned 
-                    ? `<button class="btn-hire owned" disabled>Đã có</button>` 
-                    : `<button class="btn-hire" data-upgrade="${u.id}" data-cost="${u.cost}">${u.cost.toLocaleString()}đ</button>`
-                  }
-                </div>
-              </div>
-            `;
-          }).join('')}
-        </div>
-      `;
-    }
-
-    if (this.activeTab === 'ledger') {
-      return `
-        <div class="ledger-container">
-          <div class="ledger-stats-banner">
-            <div class="ledger-stat-card highlight">
-              <small>Tổng lãi</small>
-              <b>+${(state.stats.totalProfitAllTime / 1000).toLocaleString()}k</b>
-            </div>
-            <div class="ledger-stat-card">
-              <small>Đã bán</small>
-              <b>${state.stats.totalCupsSold} ly</b>
-            </div>
-            <div class="ledger-stat-card">
-              <small>Đánh giá</small>
-              <b style="color: #D69E2E;">⭐ ${state.rating.toFixed(1)}</b>
-            </div>
-          </div>
-          <div class="ledger-section-box">
-            <b>📈 LÃI / LỖ 10 NGÀY</b>
-            ${this.render10DaysChart()}
-          </div>
-        </div>
-      `;
-    }
-  }
-
-  render10DaysChart() {
-    const list = state.history10Days.slice(-10);
-    const maxVal = Math.max(...list.map(d => Math.abs(d.profit)), 350000);
-
-    return `
-      <div class="svg-chart-container" style="margin-top: 6px;">
-        <svg viewBox="0 0 320 80" width="100%" height="80">
-          <line x1="0" y1="65" x2="320" y2="65" stroke="#CBD5E0" stroke-width="1" stroke-dasharray="2 2"/>
-          ${list.map((d, i) => {
-            const x = 12 + i * 31;
-            const barH = Math.max(6, Math.min(55, Math.round((Math.abs(d.profit) / maxVal) * 55)));
-            const y = 65 - barH;
-            const color = d.profit >= 0 ? '#38A169' : '#E53E3E';
-            return `
-              <rect x="${x}" y="${y}" width="18" height="${barH}" rx="3" fill="${color}"/>
-              <text x="${x + 9}" y="76" font-size="8" fill="#718096" text-anchor="middle" font-weight="700">${d.day}</text>
-              <text x="${x + 9}" y="${y - 2}" font-size="7" fill="${color}" text-anchor="middle" font-weight="800">${Math.round(d.profit / 1000)}k</text>
-            `;
-          }).join('')}
-        </svg>
-      </div>
-    `;
-  }
-
-  attachTabEvents() {
-    this.elView.querySelectorAll('.qty-btn').forEach(btn => {
-      btn.onclick = () => {
-        const item = btn.dataset.item;
-        const act = btn.dataset.act;
-        const cost = parseInt(btn.dataset.cost || '0', 10);
-        const shelfLife = parseInt(btn.dataset.shelflife || '2', 10);
-
-        if (act === 'add') {
-          const bulkCost = cost * 5;
-          if (state.money < bulkCost) {
-            audio.trash();
-            this.showToast('Không đủ tiền trong ngân quỹ!');
-            return;
-          }
-          state.money -= bulkCost;
-          state.buyItemLot(item, 5, cost, shelfLife);
-          audio.pour();
-          this.showToast(`Đã nhập 5 phần (+Lô mới)!`);
-        } else if (act === 'sub') {
-          if (state.getTotalQty(item) >= 1) {
-            state.consumeItem(item, 1);
-            audio.click();
-          }
-        }
-        this.render();
-      };
-    });
-
-    this.elView.querySelectorAll('[data-view-lots]').forEach(btn => {
-      btn.onclick = () => {
-        const key = btn.dataset.viewLots;
-        const name = btn.dataset.itemName;
-        this.openLotsModal(key, name);
-      };
-    });
-
-    this.elView.querySelectorAll('[data-hire]').forEach(btn => {
-      btn.onclick = () => {
-        const sid = btn.dataset.hire;
-        const cost = parseInt(btn.dataset.cost, 10);
-        if (state.money < cost) {
-          audio.trash();
-          this.showToast('Không đủ tiền thuê nhân viên!');
-          return;
-        }
-        state.money -= cost;
-        state.staff[sid].hired = true;
-        audio.serveSuccess();
-        this.showToast('Đã thuê nhân viên thành công!');
-        state.save();
-        this.render();
-      };
-    });
-
-    this.elView.querySelectorAll('[data-upgrade-staff]').forEach(btn => {
-      btn.onclick = () => {
-        const sid = btn.dataset.upgradeStaff;
-        const cost = parseInt(btn.dataset.cost, 10);
-        if (state.money < cost) {
-          audio.trash();
-          this.showToast('Không đủ tiền nâng cấp nhân viên!');
-          return;
-        }
-        state.money -= cost;
-        state.staff[sid].level += 1;
-        audio.serveSuccess();
-        this.showToast(`Đã nâng cấp lên Level ${state.staff[sid].level}!`);
-        state.save();
-        this.render();
-      };
-    });
-
-    this.elView.querySelectorAll('[data-upgrade]').forEach(btn => {
-      btn.onclick = () => {
-        const uid = btn.dataset.upgrade;
-        const cost = parseInt(btn.dataset.cost, 10);
-        if (state.money < cost) {
-          audio.trash();
-          this.showToast('Không đủ tiền mua nâng cấp!');
-          return;
-        }
-        state.money -= cost;
-        state.upgrades[uid] = true;
-        audio.serveSuccess();
-        this.showToast('Nâng cấp tiệm thành công!');
-        state.save();
-        this.render();
-      };
-    });
-  }
-
-  openLotsModal(key, name) {
-    audio.click();
-    const lots = state.inventoryLots[key] || [];
-
-    this.openModal(`
-      <h2>📋 CHI TIẾT LÔ HÀNG: ${name}</h2>
-      <div style="max-height: 240px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; margin: 10px 0;">
-        ${lots.length === 0 ? '<p style="text-align: center; color: #A0AEC0;">Hết hàng</p>' : ''}
-        ${lots.map((lot, idx) => `
-          <div style="background: #FFF; border: 1.5px solid #EAD2BC; border-radius: 8px; padding: 6px; display: flex; justify-content: space-between; align-items: center;">
-            <div>
-              <b>Lô #${idx + 1} • ${lot.qty} phần</b>
-              <small style="display: block; font-size: 10px; color: #718096;">Nhập Ngày ${lot.buyDay}</small>
-            </div>
-            <span class="lot-badge ${lot.expireDay <= state.day ? 'badge-today' : 'badge-ok'}">
-              ${lot.expireDay <= state.day ? '🔴 Hết hạn hôm nay' : `🟢 Còn đến Ngày ${lot.expireDay}`}
-            </span>
-          </div>
-        `).join('')}
-      </div>
-      <button class="btn-modal-primary" id="btnCloseLotsModal" style="width: 100%;">ĐÃ HIỂU</button>
-    `);
-
-    document.getElementById('btnCloseLotsModal').onclick = () => this.closeModal();
-  }
-
-  // ================= 4.2. BẮT ĐẦU PHA CHẾ =================
   startSellPhase() {
     this.viewMode = 'sell';
     this.isPaused = false;
@@ -981,12 +716,11 @@ class GameApp {
 
     clearInterval(this.sellTimer);
     this.sellTimer = setInterval(() => {
-      if (this.isPaused || this.viewMode !== 'sell') return;
+      if (this.isPaused) return;
 
       this.gameSeconds += 1;
-      const coolerMod = state.upgrades.coolerAir ? 0.7 : 1.1;
       this.orders.forEach(ord => {
-        ord.patience = Math.max(0, ord.patience - coolerMod);
+        ord.patience = Math.max(0, ord.patience - 0.9);
       });
 
       const angryIdx = this.orders.findIndex(ord => ord.patience <= 0);
@@ -1006,7 +740,6 @@ class GameApp {
       }
     }, 1000);
 
-    this.startStaffAutomation();
     this.render();
   }
 
@@ -1017,75 +750,6 @@ class GameApp {
     if (!hasCounter && this.orders.length < 3) this.generateOrder('counter');
     if (!hasOnline && this.orders.length < 3) this.generateOrder('online');
     if (this.orders.length < 2) this.generateOrder();
-  }
-
-  startStaffAutomation() {
-    clearInterval(this.staffTimer);
-    this.staffTimer = setInterval(() => {
-      if (this.isPaused || this.viewMode !== 'sell') return;
-
-      const activeOrd = this.orders[this.activeOrderIndex];
-      if (!activeOrd || this.currentCup.isSealing || this.currentCup.isDelivering) return;
-
-      // Minh rót trà
-      if (state.staff.minhTea?.hired && this.currentCup.cup && !this.currentCup.tea) {
-        if (state.getTotalQty(activeOrd.recipe.tea) > 0) {
-          this.currentCup.tea = activeOrd.recipe.tea;
-          audio.pour();
-          this.checkAndTriggerAutoSeal();
-          this.render();
-          return;
-        }
-      }
-
-      // Linh đa nhiệm
-      if (state.staff.linhHelper?.hired && this.currentCup.cup) {
-        if (!this.currentCup.sugar) {
-          this.currentCup.sugar = activeOrd.recipe.sugar;
-          audio.click();
-          this.checkAndTriggerAutoSeal();
-          this.render();
-          return;
-        }
-        if (!this.currentCup.ice) {
-          this.currentCup.ice = activeOrd.recipe.ice;
-          audio.addIce();
-          this.checkAndTriggerAutoSeal();
-          this.render();
-          return;
-        }
-        if (activeOrd.recipe.syrup && !this.currentCup.syrup) {
-          if (state.getTotalQty(activeOrd.recipe.syrup) > 0) {
-            this.currentCup.syrup = activeOrd.recipe.syrup;
-            audio.addSyrup();
-            this.checkAndTriggerAutoSeal();
-            this.render();
-            return;
-          }
-        }
-        for (const tid of activeOrd.recipe.toppings) {
-          if (!this.currentCup.toppings.includes(tid)) {
-            if (state.getTotalQty(tid) > 0) {
-              this.currentCup.toppings.push(tid);
-              audio.addTopping();
-              this.checkAndTriggerAutoSeal();
-              this.render();
-              return;
-            }
-          }
-        }
-      }
-    }, 1200);
-
-    clearInterval(this.vyTimer);
-    this.vyTimer = setInterval(() => {
-      if (this.isPaused || this.viewMode !== 'sell' || !state.staff.vyOnline?.hired) return;
-      const appOrdIdx = this.orders.findIndex((o, idx) => o.type === 'online' && idx !== this.activeOrderIndex);
-      if (appOrdIdx !== -1) {
-        const appOrd = this.orders[appOrdIdx];
-        this.executeDelivery(appOrd, appOrdIdx);
-      }
-    }, 3500);
   }
 
   generateOrder(forcedType = null) {
@@ -1126,58 +790,59 @@ class GameApp {
 
   resetCup() {
     this.currentCup = {
-      cup: null,
-      tea: null,
-      syrup: null,
-      sugar: null,
-      ice: null,
-      toppings: [],
-      isSealing: false,
-      isDelivering: false
+      cup: null, tea: null, syrup: null,
+      sugar: null, ice: null, toppings: [],
+      isSealing: false, isDelivering: false
     };
   }
 
-  // ================= 4.3. RENDER MÀN HÌNH BÁN HÀNG CHUẨN XỊN =================
+  // ================= 6. RENDER GIAO DIỆN QUẦY CHUẨN XỊN =================
   renderSellView() {
     const activeOrd = this.orders[this.activeOrderIndex] || null;
+    const isMatched = this.isOrderMatched(activeOrd);
 
     this.elView.innerHTML = `
       <div class="shop-counter-screen">
+        
         <!-- 1. HÀNG ORDER CARD NGANG Ở TRÊN -->
         <div class="orders-top-strip">
           ${this.renderOrdersLane()}
         </div>
 
-        <!-- 2. QUẦY PHA CHẾ CHÍNH CHUẨN HÌNH ẢNH MẪU -->
+        <!-- 2. QUẦY PHA CHẾ CHÍNH ĐẸP LUNG LINH -->
         <div class="cozy-kitchen-table">
           
           <!-- CỘT BÊN TRÁI: LY, ĐƯỜNG, ĐÁ -->
           <div class="left-ingredients-panel">
-            <!-- PHẦN LY -->
+            
+            <!-- Ô LY (M & L) -->
             <div class="panel-section-box">
               <div class="box-title-label">LY</div>
               <div class="cups-vertical-stack">
-                <button class="cup-item-art ${this.currentCup.cup === 'M' ? 'selected' : ''}" data-pick-cup="M">
-                  <span class="qty-pill">${state.getTotalQty('cupM')}</span>
-                  <div class="cup-glass-art cup-m">
-                    <span class="cup-badge-letter">M</span>
-                  </div>
+                <button class="cup-btn-card ${this.currentCup.cup === 'M' ? 'selected' : ''}" data-pick-cup="M">
+                  <span class="qty-bubble">${state.getTotalQty('cupM')}</span>
+                  ${renderCupArtSvg('M')}
                 </button>
-
-                <button class="cup-item-art ${this.currentCup.cup === 'L' ? 'selected' : ''}" data-pick-cup="L">
-                  <span class="qty-pill">${state.getTotalQty('cupL')}</span>
-                  <div class="cup-glass-art cup-l">
-                    <span class="cup-badge-letter">L</span>
-                  </div>
+                <button class="cup-btn-card ${this.currentCup.cup === 'L' ? 'selected' : ''}" data-pick-cup="L">
+                  <span class="qty-bubble">${state.getTotalQty('cupL')}</span>
+                  ${renderCupArtSvg('L')}
                 </button>
               </div>
             </div>
 
-            <!-- PHẦN ĐƯỜNG -->
+            <!-- Ô ĐƯỜNG -->
             <div class="panel-section-box">
               <div class="box-title-label">Đường</div>
-              <div class="condiment-bowl-art">
-                <span class="bowl-icon">🥣</span>
+              <!-- Chén đường sứ trắng muỗng bạc -->
+              <div class="condiment-bowl-svg-wrap">
+                <svg viewBox="0 0 60 36" width="46" height="28">
+                  <ellipse cx="30" cy="22" rx="24" ry="11" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.6"/>
+                  <ellipse cx="30" cy="19" rx="20" ry="8" fill="#F8FAFC"/>
+                  <path d="M16 19 Q30 14 44 19 Q30 22 16 19" fill="#FFFFFF" opacity="0.95"/>
+                  <!-- Muỗng bạc -->
+                  <path d="M10 8 L32 20" stroke="#94A3B8" stroke-width="2.5" stroke-linecap="round"/>
+                  <ellipse cx="10" cy="8" rx="4" ry="2.5" fill="#CBD5E1"/>
+                </svg>
               </div>
               <div class="segmented-picker-row">
                 ${SUGAR_LEVELS.map(s => `
@@ -1186,11 +851,18 @@ class GameApp {
               </div>
             </div>
 
-            <!-- PHẦN ĐÁ -->
+            <!-- Ô ĐÁ -->
             <div class="panel-section-box">
               <div class="box-title-label">Đá</div>
-              <div class="condiment-bowl-art">
-                <span class="bowl-icon">🧊</span>
+              <!-- Bát đá viên pha lê -->
+              <div class="condiment-bowl-svg-wrap">
+                <svg viewBox="0 0 60 36" width="46" height="28">
+                  <ellipse cx="30" cy="22" rx="24" ry="11" fill="rgba(255,255,255,0.7)" stroke="#93C5FD" stroke-width="1.6"/>
+                  <!-- Đá viên bên trong -->
+                  <rect x="20" y="14" width="8" height="8" rx="1.5" fill="#BFDBFE" stroke="#60A5FA" stroke-width="1"/>
+                  <rect x="29" y="12" width="9" height="9" rx="1.5" fill="#DBEAFE" stroke="#93C5FD" stroke-width="1"/>
+                  <rect x="25" y="19" width="8" height="8" rx="1.5" fill="#EFF6FF" stroke="#BFDBFE" stroke-width="1"/>
+                </svg>
               </div>
               <div class="segmented-picker-row">
                 ${ICE_LEVELS.map(ice => `
@@ -1201,85 +873,75 @@ class GameApp {
 
             <!-- NÚT ĐỔ LY -->
             ${this.currentCup.cup ? `
-              <button class="btn-trash-bowl" id="btnDiscardCup">🗑 Đổ Ly</button>
+              <button class="btn-trash-action" id="btnDiscardCup">🗑 Đổ Ly</button>
             ` : ''}
           </div>
 
-          <!-- KHU VỰC KỆ CHÍNH (BÊN PHẢI) -->
+          <!-- CỘT KỆ CHÍNH BÊN PHẢI -->
           <div class="right-shelves-panel">
             
-            <!-- KỆ TRÊN: 9 BÌNH TRÀ + MÁY ĐÓNG NẮP RETRO -->
+            <!-- KỆ TRÊN: 9 BÌNH TRÀ + MÁY ĐÓNG NẮP -->
             <div class="shelf-wrapper shelf-teas">
               <div class="shelf-header-pill">🌱 TRÀ / NƯỚC NỀN (9 khung)</div>
               
-              <div class="teas-and-sealer-row">
-                <!-- 9 BÌNH Ủ TRÀ -->
+              <div class="teas-and-sealer-flex">
                 <div class="dispensers-grid-9">
-                  ${TEAS.map((t, idx) => {
+                  ${TEAS.map(t => {
                     const isSelected = this.currentCup.tea === t.id;
                     const qty = state.getTotalQty(t.id);
                     return `
-                      <button class="dispenser-card-art ${isSelected ? 'selected' : ''}" data-pick-tea="${t.id}" title="${t.name}">
-                        <span class="qty-pill">${qty}</span>
-                        <!-- Nắp bạc -->
-                        <div class="dispenser-cap"></div>
-                        <!-- Thân bình thuỷ tinh -->
-                        <div class="dispenser-body">
-                          <div class="tea-liquid-fill" style="background: ${t.liquid};"></div>
-                          <div class="tea-art-icon">${t.icon}</div>
-                          <div class="tea-label-banner">${t.name}</div>
-                        </div>
-                        <!-- Vòi rót đen -->
-                        <div class="dispenser-spout"></div>
+                      <button class="dispenser-btn ${isSelected ? 'selected' : ''}" data-pick-tea="${t.id}" title="${t.name}">
+                        <span class="qty-bubble">${qty}</span>
+                        ${renderDispenserSvg(t, isSelected, qty)}
                       </button>
                     `;
                   }).join('')}
                 </div>
 
-                <!-- MÁY ĐÓNG NẮP VINTAGE RETRO -->
-                <div class="retro-sealer-art-box ${this.currentCup.isSealing ? 'sealing-active' : ''}">
-                  <div class="sealer-film-roll">
-                    <span class="film-gear gear-l">⚙️</span>
-                    <div class="film-tape-pattern">🌸 🌸 🌸</div>
-                    <span class="film-gear gear-r">⚙️</span>
-                  </div>
-
-                  <div class="sealer-head-block">
-                    <button class="btn-seal-stamp ${this.isOrderMatched(activeOrd) ? 'ready' : ''}" id="btnManualSealServe">
-                      <span>ĐÓNG NẮP</span>
-                      <i class="led-light ${this.isOrderMatched(activeOrd) ? 'on' : ''}"></i>
-                    </button>
-                  </div>
-
-                  <!-- ĐẾ ĐẶT LY -->
-                  <div class="sealer-cup-stage">
-                    ${this.currentCup.cup ? `
-                      <div class="staged-cup-preview">
-                        ${this.renderCupSvg()}
-                      </div>
-                    ` : `
-                      <div class="empty-stage-ring">
-                        <small>Chưa có ly</small>
-                      </div>
-                    `}
-                  </div>
+                <!-- MÁY ĐÓNG NẮP RETRO VINTAGE -->
+                <div class="sealer-machine-box ${this.currentCup.isSealing ? 'sealing' : ''}">
+                  <button class="sealer-interactive-btn" id="btnManualSealServe">
+                    ${renderSealerMachineSvg(this.currentCup.isSealing, isMatched)}
+                  </button>
+                  <!-- Ly đang pha hiển thị trên đế máy -->
+                  ${this.currentCup.cup ? `
+                    <div class="staged-cup-slot">
+                      ${this.renderStagedCupSvg()}
+                    </div>
+                  ` : ''}
                 </div>
               </div>
             </div>
 
-            <!-- KỆ GIỮA: 15 KHAY TOPPING (9 HÀNG TRÊN + 6 HÀNG DƯỚI) -->
+            <!-- KỆ GIỮA: 15 KHAY TOPPING (9 HÀNG 1, 6 HÀNG 2) -->
             <div class="shelf-wrapper shelf-toppings">
               <div class="shelf-header-pill">🧆 TOPPING (15 khung)</div>
               
-              <div class="toppings-container-grid">
-                <!-- HÀNG 1: 9 KHAY -->
+              <div class="toppings-grid-container">
                 <div class="toppings-row-1">
-                  ${TOPPINGS.slice(0, 9).map(tp => this.renderToppingTrayHtml(tp)).join('')}
+                  ${TOPPINGS.slice(0, 9).map(tp => {
+                    const inCup = this.currentCup.toppings.includes(tp.id);
+                    const qty = state.getTotalQty(tp.id);
+                    return `
+                      <button class="topping-btn ${inCup ? 'in-cup' : ''}" data-pick-topping="${tp.id}">
+                        <span class="qty-bubble">${qty}</span>
+                        ${renderToppingSvg(tp, inCup, qty)}
+                      </button>
+                    `;
+                  }).join('')}
                 </div>
 
-                <!-- HÀNG 2: 6 KHAY -->
                 <div class="toppings-row-2">
-                  ${TOPPINGS.slice(9, 15).map(tp => this.renderToppingTrayHtml(tp)).join('')}
+                  ${TOPPINGS.slice(9, 15).map(tp => {
+                    const inCup = this.currentCup.toppings.includes(tp.id);
+                    const qty = state.getTotalQty(tp.id);
+                    return `
+                      <button class="topping-btn ${inCup ? 'in-cup' : ''}" data-pick-topping="${tp.id}">
+                        <span class="qty-bubble">${qty}</span>
+                        ${renderToppingSvg(tp, inCup, qty)}
+                      </button>
+                    `;
+                  }).join('')}
                 </div>
               </div>
             </div>
@@ -1288,26 +950,14 @@ class GameApp {
             <div class="shelf-wrapper shelf-syrups">
               <div class="shelf-header-pill">🧴 SIRO (9 khung)</div>
               
-              <div class="syrups-bottles-grid-9">
+              <div class="syrups-grid-9">
                 ${SYRUPS.map(s => {
                   const inCup = this.currentCup.syrup === s.id;
                   const qty = state.getTotalQty(s.id);
                   return `
-                    <button class="syrup-bottle-art ${inCup ? 'in-cup' : ''}" data-pick-syrup="${s.id}" title="${s.name}">
-                      <span class="qty-pill">${qty}</span>
-                      <!-- Vòi bơm đen -->
-                      <div class="pump-head-art">
-                        <div class="pump-spout-lip"></div>
-                        <div class="pump-stem"></div>
-                      </div>
-                      <!-- Thân chai thuỷ tinh -->
-                      <div class="bottle-glass-body">
-                        <div class="syrup-liquid-fill" style="background: ${s.color};"></div>
-                        <div class="bottle-label-card">
-                          <b>${s.name}</b>
-                          <span class="fruit-ico">${s.icon}</span>
-                        </div>
-                      </div>
+                    <button class="syrup-btn ${inCup ? 'in-cup' : ''}" data-pick-syrup="${s.id}">
+                      <span class="qty-bubble">${qty}</span>
+                      ${renderSyrupSvg(s, inCup, qty)}
                     </button>
                   `;
                 }).join('')}
@@ -1322,58 +972,46 @@ class GameApp {
     this.attachSellEvents();
   }
 
-  renderToppingTrayHtml(tp) {
-    const inCup = this.currentCup.toppings.includes(tp.id);
-    const qty = state.getTotalQty(tp.id);
+  renderStagedCupSvg() {
+    if (!this.currentCup.cup) return '';
+    const isL = this.currentCup.cup === 'L';
+    let liquidColor = '#FDF5EC';
+
+    if (this.currentCup.tea) {
+      const teaObj = TEAS.find(t => t.id === this.currentCup.tea);
+      if (teaObj) liquidColor = teaObj.liquid;
+    }
+    if (this.currentCup.syrup) {
+      const sObj = SYRUPS.find(s => s.id === this.currentCup.syrup);
+      if (sObj) liquidColor = sObj.color;
+    }
+
+    const hasIce = this.currentCup.ice && this.currentCup.ice !== 'Không';
+    const hasTops = this.currentCup.toppings.length > 0;
 
     return `
-      <button class="topping-tray-art ${inCup ? 'in-cup' : ''}" data-pick-topping="${tp.id}" title="${tp.name}">
-        <span class="qty-pill">${qty}</span>
-        <div class="tray-glass-inner">
-          <div class="tray-food-graphic food-${tp.type}" style="--food-color: ${tp.color}">
-            ${this.renderFoodVisual(tp)}
-          </div>
-          <div class="tray-white-badge">${tp.name}</div>
-        </div>
-      </button>
+      <svg viewBox="0 0 60 76" width="34" height="44" class="staged-cup-svg">
+        <path d="M10 8 L15 68 Q16 71 20 71 L40 71 Q44 71 45 68 L50 8 Z" fill="rgba(255,255,255,0.4)" stroke="#7A4222" stroke-width="1.8"/>
+        ${this.currentCup.tea || this.currentCup.syrup ? `
+          <path d="M12 14 L15 68 Q16 70 20 70 L40 70 Q44 70 45 68 L48 14 Z" fill="${liquidColor}"/>
+        ` : ''}
+        ${hasIce ? `
+          <rect x="20" y="24" width="8" height="7" rx="2" fill="#FFF" fill-opacity="0.8"/>
+          <rect x="32" y="30" width="8" height="7" rx="2" fill="#FFF" fill-opacity="0.8"/>
+        ` : ''}
+        ${hasTops ? `
+          <circle cx="22" cy="65" r="3" fill="#1A1412"/>
+          <circle cx="30" cy="66" r="3" fill="#1A1412"/>
+          <circle cx="38" cy="65" r="3" fill="#1A1412"/>
+        ` : ''}
+        <ellipse cx="30" cy="8" rx="20" ry="3.5" fill="none" stroke="#7A4222" stroke-width="1.8"/>
+      </svg>
     `;
   }
 
-  renderFoodVisual(tp) {
-    if (tp.type === 'pearl') {
-      return `
-        <div class="pearls-cluster">
-          <span style="background:${tp.color}"></span><span style="background:${tp.color}"></span>
-          <span style="background:${tp.color}"></span><span style="background:${tp.color}"></span>
-        </div>
-      `;
-    }
-    if (tp.type === 'cube') {
-      return `
-        <div class="cubes-cluster">
-          <span style="background:${tp.color}"></span><span style="background:${tp.color}"></span>
-          <span style="background:${tp.color}"></span>
-        </div>
-      `;
-    }
-    if (tp.type === 'foam') {
-      return `<div class="foam-swirl" style="background:${tp.color}"></div>`;
-    }
-    if (tp.type === 'bean') {
-      return `
-        <div class="beans-cluster">
-          <span style="background:${tp.color}"></span><span style="background:${tp.color}"></span>
-          <span style="background:${tp.color}"></span>
-        </div>
-      `;
-    }
-    return `<div class="seeds-cluster" style="background:${tp.color}"></div>`;
-  }
-
-  // ================= 4.4. CARD ORDER NGANG Ở TRÊN =================
   renderOrdersLane() {
     if (this.orders.length === 0) {
-      return '<div class="no-orders-banner">Đang chờ khách gọi món mới... 🐢</div>';
+      return '<div class="no-orders-banner">Đang chờ khách gọi món... 🐢</div>';
     }
 
     return `
@@ -1396,7 +1034,6 @@ class GameApp {
           return `
             <div class="order-h-card ${isSelected ? 'active' : ''} ${isApp ? 'app-type' : 'counter-type'}" data-order-idx="${idx}">
               <div class="order-h-icon">${isApp ? '🛵' : '👩'}</div>
-              
               <div class="order-h-details">
                 <div class="order-h-header-row">
                   ${isApp ? `<span class="badge-app">Đơn app ${ord.id}</span>` : `<span class="badge-counter">Quầy ${ord.id}</span>`}
@@ -1419,51 +1056,13 @@ class GameApp {
                 </div>
 
                 <div class="patience-track-horizontal">
-                  <i style="width: ${ord.patience}%; background: ${ord.patience > 35 ? '#38A169' : (ord.patience > 20 ? '#DD6B20' : '#E53E3E')};"></i>
+                  <i style="width: ${ord.patience}%; background: ${ord.patience > 35 ? '#22C55E' : (ord.patience > 20 ? '#F59E0B' : '#EF4444')};"></i>
                 </div>
               </div>
             </div>
           `;
         }).join('')}
       </div>
-    `;
-  }
-
-  renderCupSvg() {
-    if (!this.currentCup.cup) return '';
-
-    const isL = this.currentCup.cup === 'L';
-    let liquidColor = '#FDF5EC';
-
-    if (this.currentCup.tea) {
-      const teaObj = TEAS.find(t => t.id === this.currentCup.tea);
-      if (teaObj) liquidColor = teaObj.liquid;
-    }
-    if (this.currentCup.syrup) {
-      const sObj = SYRUPS.find(s => s.id === this.currentCup.syrup);
-      if (sObj) liquidColor = sObj.color;
-    }
-
-    const hasIce = this.currentCup.ice && this.currentCup.ice !== 'Không';
-    const hasTops = this.currentCup.toppings.length > 0;
-
-    return `
-      <svg viewBox="0 0 60 76" width="38" height="48">
-        <path d="M10 8 L15 68 Q16 71 20 71 L40 71 Q44 71 45 68 L50 8 Z" fill="rgba(255,255,255,0.4)" stroke="#7A4222" stroke-width="1.8"/>
-        ${this.currentCup.tea || this.currentCup.syrup ? `
-          <path d="M12 14 L15 68 Q16 70 20 70 L40 70 Q44 70 45 68 L48 14 Z" fill="${liquidColor}"/>
-        ` : ''}
-        ${hasIce ? `
-          <rect x="20" y="24" width="8" height="7" rx="2" fill="#FFF" fill-opacity="0.8"/>
-          <rect x="32" y="30" width="8" height="7" rx="2" fill="#FFF" fill-opacity="0.8"/>
-        ` : ''}
-        ${hasTops ? `
-          <circle cx="22" cy="65" r="3" fill="#3D2214"/>
-          <circle cx="30" cy="66" r="3" fill="#3D2214"/>
-          <circle cx="38" cy="65" r="3" fill="#3D2214"/>
-        ` : ''}
-        <ellipse cx="30" cy="8" rx="20" ry="3.5" fill="none" stroke="#7A4222" stroke-width="1.8"/>
-      </svg>
     `;
   }
 
@@ -1584,27 +1183,10 @@ class GameApp {
     const btnTrash = document.getElementById('btnDiscardCup');
     if (btnTrash) {
       btnTrash.onclick = () => {
-        audio.click();
-        this.openModal(`
-          <h2>🗑 ĐỔ LY NÀY?</h2>
-          <p style="color: #7C5B49; margin: 8px 0 16px;">
-            Bạn có chắc muốn đổ ly đang pha dở này không?
-          </p>
-          <div class="modal-btns">
-            <button class="btn-modal-cancel" id="btnCancelDiscard">HỦY</button>
-            <button class="btn-modal-confirm" id="btnConfirmDiscard">ĐỔ LY</button>
-          </div>
-        `);
-
-        document.getElementById('btnCancelDiscard').onclick = () => this.closeModal();
-        document.getElementById('btnConfirmDiscard').onclick = () => {
-          this.closeModal();
-          audio.trash();
-          state.today.wasteDiscardedCups += 1500;
-          this.resetCup();
-          this.showToast('Đã đổ ly làm lại!');
-          this.render();
-        };
+        audio.trash();
+        this.resetCup();
+        this.showToast('Đã đổ ly làm lại!');
+        this.render();
       };
     }
 
@@ -1615,6 +1197,7 @@ class GameApp {
         if (ord && this.isOrderMatched(ord)) {
           this.checkAndTriggerAutoSeal(true);
         } else {
+          audio.click();
           this.showToast('Chưa đủ nguyên liệu theo công thức!');
         }
       };
@@ -1643,17 +1226,15 @@ class GameApp {
       this.showToast('✨ Máy đang tự động dập nắp...');
       this.render();
 
-      const duration = state.upgrades.fastSealer ? 250 : 450;
-
       setTimeout(() => {
         this.currentCup.isSealing = false;
         this.currentCup.isDelivering = true;
         this.executeDelivery(ord);
-      }, duration);
+      }, 400);
     }
   }
 
-  executeDelivery(ord, explicitIdx = null) {
+  executeDelivery(ord) {
     audio.serveSuccess();
 
     state.consumeItem('cup' + ord.recipe.cup);
@@ -1671,8 +1252,7 @@ class GameApp {
     }, 0);
 
     const fullPrice = baseP + sizeP + syrupP + topP;
-    const tipMod = state.upgrades.turtleCharm ? 0.25 : 0.15;
-    const tip = Math.round(fullPrice * tipMod);
+    const tip = Math.round(fullPrice * 0.2);
     const totalEarned = fullPrice + tip;
 
     state.money += totalEarned;
@@ -1693,8 +1273,7 @@ class GameApp {
       this.showToast(`+${totalEarned.toLocaleString()}đ 💰 Đã giao khách ${ord.name}!`);
     }
 
-    const removeIdx = explicitIdx !== null ? explicitIdx : this.activeOrderIndex;
-    this.orders.splice(removeIdx, 1);
+    this.orders.splice(this.activeOrderIndex, 1);
     this.activeOrderIndex = 0;
     this.resetCup();
     this.ensureOrderBalance();
@@ -1704,22 +1283,13 @@ class GameApp {
   endSellPhase() {
     clearInterval(this.sellTimer);
     clearInterval(this.staffTimer);
-    clearInterval(this.vyTimer);
     audio.bell();
 
-    const expiredCount = state.processEndOfDayExpiry();
     const rentCost = state.today.costRent;
     const utilitiesCost = state.today.costUtilities;
-
-    let staffSalaries = 0;
-    if (state.staff.minhTea?.hired) staffSalaries += STAFF_LIST[0].baseSalary + (state.staff.minhTea.level - 1) * 2000;
-    if (state.staff.linhHelper?.hired) staffSalaries += STAFF_LIST[1].baseSalary + (state.staff.linhHelper.level - 1) * 2000;
-    if (state.staff.vyOnline?.hired) staffSalaries += STAFF_LIST[2].baseSalary + (state.staff.vyOnline.level - 1) * 2000;
-
     const totalRevenue = this.dailyReport.revenue;
-    const totalExpenses = rentCost + utilitiesCost + staffSalaries;
-    const totalWaste = state.today.wasteExpiredTea + state.today.wasteExpiredTopping + state.today.wasteExpiredSyrup + state.today.wasteDiscardedCups;
-    const netProfit = totalRevenue - totalExpenses - totalWaste;
+    const totalExpenses = rentCost + utilitiesCost;
+    const netProfit = totalRevenue - totalExpenses;
 
     state.money -= totalExpenses;
     state.stats.totalProfitAllTime += netProfit;
@@ -1736,16 +1306,13 @@ class GameApp {
       <div class="day-end-summary-box">
         <div class="summary-line"><span>Ly đã phục vụ:</span> <b>${this.dailyReport.served} ly</b></div>
         <div class="summary-line"><span>Doanh thu:</span> <b class="pos">+${totalRevenue.toLocaleString()}đ</b></div>
-        <div class="summary-line sub"><span>Mặt bằng & Điện:</span> <b class="neg">-${(rentCost + utilitiesCost).toLocaleString()}đ</b></div>
-        ${staffSalaries > 0 ? `<div class="summary-line sub"><span>Lương nhân viên:</span> <b class="neg">-${staffSalaries.toLocaleString()}đ</b></div>` : ''}
-        ${totalWaste > 0 ? `<div class="summary-line sub"><span>Hao hụt:</span> <b class="neg">-${totalWaste.toLocaleString()}đ</b></div>` : ''}
+        <div class="summary-line sub"><span>Chi phí mặt bằng & điện:</span> <b class="neg">-${totalExpenses.toLocaleString()}đ</b></div>
         <hr style="border: 0; border-top: 1px dashed #EAD2BC; margin: 6px 0;">
         <div class="summary-line total">
           <span>LỢI NHUẬN RÒNG:</span> 
           <b class="${netProfit >= 0 ? 'pos' : 'neg'}">${netProfit >= 0 ? '+' : ''}${netProfit.toLocaleString()}đ</b>
         </div>
       </div>
-
       <button id="btnNextDay" class="btn-modal-primary" style="width: 100%; padding: 12px; font-size: 15px; border-radius: 12px;">
         TIẾP TỤC SANG NGÀY ${state.day + 1} ➔
       </button>
@@ -1753,19 +1320,6 @@ class GameApp {
 
     document.getElementById('btnNextDay').onclick = () => {
       state.day += 1;
-      state.today = {
-        revenueDrinks: 0,
-        revenueTips: 0,
-        revenueApp: 0,
-        costRestock: 0,
-        costRent: 45000,
-        costUtilities: 15000,
-        costSalaries: 0,
-        wasteExpiredTopping: 0,
-        wasteExpiredSyrup: 0,
-        wasteExpiredTea: 0,
-        wasteDiscardedCups: 0
-      };
       state.save();
       this.closeModal();
       this.startSellPhase();
