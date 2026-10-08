@@ -94,6 +94,21 @@ class SoundEngine {
   trash() {
     this.playTone(180, 'sawtooth', 0.15, 0.2);
   }
+
+  sizzle() {
+    this.playTone(360, 'sawtooth', 0.18, 0.22);
+    setTimeout(() => this.playTone(280, 'triangle', 0.14, 0.18), 60);
+  }
+
+  ding() {
+    this.playTone(880, 'sine', 0.12, 0.25);
+    setTimeout(() => this.playTone(1320, 'sine', 0.18, 0.22), 60);
+  }
+
+  warning() {
+    this.playTone(220, 'sawtooth', 0.14, 0.25);
+    setTimeout(() => this.playTone(180, 'sawtooth', 0.14, 0.25), 70);
+  }
 }
 
 const audio = new SoundEngine();
@@ -157,6 +172,157 @@ const CUSTOMERS = [
   { id: 'cozy', name: 'Cô Lan', avatar: 'cozy' },
   { id: 'turtle', name: 'Bé Rùa', avatar: 'turtle' }
 ];
+
+// ================= 2B. CƠ CHẾ BẾP MÌ CAY (CHUẨN 100% YÊU CẦU: TAP ĐỎ ➔ XANH) =================
+const NOODLE_DISHES = [
+  {
+    id: 'kimchi',
+    name: 'Mì Cay Kim Chi',
+    icon: '🍲',
+    themeColor: '#E11D48',
+    soupColor: '#DC2626',
+    price: 45000,
+    ingredients: [
+      { id: 'mi', name: 'Mì Hàn Quốc', icon: '🍜', isBase: true },
+      { id: 'kimchi', name: 'Kim Chi', icon: '🥬', isBase: true },
+      { id: 'bomy', name: 'Bò Mỹ', icon: '🥩', isBase: false },
+      { id: 'xucxich', name: 'Xúc xích', icon: '🌭', isBase: true },
+      { id: 'rau', name: 'Rau cải', icon: '🥗', isBase: true },
+      { id: 'nam', name: 'Nấm', icon: '🍄', isBase: true },
+      { id: 'trung', name: 'Trứng', icon: '🥚', isBase: false },
+      { id: 'ot', name: 'Ớt cay', icon: '🌶️', isBase: false, isSpice: true }
+    ]
+  },
+  {
+    id: 'tomyum',
+    name: 'Mì Cay Tom Yum',
+    icon: '🦐',
+    themeColor: '#EA580C',
+    soupColor: '#EA580C',
+    price: 52000,
+    ingredients: [
+      { id: 'mi', name: 'Mì Hàn Quốc', icon: '🍜', isBase: true },
+      { id: 'nuoc_tomyum', name: 'Súp Tom Yum', icon: '🥣', isBase: true },
+      { id: 'tom', name: 'Tôm sú', icon: '🦐', isBase: true },
+      { id: 'muc', name: 'Mực ống', icon: '🦑', isBase: true },
+      { id: 'cachua', name: 'Cà chua', icon: '🍅', isBase: true },
+      { id: 'nam', name: 'Nấm rơm', icon: '🍄', isBase: true },
+      { id: 'bomy', name: 'Bò Mỹ', icon: '🥩', isBase: false },
+      { id: 'ot', name: 'Ớt cay', icon: '🌶️', isBase: false, isSpice: true }
+    ]
+  },
+  {
+    id: 'tuongden',
+    name: 'Mì Tương Đen',
+    icon: '🥣',
+    themeColor: '#451A03',
+    soupColor: '#27170E',
+    price: 48000,
+    ingredients: [
+      { id: 'mi', name: 'Mì sợi tươi', icon: '🍜', isBase: true },
+      { id: 'sot_tuongden', name: 'Sốt tương đen', icon: '🥣', isBase: true },
+      { id: 'thitheo', name: 'Thịt ba chỉ', icon: '🥩', isBase: true },
+      { id: 'dualeo', name: 'Dưa leo sợi', icon: '🥒', isBase: true },
+      { id: 'trungcut', name: 'Trứng cút', icon: '🥚', isBase: true },
+      { id: 'cucaivang', name: 'Củ cải vàng', icon: '🥔', isBase: false },
+      { id: 'kimchi_side', name: 'Kim chi kèm', icon: '🥬', isBase: false }
+    ]
+  }
+];
+
+// Hàm vẽ Thố Đá Dolsot Hàn Quốc sôi bốc khói bằng SVG
+function renderDolsotPotSvg(dish, selectedIngs, isDone) {
+  const soupColor = dish ? dish.soupColor : '#DC2626';
+  const hasNoodles = selectedIngs.includes('mi');
+  const hasMeat = selectedIngs.some(i => ['bomy', 'thitheo', 'xucxich'].includes(i));
+  const hasKimchi = selectedIngs.includes('kimchi') || selectedIngs.includes('kimchi_side');
+  const hasSeafood = selectedIngs.includes('tom') || selectedIngs.includes('muc');
+  const hasEgg = selectedIngs.includes('trung') || selectedIngs.includes('trungcut');
+  const hasVeggies = selectedIngs.includes('rau') || selectedIngs.includes('cachua') || selectedIngs.includes('dualeo');
+
+  return `
+    <svg viewBox="0 0 200 110" width="100%" height="100%" class="dolsot-pot-svg">
+      <defs>
+        <!-- Lửa hoặc đế kim loại nóng -->
+        <linearGradient id="potStoneGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#2D2D2D"/>
+          <stop offset="60%" stop-color="#1A1A1A"/>
+          <stop offset="100%" stop-color="#0A0A0A"/>
+        </linearGradient>
+        <radialGradient id="soupGrad" cx="50%" cy="40%" r="55%">
+          <stop offset="0%" stop-color="${dish?.id === 'tuongden' ? '#3B1F0E' : (dish?.id === 'tomyum' ? '#FB923C' : '#EF4444')}"/>
+          <stop offset="70%" stop-color="${soupColor}"/>
+          <stop offset="100%" stop-color="#180803"/>
+        </radialGradient>
+      </defs>
+
+      <!-- Bóng đổ đáy thố -->
+      <ellipse cx="100" cy="100" rx="85" ry="8" fill="rgba(0,0,0,0.55)"/>
+
+      <!-- Thân thố đá Hàn Quốc (Dolsot) -->
+      <path d="M22 42 Q20 85 55 96 Q100 102 145 96 Q180 85 178 42 Z" 
+            fill="url(#potStoneGrad)" stroke="#EAB308" stroke-width="2.5"/>
+
+      <!-- Quai thố đá hai bên -->
+      <path d="M16 48 Q8 54 18 64" fill="none" stroke="#A1A1AA" stroke-width="4" stroke-linecap="round"/>
+      <path d="M184 48 Q192 54 182 64" fill="none" stroke="#A1A1AA" stroke-width="4" stroke-linecap="round"/>
+
+      <!-- Vành miệng thố đá -->
+      <ellipse cx="100" cy="42" rx="78" ry="18" fill="#171717" stroke="#CA8A04" stroke-width="2"/>
+
+      <!-- Nước dùng / súp mì cay sôi -->
+      <ellipse cx="100" cy="43" rx="72" ry="15" fill="url(#soupGrad)"/>
+
+      <!-- Váng dầu cay / bọt sôi -->
+      <ellipse cx="75" cy="44" rx="14" ry="4" fill="rgba(255,255,255,0.22)"/>
+      <ellipse cx="125" cy="42" rx="18" ry="5" fill="rgba(255,255,255,0.18)"/>
+      <circle cx="95" cy="40" r="3" fill="#FEF08A" opacity="0.6"/>
+      <circle cx="112" cy="45" r="2.5" fill="#FEF08A" opacity="0.5"/>
+      <circle cx="68" cy="41" r="2" fill="#FEF08A" opacity="0.6"/>
+
+      <!-- Nét vẽ nguyên liệu nổi trong thố -->
+      ${hasNoodles ? `
+        <!-- Sợi mì xoăn vàng óng -->
+        <path d="M60 44 Q75 48 90 43 Q105 48 120 42 Q135 46 145 42" stroke="#FDE047" stroke-width="3" fill="none"/>
+        <path d="M70 47 Q85 43 100 48 Q115 44 130 47" stroke="#FACC15" stroke-width="2.5" fill="none"/>
+      ` : ''}
+
+      ${hasKimchi ? `
+        <!-- Miếng kim chi đỏ au -->
+        <rect x="52" y="38" width="18" height="9" rx="3" fill="#DC2626" stroke="#991B1B" stroke-width="1" transform="rotate(-8 52 38)"/>
+      ` : ''}
+
+      ${hasMeat ? `
+        <!-- Lát thịt bò / xúc xích -->
+        <rect x="125" y="38" width="22" height="8" rx="4" fill="#B91C1C" stroke="#7F1D1D" stroke-width="1" transform="rotate(12 125 38)"/>
+        <ellipse cx="136" cy="42" rx="4" ry="2" fill="#FCA5A5" opacity="0.8"/>
+      ` : ''}
+
+      ${hasSeafood ? `
+        <!-- Tôm / Mực hải sản -->
+        <path d="M128 35 Q140 32 142 42" stroke="#FB923C" stroke-width="4" fill="none" stroke-linecap="round"/>
+      ` : ''}
+
+      ${hasEgg ? `
+        <!-- Trứng gà / trứng cút lòng đào -->
+        <circle cx="100" cy="42" r="7" fill="#FFF"/>
+        <circle cx="100" cy="42" r="4.2" fill="#F59E0B"/>
+      ` : ''}
+
+      ${hasVeggies ? `
+        <!-- Lá rau cải xanh / dưa leo -->
+        <ellipse cx="80" cy="45" rx="9" ry="4" fill="#22C55E" transform="rotate(-15 80 45)"/>
+      ` : ''}
+
+      <!-- Biểu tượng hoàn thành lấp lánh nếu đã xong -->
+      ${isDone ? `
+        <circle cx="100" cy="20" r="14" fill="#22C55E" stroke="#FFF" stroke-width="2"/>
+        <text x="100" y="25" font-size="14" font-weight="bold" fill="#FFF" text-anchor="middle">✓</text>
+      ` : ''}
+    </svg>
+  `;
+}
+
 
 // ================= 3. TRẠNG THÁI GAME =================
 class GameState {
@@ -1166,12 +1332,16 @@ function triggerFloatReward(x, y, text) {
 // ================= 5. CONTROLLER GAME CHÍNH =================
 class GameApp {
   constructor() {
+    // Chế độ chơi: 'noodle' (Bếp Mì Cay) hoặc 'milktea' (Tiệm Trà Sữa)
+    this.currentAppMode = 'noodle'; // Mặc định mở ngay Bếp Mì Cay để test cơ chế!
+
     this.viewMode = 'sell';
     this.isPaused = false;
     this.sellTimer = null;
     this.gameSeconds = 0;
     this.maxDaySeconds = 90;
 
+    // Trà sữa
     this.orders = [];
     this.activeOrderIndex = 0;
     this.orderCounterId = 100;
@@ -1185,6 +1355,13 @@ class GameApp {
       sugar: '70%', ice: 'Bình thường', toppings: [],
       isSealing: false, isDelivering: false
     };
+
+    // Mì Cay (Cơ chế Tap Đỏ 🔴 ➔ Xanh 🟢)
+    this.currentNoodleDishId = 'kimchi';
+    this.selectedNoodleIngredients = [];
+    this.noodleOrders = [];
+    this.activeNoodleOrderIndex = 0;
+    this.noodleCounterId = 200;
 
     this.dailyReport = { served: 0, mistakes: 0, revenue: 0, tips: 0 };
 
@@ -1200,6 +1377,7 @@ class GameApp {
     this.elModalCard = document.getElementById('modalCard');
     this.elToast = document.getElementById('toast');
 
+    this.generateNoodleOrder();
     this.initEvents();
     this.startSellPhase();
   }
@@ -1213,6 +1391,28 @@ class GameApp {
     this.elBtnSound.textContent = audio.enabled ? '🔊' : '🔇';
 
     this.elBtnPause.onclick = () => this.togglePause();
+
+    // Mode Switcher: Chuyển qua lại Bếp Mì Cay & Tiệm Trà Sữa
+    const tabNoodle = document.getElementById('tabModeNoodle');
+    const tabMilktea = document.getElementById('tabModeMilktea');
+    if (tabNoodle && tabMilktea) {
+      tabNoodle.onclick = () => {
+        audio.click();
+        this.currentAppMode = 'noodle';
+        tabNoodle.classList.add('active');
+        tabMilktea.classList.remove('active');
+        this.showToast('🍜 Chuyển sang Bếp Mì Cay (Cơ chế Đỏ ➔ Xanh)');
+        this.render();
+      };
+      tabMilktea.onclick = () => {
+        audio.click();
+        this.currentAppMode = 'milktea';
+        tabMilktea.classList.add('active');
+        tabNoodle.classList.remove('active');
+        this.showToast('🧋 Chuyển sang Tiệm Trà Sữa');
+        this.render();
+      };
+    }
 
     const overlay = document.getElementById('modalOverlay');
     if (overlay) overlay.onclick = () => {
@@ -1246,18 +1446,22 @@ class GameApp {
 
     if (this.isPaused) {
       this.openModal(`
-        <h2>⏸ QUẢN LÝ TIỆM TRÀ SỮA</h2>
+        <h2>⏸ QUẢN LÝ TIỆM</h2>
         <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 12px;">
-          <button class="btn-modal-primary" id="btnResume">▶️ Tiếp Tục Bán Hàng</button>
-          <button class="btn-modal-confirm" id="btnResetCupEarly">🗑 Đổ Ly Đang Pha</button>
+          <button class="btn-modal-primary" id="btnResume">▶️ Tiếp Tục Chơi</button>
+          <button class="btn-modal-confirm" id="btnResetCupEarly">🗑 Nấu Lại Món Hiện Tại</button>
           <button class="btn-modal-cancel" id="btnEndDayEarly">🌙 Đóng Cửa Tiệm Sớm</button>
         </div>
       `);
 
       document.getElementById('btnResume').onclick = () => this.togglePause();
       document.getElementById('btnResetCupEarly').onclick = () => {
-        this.resetCup();
-        this.showToast('Đã đổ ly làm lại!');
+        if (this.currentAppMode === 'noodle') {
+          this.selectedNoodleIngredients = [];
+        } else {
+          this.resetCup();
+        }
+        this.showToast('Đã làm lại món!');
         this.closeModal();
         this.isPaused = false;
         this.render();
@@ -1274,7 +1478,374 @@ class GameApp {
 
   render() {
     this.renderTopBar();
-    this.renderSellView();
+    if (this.currentAppMode === 'noodle') {
+      this.renderNoodleKitchenView();
+    } else {
+      this.renderSellView();
+    }
+  }
+
+  // ================= 5B. LOGIC BẾP MÌ CAY (TAP ĐỎ 🔴 ➔ XANH 🟢) =================
+  generateNoodleOrder() {
+    this.noodleCounterId += 1;
+    const cust = CUSTOMERS[Math.floor(Math.random() * CUSTOMERS.length)];
+    const dish = NOODLE_DISHES[Math.floor(Math.random() * NOODLE_DISHES.length)];
+
+    let speech = '';
+    let spiceLevelText = 'Không cay';
+    let isSpicy = false;
+    let extraIngredients = [];
+    let required = [];
+
+    if (dish.id === 'kimchi') {
+      // Đơn hàng Mì Kim Chi theo đúng ví dụ thực tế trong yêu cầu
+      const scenarios = [
+        {
+          spice: 'Không cay (0 cay)', isSpicy: false, extras: ['bomy'],
+          text: `Dạ cho em 1 tô <b class="dialog-target-highlight">Mì Cay Kim Chi</b> thêm bò Mỹ, không cay nha!`
+        },
+        {
+          spice: 'Cay Cấp 2 🌶️🌶️', isSpicy: true, extras: ['bomy', 'trung'],
+          text: `Cho mình 1 tô <b class="dialog-target-highlight">Mì Kim Chi</b> bò Mỹ cấp 2 thêm trứng gà!`
+        },
+        {
+          spice: 'Không cay (0 cay)', isSpicy: false, extras: ['trung'],
+          text: `Cho em 1 tô <b class="dialog-target-highlight">Mì Kim Chi</b> thêm trứng, không cay nhé quán ơi!`
+        },
+        {
+          spice: 'Cay Cấp 1 🌶️', isSpicy: true, extras: [],
+          text: `Cho 1 tô <b class="dialog-target-highlight">Mì Cay Kim Chi</b> truyền thống, cay cấp 1!`
+        }
+      ];
+      const sc = scenarios[Math.floor(Math.random() * scenarios.length)];
+      spiceLevelText = sc.spice;
+      isSpicy = sc.isSpicy;
+      extraIngredients = sc.extras;
+      speech = sc.text;
+      // Nguyên liệu bắt buộc của Kim Chi
+      required = ['mi', 'kimchi', 'xucxich', 'rau', 'nam', ...extraIngredients];
+      if (isSpicy) required.push('ot');
+
+    } else if (dish.id === 'tomyum') {
+      // Mì Tom Yum Hải Sản
+      const scenarios = [
+        {
+          spice: 'Chua Cay Vừa 🌶️', isSpicy: true, extras: ['bomy'],
+          text: `Dạ cho em 1 tô <b class="dialog-target-highlight">Mì Tom Yum Hải Sản</b> thêm bò Mỹ, chua cay vừa!`
+        },
+        {
+          spice: 'Không cay (0 cay)', isSpicy: false, extras: [],
+          text: `Lấy mình 1 tô <b class="dialog-target-highlight">Mì Tom Yum Tôm Mực</b> đầy đặn, không cay nha!`
+        },
+        {
+          spice: 'Cay Cấp 2 🌶️🌶️', isSpicy: true, extras: ['bomy'],
+          text: `Cho 1 tô <b class="dialog-target-highlight">Mì Tom Yum</b> thêm bò Mỹ, cay cấp 2 ăn cho ấm bụng!`
+        }
+      ];
+      const sc = scenarios[Math.floor(Math.random() * scenarios.length)];
+      spiceLevelText = sc.spice;
+      isSpicy = sc.isSpicy;
+      extraIngredients = sc.extras;
+      speech = sc.text;
+      required = ['mi', 'nuoc_tomyum', 'tom', 'muc', 'cachua', 'nam', ...extraIngredients];
+      if (isSpicy) required.push('ot');
+
+    } else {
+      // Mì Tương Đen Jajangmyeon
+      const scenarios = [
+        {
+          spice: 'Không cay', isSpicy: false, extras: ['cucaivang'],
+          text: `Cho mình 1 phần <b class="dialog-target-highlight">Mì Tương Đen Jajangmyeon</b> thêm củ cải vàng nha!`
+        },
+        {
+          spice: 'Không cay', isSpicy: false, extras: ['kimchi_side'],
+          text: `Dạ cho em 1 tô <b class="dialog-target-highlight">Mì Tương Đen Thịt Ba Chỉ</b> ăn kèm kim chi!`
+        },
+        {
+          spice: 'Không cay', isSpicy: false, extras: ['cucaivang', 'kimchi_side'],
+          text: `Lấy 1 phần <b class="dialog-target-highlight">Mì Tương Đen Đặc Biệt</b> kèm đủ củ cải vàng và kim chi!`
+        }
+      ];
+      const sc = scenarios[Math.floor(Math.random() * scenarios.length)];
+      spiceLevelText = sc.spice;
+      isSpicy = sc.isSpicy;
+      extraIngredients = sc.extras;
+      speech = sc.text;
+      required = ['mi', 'sot_tuongden', 'thitheo', 'dualeo', 'trungcut', ...extraIngredients];
+    }
+
+    // Tự động nhận diện và chuyển sang món đang được làm
+    this.currentNoodleDishId = dish.id;
+    this.selectedNoodleIngredients = [];
+
+    const orderObj = {
+      id: `#${this.noodleCounterId}`,
+      customer: cust,
+      name: cust.name,
+      avatar: cust.avatar,
+      patience: 100,
+      speech,
+      dishId: dish.id,
+      dishName: dish.name,
+      spiceLevelText,
+      isSpicy,
+      requiredIngredients: required
+    };
+
+    this.noodleOrders = [orderObj];
+    this.activeNoodleOrderIndex = 0;
+  }
+
+  renderNoodleKitchenView() {
+    const activeOrd = this.noodleOrders[this.activeNoodleOrderIndex] || null;
+    const currentDish = NOODLE_DISHES.find(d => d.id === this.currentNoodleDishId) || NOODLE_DISHES[0];
+
+    const reqList = activeOrd ? activeOrd.requiredIngredients : [];
+    const isAllComplete = reqList.length > 0 && reqList.every(id => this.selectedNoodleIngredients.includes(id));
+    const completedCount = reqList.filter(id => this.selectedNoodleIngredients.includes(id)).length;
+    const totalCount = reqList.length;
+
+    this.elView.innerHTML = `
+      <div class="noodle-kitchen-view">
+        <!-- KHU VỰC ĐƠN HÀNG KHÁCH YÊU CẦU -->
+        ${activeOrd ? `
+          <div class="noodle-order-box">
+            <div class="noodle-order-head">
+              <span class="noodle-dish-title">
+                ${activeOrd.dishId === 'kimchi' ? '🍲' : (activeOrd.dishId === 'tomyum' ? '🦐' : '🥣')} 
+                ${activeOrd.name} • ${activeOrd.dishName}
+              </span>
+              <span class="noodle-spice-badge ${activeOrd.isSpicy ? '' : 'no-spice'}">
+                ${activeOrd.spiceLevelText}
+              </span>
+            </div>
+
+            <div class="noodle-order-details">
+              💬 ${activeOrd.speech}
+            </div>
+
+            <!-- Thanh kiên nhẫn của khách -->
+            <div class="patience-row" style="margin-top: 3px;">
+              <span class="patience-label">CHỜ ĐỢI:</span>
+              <div class="patience-track">
+                <div class="patience-bar-fill" style="width: ${activeOrd.patience}%; background: ${activeOrd.patience > 35 ? '#22C55E' : (activeOrd.patience > 20 ? '#F59E0B' : '#EF4444')};"></div>
+              </div>
+            </div>
+          </div>
+        ` : ''}
+
+        <!-- KHU VỰC NẤU: 3 THỐ MÌ ĐÁ (HỆ THỐNG TỰ NHẬN DIỆN MÓN ĐANG NẤU) -->
+        <div class="noodle-cooking-station">
+          <div class="station-title-bar">
+            <span class="station-badge">🔥 BẾP THỐ ĐÁ HÀN QUỐC</span>
+            <span style="font-size: 11px; font-weight: 800; color: #9A3412;">
+              Tiến độ: <b>${completedCount}/${totalCount}</b> nguyên liệu
+            </span>
+          </div>
+
+          <!-- Chọn món thố đang nấu -->
+          <div class="stove-dishes-selector">
+            ${NOODLE_DISHES.map(d => {
+              const isActive = d.id === this.currentNoodleDishId;
+              const isOrderDish = activeOrd && activeOrd.dishId === d.id;
+              return `
+                <button class="stove-dish-tab ${isActive ? 'active' : ''}" data-select-noodle-dish="${d.id}" title="${d.name}">
+                  ${isOrderDish ? `<span class="stove-pot-indicator">Khách gọi</span>` : ''}
+                  <span class="stove-dish-icon">${d.icon}</span>
+                  <span class="stove-dish-name">${d.name}</span>
+                </button>
+              `;
+            }).join('')}
+          </div>
+
+          <!-- THỐ ĐÁ TO ĐANG NẤU BỐC KHÓI -->
+          <div class="big-pot-preview-box">
+            <div class="pot-simmer-steam">♨️ ♨️ ♨️</div>
+            <div class="pot-graphic-wrapper">
+              ${renderDolsotPotSvg(currentDish, this.selectedNoodleIngredients, isAllComplete)}
+            </div>
+          </div>
+        </div>
+
+        <!-- KHUNG NGUYÊN LIỆU ĐỘNG (TỰ ĐỘNG THAY ĐỔI THEO MÓN ĐANG NẤU) -->
+        <div class="dynamic-ingredients-section">
+          <div class="ingredients-guide-banner">
+            <span class="guide-text">
+              📦 BỘ NGUYÊN LIỆU: <b>${currentDish.name.toUpperCase()}</b>
+            </span>
+            <div class="guide-legend">
+              <span class="legend-item"><span class="legend-dot-red"></span> Chưa chọn</span>
+              <span class="legend-item"><span class="legend-dot-green"></span> Đã chọn</span>
+            </div>
+          </div>
+
+          <!-- Lưới các ô nguyên liệu: 100% Thao tác TAP/CHẠM, Không kéo thả -->
+          <div class="ingredient-matrix-grid">
+            ${currentDish.ingredients.map(ing => {
+              const isRequired = reqList.includes(ing.id);
+              const isSelected = this.selectedNoodleIngredients.includes(ing.id);
+
+              let statusClass = 'req-not-needed';
+              let badgeHtml = '<span class="req-status-tag" style="background:#E2E8F0; color:#64748B;">⚪ Không gọi</span>';
+
+              if (isRequired) {
+                if (isSelected) {
+                  statusClass = 'req-done';
+                  badgeHtml = '<span class="req-status-tag tag-green">✅ Đã chọn</span>';
+                } else {
+                  statusClass = 'req-pending';
+                  badgeHtml = '<span class="req-status-tag tag-red">🔴 Cần cho</span>';
+                }
+              }
+
+              return `
+                <button class="ingredient-tap-slot ${statusClass}" 
+                        data-noodle-ing="${ing.id}" 
+                        data-required="${isRequired ? '1' : '0'}"
+                        title="${ing.name}">
+                  ${badgeHtml}
+                  <span class="ing-slot-icon">${ing.icon}</span>
+                  <span class="ing-slot-name">${ing.name}</span>
+                </button>
+              `;
+            }).join('')}
+          </div>
+        </div>
+
+        <!-- BANNER THÔNG BÁO TIẾN ĐỘ -->
+        <div class="noodle-status-banner ${isAllComplete ? 'ready' : 'incomplete'}">
+          ${isAllComplete 
+            ? '✨ ĐÃ ĐỦ NGUYÊN LIỆU! MÓN ĐÃ NẤU XONG! SẴN SÀNG GIAO MÓN 🎉' 
+            : `⚠️ Còn thiếu ${totalCount - completedCount} nguyên liệu có viền đỏ 🔴 (Chạm để cho vào thố)`}
+        </div>
+
+        <!-- CÁC NÚT HÀNH ĐỘNG -->
+        <div class="noodle-actions-bar">
+          <button class="btn-noodle-reset" id="btnResetNoodlePot" title="Đổ thố làm lại">
+            🗑 Nấu Lại
+          </button>
+          <button class="btn-noodle-serve ${isAllComplete ? 'ready' : ''}" id="btnServeNoodle" title="Giao thố mì cho khách">
+            ${isAllComplete ? '🚚 GIAO MÓN NGAY ✨' : '⏳ Đang Nấu (Chưa đủ)'}
+          </button>
+        </div>
+      </div>
+    `;
+
+    this.attachNoodleEvents();
+  }
+
+  attachNoodleEvents() {
+    const activeOrd = this.noodleOrders[this.activeNoodleOrderIndex] || null;
+    const reqList = activeOrd ? activeOrd.requiredIngredients : [];
+
+    // 1. Chuyển đổi thố món đang nấu (Kim Chi, Tom Yum, Tương Đen)
+    this.elView.querySelectorAll('[data-select-noodle-dish]').forEach(btn => {
+      btn.onclick = () => {
+        const dishId = btn.dataset.selectNoodleDish;
+        audio.click();
+        this.currentNoodleDishId = dishId;
+        this.selectedNoodleIngredients = [];
+        const dObj = NOODLE_DISHES.find(d => d.id === dishId);
+        this.showToast(`Đã chuyển sang bộ nguyên liệu ${dObj ? dObj.name : ''}`);
+        this.render();
+      };
+    });
+
+    // 2. Chạm vào nguyên liệu (TAP / CLICK ĐỎ 🔴 ➔ XANH 🟢)
+    this.elView.querySelectorAll('[data-noodle-ing]').forEach(btn => {
+      btn.onclick = (e) => {
+        const ingId = btn.dataset.noodleIng;
+        const isRequired = btn.dataset.required === '1';
+        const currentDish = NOODLE_DISHES.find(d => d.id === this.currentNoodleDishId);
+        const ingObj = currentDish?.ingredients.find(i => i.id === ingId);
+
+        // TH1: Nguyên liệu BẮT BUỘC theo đơn hàng
+        if (isRequired) {
+          const idx = this.selectedNoodleIngredients.indexOf(ingId);
+          if (idx === -1) {
+            // Chưa chọn ➔ CHUYỂN SANG VIỀN XANH
+            audio.ding();
+            audio.sizzle();
+            this.selectedNoodleIngredients.push(ingId);
+            triggerFloatReward(e.clientX, e.clientY, `+${ingObj?.name || 'Nguyên liệu'} ✅`);
+          } else {
+            // Đã chọn, chạm lại ➔ Cho phép gỡ ra chuyển lại ĐỎ
+            audio.click();
+            this.selectedNoodleIngredients.splice(idx, 1);
+            triggerFloatReward(e.clientX, e.clientY, `Bỏ ${ingObj?.name || ''}`);
+          }
+          this.render();
+
+        } else {
+          // TH2: Nguyên liệu KHÔNG YÊU CẦU trong đơn (Ví dụ: dặn không cay mà bấm ớt)
+          audio.warning();
+          btn.classList.add('shake-invalid');
+          setTimeout(() => btn.classList.remove('shake-invalid'), 400);
+
+          if (ingObj?.isSpice) {
+            this.showToast(`⚠️ Khách dặn ${activeOrd?.spiceLevelText || 'Không Cay'}, không chọn ớt nha!`);
+          } else {
+            this.showToast(`⚠️ Món này khách không gọi ${ingObj?.name || 'nguyên liệu này'}!`);
+          }
+        }
+      };
+    });
+
+    // 3. Nút đổ thố nấu lại
+    const btnReset = document.getElementById('btnResetNoodlePot');
+    if (btnReset) {
+      btnReset.onclick = () => {
+        audio.trash();
+        this.selectedNoodleIngredients = [];
+        this.showToast('Đã làm trống thố, hãy chọn lại nguyên liệu!');
+        this.render();
+      };
+    }
+
+    // 4. Nút Giao Món
+    const btnServe = document.getElementById('btnServeNoodle');
+    if (btnServe) {
+      btnServe.onclick = () => {
+        const isAllComplete = reqList.length > 0 && reqList.every(id => this.selectedNoodleIngredients.includes(id));
+        if (isAllComplete && activeOrd) {
+          this.executeNoodleServe(activeOrd);
+        } else {
+          audio.warning();
+          this.showToast('⚠️ Chưa đủ các nguyên liệu viền đỏ 🔴!');
+        }
+      };
+    }
+  }
+
+  executeNoodleServe(order) {
+    audio.serveSuccess();
+
+    const dishObj = NOODLE_DISHES.find(d => d.id === order.dishId);
+    const dishPrice = dishObj ? dishObj.price : 45000;
+    const tip = 10000;
+    const totalEarned = dishPrice + tip;
+
+    state.money += totalEarned;
+    state.rating = Math.min(5.0, state.rating + 0.1);
+
+    this.dailyReport.served += 1;
+    this.dailyReport.revenue += totalEarned;
+    this.dailyReport.tips += tip;
+
+    if (typeof confetti === 'function') {
+      try {
+        confetti({ particleCount: 60, spread: 70, origin: { y: 0.6 } });
+      } catch (e) {}
+    }
+
+    triggerFloatReward(window.innerWidth / 2, window.innerHeight / 2, `+${totalEarned.toLocaleString()}đ 🍜`);
+    this.showToast(`+${totalEarned.toLocaleString()}đ 🥰 ${order.name}: "Tô mì ngon xuất sắc, đúng yêu cầu! Cảm ơn quán!"`);
+
+    this.selectedNoodleIngredients = [];
+    setTimeout(() => {
+      this.generateNoodleOrder();
+      this.render();
+    }, 600);
   }
 
   renderTopBar() {
@@ -1306,18 +1877,34 @@ class GameApp {
       if (this.isPaused) return;
 
       this.gameSeconds += 1;
-      this.orders.forEach(ord => {
-        ord.patience = Math.max(0, ord.patience - 0.7);
-      });
 
-      const angryIdx = this.orders.findIndex(ord => ord.patience <= 0);
-      if (angryIdx !== -1) {
-        audio.trash();
-        const angryOrd = this.orders.splice(angryIdx, 1)[0];
-        this.dailyReport.mistakes += 1;
-        state.rating = Math.max(1.0, state.rating - 0.15);
-        this.showToast(`${angryOrd.name} đã bỏ về vì chờ lâu!`);
-        this.ensureOrderBalance();
+      if (this.currentAppMode === 'noodle') {
+        this.noodleOrders.forEach(ord => {
+          ord.patience = Math.max(0, ord.patience - 0.5);
+        });
+        const angryNoodleIdx = this.noodleOrders.findIndex(ord => ord.patience <= 0);
+        if (angryNoodleIdx !== -1) {
+          audio.trash();
+          const angryOrd = this.noodleOrders.splice(angryNoodleIdx, 1)[0];
+          this.dailyReport.mistakes += 1;
+          state.rating = Math.max(1.0, state.rating - 0.1);
+          this.showToast(`${angryOrd.name} đã sốt ruột bỏ về vì đợi lâu!`);
+          this.generateNoodleOrder();
+        }
+      } else {
+        this.orders.forEach(ord => {
+          ord.patience = Math.max(0, ord.patience - 0.7);
+        });
+
+        const angryIdx = this.orders.findIndex(ord => ord.patience <= 0);
+        if (angryIdx !== -1) {
+          audio.trash();
+          const angryOrd = this.orders.splice(angryIdx, 1)[0];
+          this.dailyReport.mistakes += 1;
+          state.rating = Math.max(1.0, state.rating - 0.15);
+          this.showToast(`${angryOrd.name} đã bỏ về vì chờ lâu!`);
+          this.ensureOrderBalance();
+        }
       }
 
       if (this.gameSeconds >= this.maxDaySeconds) {

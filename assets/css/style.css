@@ -1024,3 +1024,531 @@ button:active {
 
 .pos { color: var(--status-green); }
 .neg { color: var(--status-red); }
+
+/* ================= 12. MODE SWITCHER TABS (BẾP MÌ CAY & TIỆM TRÀ SỮA) ================= */
+.brand-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 10px;
+  background: #FFEAD2;
+  border-bottom: 2px solid #E4BA8C;
+  gap: 8px;
+}
+
+.mode-tabs-container {
+  display: flex;
+  background: rgba(88, 44, 16, 0.12);
+  padding: 3px;
+  border-radius: 20px;
+  gap: 4px;
+  width: 100%;
+}
+
+.mode-tab-btn {
+  flex: 1;
+  padding: 6px 10px;
+  border-radius: 16px;
+  font-family: var(--font-display);
+  font-size: 12.5px;
+  font-weight: 800;
+  color: #643111;
+  text-align: center;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.mode-tab-btn.active {
+  background: linear-gradient(180deg, #E11D48, #BE123C);
+  color: #FFF;
+  box-shadow: 0 2px 8px rgba(190, 18, 60, 0.4), 0 1px 0 rgba(255,255,255,0.3) inset;
+  transform: scale(1.02);
+}
+
+.mode-tab-btn.mode-tea.active {
+  background: linear-gradient(180deg, #16A34A, #15803D);
+  box-shadow: 0 2px 8px rgba(22, 163, 74, 0.4);
+}
+
+/* ================= 13. GIAO DIỆN BẾP MÌ CAY (CƠ CHẾ VIỀN ĐỎ 🔴 ➔ XANH 🟢) ================= */
+.noodle-kitchen-view {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  background: #FFF9F2;
+  position: relative;
+  padding-bottom: 12px;
+}
+
+/* Thẻ đơn hàng mì cay */
+.noodle-order-box {
+  background: #FFFFFF;
+  margin: 6px 8px 4px;
+  border-radius: 14px;
+  border: 2px solid #FBCFE8;
+  box-shadow: 0 3px 10px rgba(190, 24, 93, 0.08);
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.noodle-order-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.noodle-dish-title {
+  font-family: var(--font-display);
+  font-size: 15px;
+  color: #BE123C;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.noodle-spice-badge {
+  font-size: 11px;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 10px;
+  background: #FEE2E2;
+  color: #DC2626;
+  border: 1px solid #FECACA;
+}
+
+.noodle-spice-badge.no-spice {
+  background: #ECFDF5;
+  color: #059669;
+  border-color: #A7F3D0;
+}
+
+.noodle-order-details {
+  font-size: 12.5px;
+  color: #374151;
+  background: #FFF1F2;
+  padding: 6px 10px;
+  border-radius: 8px;
+  border-left: 3px solid #E11D48;
+  line-height: 1.4;
+}
+
+/* Khu vực Bếp Nấu 3 Thố Mì */
+.noodle-cooking-station {
+  margin: 4px 8px;
+  background: linear-gradient(180deg, #FDF2E9, #FCE7D4);
+  border: 2px solid #E5C3A6;
+  border-radius: 16px;
+  padding: 8px;
+  box-shadow: inset 0 2px 6px rgba(0,0,0,0.04);
+}
+
+.station-title-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.station-badge {
+  font-family: var(--font-display);
+  font-size: 12px;
+  color: #7C2D12;
+  background: #FFEDD5;
+  padding: 3px 9px;
+  border-radius: 12px;
+  border: 1px solid #FDBA74;
+}
+
+.stove-dishes-selector {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+
+.stove-dish-tab {
+  background: #FFF;
+  border: 2px solid #E2E8F0;
+  border-radius: 12px;
+  padding: 6px 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+}
+
+.stove-dish-tab.active {
+  border-color: #E11D48;
+  background: #FFF1F2;
+  box-shadow: 0 3px 10px rgba(225, 29, 72, 0.25);
+  transform: translateY(-2px);
+}
+
+.stove-dish-icon {
+  font-size: 24px;
+}
+
+.stove-dish-name {
+  font-family: var(--font-display);
+  font-size: 11px;
+  color: #4B5563;
+  text-align: center;
+}
+
+.stove-dish-tab.active .stove-dish-name {
+  color: #BE123C;
+  font-weight: 800;
+}
+
+.stove-pot-indicator {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: #22C55E;
+  color: #FFF;
+  font-size: 9px;
+  padding: 1px 5px;
+  border-radius: 8px;
+  font-weight: 900;
+}
+
+/* Thố Nồi Mì Đang Nấu Lớn */
+.big-pot-preview-box {
+  margin-top: 8px;
+  background: radial-gradient(circle at 50% 60%, #3F1D13 0%, #1E0C06 100%);
+  border-radius: 14px;
+  border: 3px solid #854D0E;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.pot-simmer-steam {
+  font-size: 16px;
+  animation: steamFloat 2s infinite ease-in-out;
+  margin-bottom: -4px;
+  filter: drop-shadow(0 2px 4px rgba(255,255,255,0.4));
+}
+
+@keyframes steamFloat {
+  0%, 100% { transform: translateY(0) scale(1); opacity: 0.7; }
+  50% { transform: translateY(-5px) scale(1.15); opacity: 1; }
+}
+
+.pot-graphic-wrapper {
+  width: 100%;
+  max-width: 240px;
+  height: 90px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pot-inside-ingredients {
+  position: absolute;
+  bottom: 22px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 3px;
+  max-width: 170px;
+  z-index: 5;
+}
+
+.pot-ingredient-pill {
+  font-size: 15px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  padding: 2px 4px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes popIn {
+  0% { transform: scale(0); }
+  70% { transform: scale(1.25); }
+  100% { transform: scale(1); }
+}
+
+/* KHUNG NGUYÊN LIỆU ĐỘNG (DYNAMIC INGREDIENTS MATRIX) */
+.dynamic-ingredients-section {
+  margin: 6px 8px;
+  background: #FFFFFF;
+  border: 2px solid #F1D2B5;
+  border-radius: 16px;
+  padding: 8px 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+}
+
+.ingredients-guide-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 6px;
+  border-bottom: 1.5px dashed #F1D2B5;
+  margin-bottom: 8px;
+}
+
+.guide-text {
+  font-family: var(--font-display);
+  font-size: 12px;
+  color: #633010;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.guide-legend {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 10.5px;
+  font-weight: 800;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.legend-dot-red {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #EF4444;
+  box-shadow: 0 0 5px rgba(239, 68, 68, 0.8);
+}
+
+.legend-dot-green {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #22C55E;
+  box-shadow: 0 0 5px rgba(34, 197, 94, 0.8);
+}
+
+/* LƯỚI Ô NGUYÊN LIỆU (TAP SLOTS) */
+.ingredient-matrix-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 7px;
+}
+
+/* Nút nguyên liệu chạm */
+.ingredient-tap-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 2px 8px;
+  border-radius: 13px;
+  background: #FFFFFF;
+  position: relative;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: all 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+  min-height: 72px;
+}
+
+.ingredient-tap-slot:active {
+  transform: scale(0.92);
+}
+
+.ing-slot-icon {
+  font-size: 26px;
+  margin-bottom: 3px;
+  filter: drop-shadow(0 2px 3px rgba(0,0,0,0.1));
+  transition: transform 0.2s ease;
+}
+
+.ing-slot-name {
+  font-size: 11px;
+  font-weight: 800;
+  text-align: center;
+  color: #374151;
+  line-height: 1.15;
+  max-width: 90%;
+  word-break: break-word;
+}
+
+/* 1. Trạng thái VIỀN ĐỎ 🔴 (Bắt buộc nhưng CHƯA CHỌN) */
+.ingredient-tap-slot.req-pending {
+  border: 3px solid #EF4444;
+  background: #FEF2F2;
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.35);
+  animation: redSlotPulse 1.8s infinite;
+}
+
+.ingredient-tap-slot.req-pending .ing-slot-name {
+  color: #B91C1C;
+}
+
+@keyframes redSlotPulse {
+  0%, 100% {
+    box-shadow: 0 0 6px rgba(239, 68, 68, 0.3);
+    border-color: #EF4444;
+  }
+  50% {
+    box-shadow: 0 0 14px rgba(239, 68, 68, 0.65);
+    border-color: #DC2626;
+  }
+}
+
+.req-status-tag {
+  position: absolute;
+  top: -6px;
+  right: -5px;
+  font-size: 9px;
+  font-weight: 900;
+  padding: 1px 5px;
+  border-radius: 10px;
+  border: 1px solid rgba(0,0,0,0.1);
+}
+
+.req-status-tag.tag-red {
+  background: #EF4444;
+  color: #FFF;
+  box-shadow: 0 2px 4px rgba(239,68,68,0.4);
+}
+
+/* 2. Trạng thái VIỀN XANH 🟢 (ĐÃ CHỌN THÀNH CÔNG) */
+.ingredient-tap-slot.req-done {
+  border: 3px solid #22C55E;
+  background: #F0FDF4;
+  box-shadow: 0 0 12px rgba(34, 197, 94, 0.4);
+  transform: translateY(-1px);
+}
+
+.ingredient-tap-slot.req-done .ing-slot-name {
+  color: #15803D;
+  font-weight: 900;
+}
+
+.ingredient-tap-slot.req-done .ing-slot-icon {
+  transform: scale(1.1);
+}
+
+.req-status-tag.tag-green {
+  background: #22C55E;
+  color: #FFF;
+  box-shadow: 0 2px 5px rgba(34, 197, 94, 0.45);
+}
+
+/* 3. Trạng thái VIỀN XÁM / KHÔNG YÊU CẦU */
+.ingredient-tap-slot.req-not-needed {
+  border: 1.5px solid #CBD5E1;
+  background: #F8FAFC;
+  opacity: 0.6;
+}
+
+.ingredient-tap-slot.req-not-needed .ing-slot-name {
+  color: #94A3B8;
+}
+
+/* Rung lắc khi chọn nhầm */
+.ingredient-tap-slot.shake-invalid {
+  animation: slotShake 0.4s ease;
+}
+
+@keyframes slotShake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-6px); }
+  40%, 80% { transform: translateX(6px); }
+}
+
+/* Banner Trạng Thái Đủ Nguyên Liệu */
+.noodle-status-banner {
+  margin: 6px 8px 4px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-family: var(--font-display);
+  font-size: 13px;
+  transition: all 0.3s ease;
+}
+
+.noodle-status-banner.incomplete {
+  background: #FEF3C7;
+  color: #92400E;
+  border: 1.5px solid #FCD34D;
+}
+
+.noodle-status-banner.ready {
+  background: linear-gradient(180deg, #DCFCE7, #BBF7D0);
+  color: #14532D;
+  border: 2px solid #4ADE80;
+  box-shadow: 0 4px 14px rgba(34, 197, 94, 0.35);
+  animation: readyGlow 1.5s infinite alternate;
+}
+
+@keyframes readyGlow {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.02); }
+}
+
+/* Nút Hành Động Giao Món */
+.noodle-actions-bar {
+  margin: 4px 8px 10px;
+  display: flex;
+  gap: 8px;
+}
+
+.btn-noodle-reset {
+  flex: 1;
+  background: #F1F5F9;
+  color: #475569;
+  font-family: var(--font-display);
+  font-size: 13px;
+  padding: 10px;
+  border-radius: 12px;
+  border: 2px solid #CBD5E1;
+  font-weight: 800;
+}
+
+.btn-noodle-serve {
+  flex: 2.2;
+  background: #94A3B8;
+  color: #F8FAFC;
+  font-family: var(--font-display);
+  font-size: 14px;
+  padding: 11px 16px;
+  border-radius: 12px;
+  border: none;
+  font-weight: 900;
+  box-shadow: 0 3px 0 #64748B;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.btn-noodle-serve.ready {
+  background: linear-gradient(180deg, #22C55E, #16A34A);
+  color: #FFF;
+  box-shadow: 0 4px 0 #15803D, 0 4px 16px rgba(34, 197, 94, 0.5);
+  cursor: pointer;
+  animation: pulseButton 1.2s infinite;
+}
+
+@keyframes pulseButton {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.03); }
+}
+

@@ -3,13 +3,13 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
-  <title>🧋 Tiệm Trà Sữa Của Rùa - Game Quản Lý & Pha Chế Trà Sữa</title>
-  <meta name="description" content="Game mobile 2D casual mô phỏng quản lý tiệm trà sữa của Rùa. Pha chế nhanh, tự động dập nắp, thuê nhân viên và nâng cấp tiệm mỗi ngày!">
+  <title>🍜 Tiệm Mì Cay & 🧋 Tiệm Trà Sữa - Cơ chế Tap Viền Đỏ ➔ Xanh</title>
+  <meta name="description" content="Game mobile nấu ăn phong cách anime mô phỏng Tiệm Mì Cay và Tiệm Trà Sữa với cơ chế chạm nguyên liệu viền đỏ ➔ viền xanh chuẩn xác.">
   <meta name="theme-color" content="#5C3826">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Mali:wght@400;500;600;700&family=Nunito:wght@600;700;800;900&family=Paytone+One&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/style.css?v=20261007_04">
+  <link rel="stylesheet" href="assets/css/style.css?v=20261008_01">
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
 </head>
 <body>
@@ -50,11 +50,12 @@
       </div>
     </header>
 
-    <!-- Biển hiệu tiệm dễ thương -->
+    <!-- Thanh chuyển chế độ (Bếp Mì Cay & Tiệm Trà Sữa) -->
     <div class="brand-strip">
-      <span class="turtle-icon">🐢</span>
-      <span class="brand-title">TIỆM TRÀ SỮA CỦA RÙA</span>
-      <span class="turtle-icon">🧋</span>
+      <div class="mode-tabs-container">
+        <button id="tabModeNoodle" class="mode-tab-btn active" title="Bếp Mì Cay (Cơ chế Đỏ ➔ Xanh)">🍜 BẾP MÌ CAY (Đỏ ➔ Xanh)</button>
+        <button id="tabModeMilktea" class="mode-tab-btn mode-tea" title="Tiệm Trà Sữa">🧋 TIỆM TRÀ SỮA</button>
+      </div>
     </div>
 
     <!-- Main View Container: Giao diện Chuẩn bị hoặc Bán hàng -->
